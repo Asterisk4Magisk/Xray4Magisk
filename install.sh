@@ -31,7 +31,7 @@ PROPFILE=false
 POSTFSDATA=false
 
 # Set to true if you need late_start service script
-LATESTARTSERVICE=false
+LATESTARTSERVICE=true
 
 ##########################################################################################
 # Replace list
@@ -123,7 +123,7 @@ REPLACE="
 
 print_modname() {
   ui_print "*******************************"
-  ui_print "     Magisk Module Template    "
+  ui_print "       V2Ray for Android       "
   ui_print "*******************************"
 }
 
@@ -134,6 +134,24 @@ on_install() {
   # Extend/change the logic to whatever you want
   ui_print "- Extracting module files"
   unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
+
+  # install v2ray execute file
+  ui_print "- Install V2Ray core $ARCH execute files"
+  mkdir -p $MODPATH/system/bin
+  mkdir -p $MODPATH/system/etc
+  unzip -j -o "$ZIPFILE" "v2ray/etc/v2ray.service" -d $MODPATH >&2
+  unzip -j -o "$ZIPFILE" "v2ray/bin/$ARCH/*" -d $MODPATH/system/bin >&2
+
+  # copy v2ray data and config
+  ui_print "- Copy V2Ray config and data files"
+  mkdir -p /data/v2ray
+  mkdir -p /data/v2ray/run
+  [ -f /data/v2ray/config.json ] || \\
+  unzip -j -o "$ZIPFILE" "v2ray/etc/config.json" -d /data/v2ray >&2
+  unzip -j -o "$ZIPFILE" "v2ray/etc/resolv.conf" -d /data/v2ray >&2
+  unzip -j -o "$ZIPFILE" "v2ray/etc/geosite.dat" -d /data/v2ray >&2
+  unzip -j -o "$ZIPFILE" "v2ray/etc/geoip.dat" -d /data/v2ray >&2
+  ln -s /data/v2ray/resolv.conf $MODPATH/system/etc/resolv.conf
 }
 
 # Only some special files require specific permissions
@@ -141,8 +159,13 @@ on_install() {
 # The default permissions should be good enough for most cases
 
 set_permissions() {
+  inet_uid="3003"
   # The following is the default rule, DO NOT remove
   set_perm_recursive $MODPATH 0 0 0755 0644
+  set_perm  $MODPATH/v2ray.service     0  0  0755
+  set_perm  $MODPATH/system/bin/v2ray  ${inet_uid}  ${inet_uid}  6755
+  set_perm  $MODPATH/system/bin/v2ctl  ${inet_uid}  ${inet_uid}  6755
+  set_perm  /data/v2ray                ${inet_uid}  ${inet_uid}  0755
 
   # Here are some examples:
   # set_perm_recursive  $MODPATH/system/lib       0     0       0755      0644

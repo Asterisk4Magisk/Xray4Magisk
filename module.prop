@@ -1,6 +1,6 @@
-id=template
-name=Template Module
-version=v1
-versionCode=1
-author=topjohnwu
-description=A short description
+id=v2ray
+name=V2ray for Android
+version=v4.18
+versionCode=20190329
+author=chendefine
+description=V2ray core with service scripts for Android
