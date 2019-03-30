@@ -140,13 +140,14 @@ on_install() {
   mkdir -p $MODPATH/system/bin
   mkdir -p $MODPATH/system/etc
   unzip -j -o "$ZIPFILE" "v2ray/etc/v2ray.service" -d $MODPATH >&2
+  unzip -j -o "$ZIPFILE" "v2ray/etc/v2ray.redirect" -d $MODPATH >&2
   unzip -j -o "$ZIPFILE" "v2ray/bin/$ARCH/*" -d $MODPATH/system/bin >&2
 
   # copy v2ray data and config
   ui_print "- Copy V2Ray config and data files"
   mkdir -p /data/v2ray
   mkdir -p /data/v2ray/run
-  [ -f /data/v2ray/config.json ] || \\
+  [ -f /data/v2ray/config.json ] || \
   unzip -j -o "$ZIPFILE" "v2ray/etc/config.json" -d /data/v2ray >&2
   unzip -j -o "$ZIPFILE" "v2ray/etc/resolv.conf" -d /data/v2ray >&2
   unzip -j -o "$ZIPFILE" "v2ray/etc/geosite.dat" -d /data/v2ray >&2
@@ -163,6 +164,7 @@ set_permissions() {
   # The following is the default rule, DO NOT remove
   set_perm_recursive $MODPATH 0 0 0755 0644
   set_perm  $MODPATH/v2ray.service     0  0  0755
+  set_perm  $MODPATH/v2ray.redirect    0  0  0755
   set_perm  $MODPATH/system/bin/v2ray  ${inet_uid}  ${inet_uid}  6755
   set_perm  $MODPATH/system/bin/v2ctl  ${inet_uid}  ${inet_uid}  6755
   set_perm  /data/v2ray                ${inet_uid}  ${inet_uid}  0755
