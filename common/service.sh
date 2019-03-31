@@ -8,4 +8,5 @@ MODDIR=${0%/*}
 
 # This script will be executed in late_start service mode
 
-if [ ! -f /data/v2ray/no-autostart ] ; then $MODDIR/v2ray.service start  && [ -f /data/v2ray/appid.list ] && $MODDIR/v2ray.redirect enable ; fi
+if [ ! -f /data/v2ray/manual ] ; then $MODDIR/scripts/v2ray.service start && [ -f /data/v2ray/appid.list ] && $MODDIR/scripts/v2ray.tproxy enable ; fi
+inotifyd $MODDIR/scripts/v2ray.inotify $MODDIR &

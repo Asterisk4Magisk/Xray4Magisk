@@ -15,7 +15,7 @@ This is a v2ray module for Magisk, and includes binaries for arm, arm64, x86, x6
 
 ## Install
 
-- You can download the release installer zip file and install it via the Magisk Manager App.
+You can download the release installer zip file and install it via the Magisk Manager App.
 
 
 
@@ -26,30 +26,84 @@ This is a v2ray module for Magisk, and includes binaries for arm, arm64, x86, x6
 
 - Please make sure the config is correct. You can check it by running a command :
 
-   `export V2RAY_LOCATION_ASSET=/data/v2ray; v2ray -test -config /data/v2ray/config.json`  in android terminal.
+   `export V2RAY_LOCATION_ASSET=/data/v2ray; v2ray -test -config /data/v2ray/config.json`  in android terminal or ssh.
+
+- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/v2ray/appid.list` to select which App to proxy.
 
 
 
+## Usage
 
-## Start/Stop service
+### Normal usage ( Default and Recommended )
 
-- V2ray service is autorun on boot. If you don't want it run automatically, you can just add a file `/data/v2ray/no-autostart` .
+#### Manage service start / stop
 
-- You can start / stop manually by execute the service script in `$MODDIR/v2ray.service` . For example, in my environment , the script's absolute path is `/sbin/.magisk/img/v2ray/v2ray.service` .
+- V2Ray service is auto-run after system boot up by default.
+- You can start or stop v2ray service by simply turn on or turn off the module via Magisk Manager App. Start service may wait about 10 second and stop service may take effect immediately.
 
-- So, if you want to start v2ray service, just run:
 
-  `/sbin/.magisk/img/v2ray/v2ray.service start`
 
-  or stop v2ray service:
+#### Select which App to proxy
 
-  `/sbin/.magisk/img/v2ray/v2ray.service stop `
+- If you expect transparent proxy ( read Transparent proxy section for more detail ) for some Apps, just write down these App' uid in file `/data/v2ray/appid.list` . 
 
-  or restart v2ray service:
+  Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
 
-  `/sbin/.magisk/img/v2ray/v2ray.service restart`
+- If you expect all Apps proxy by V2Ray with transparent proxy, just write a single number `0` in file `/data/v2ray/appid.list` .
+
+- Transparent proxy won't take effect until the V2Ray service start normally and file `/data/v2ray/appid.list` is not empty.
+
+
+
+### Advanced usage ( for Debug and Develop only )
+
+#### Enter manual mode
+
+If you want to control V2Ray by running command totally, just add a file `/data/v2ray/manual`.  In this situation, V2Ray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
+
+
+
+#### Manage service start / stop
+
+- V2Ray service script is `$MODDIR/scripts/v2ray.service`.
+
+- For example, in my environment ( Magisk version: 18100 ; Magisk Manager version v7.1.1 )
+
+  - Start service : 
+
+    `/sbin/.magisk/img/v2ray/scripts/v2ray.service start`
+
+  - Stop service :
+
+    `/sbin/.magisk/img/v2ray/scripts/v2ray.service stop`
+
+
+
+#### Manage transparent proxy enable / disable
+
+- Transparent proxy script is `$MODDIR/scripts/v2ray.tproxy`.
+
+- For example, in my environment ( Magisk version: 18100 ; Magisk Manager version v7.1.1 )
+
+  - Enable Transparent proxy : 
+
+    `/sbin/.magisk/img/v2ray/scripts/v2ray.tproxy enable`
+
+  - Disable Transparent proxy :
+
+    `/sbin/.magisk/img/v2ray/scripts/v2ray.tproxy disable`
+
+
 
 ## Transparent proxy
+
+### What is "Transparent proxy"
+
+> "A 'transparent proxy' is a proxy that does not modify the request or response beyond what is required for proxy authentication and identification". "A 'non-transparent proxy' is a proxy that modifies the request or response in order to provide some added service to the user agent, such as group annotation services, media type transformation, protocol reduction, or anonymity filtering".
+>
+> ​                                -- [Transparent proxy explanation in Wikipedia](https://en.wikipedia.org/wiki/Proxy_server#Transparent_proxy)
+
+
 
 ### Working principle
 
@@ -57,47 +111,23 @@ This module also contains a simple script that helping you to make transparent p
 
 
 
-**Android App** ( Browser, Google, Facebook, Twitter ... ... )
+**Android App** ( Google, Facebook, Twitter ... )
 
   &vArr;  ( TCP & UDP network protocol )
 
-Android system **iptables**                          [ localhost inside ]
+Android system **iptables**      [ localhost inside ]
 
   &vArr;  ( REDIRECT & TPROXY iptables rules )
 
-127.0.0.1:65535 [ Inbond ] ----- **V2Ray** ----- [ Outbond ]
+[ 127.0.0.1:65535 Inbond ] -- **V2Ray** -- [ Outbond ]
 
-​          ( Shadowsocks, Vmess )                                &vArr;
+  &vArr;  ( Shadowsocks, Vmess )
 
-  [ Internet outside ]            ( SS, V2Ray)       **Proxy Server**
+**Proxy Server** ( SS, V2Ray)   [ Internet outside ]             
 
-​       ( HTTP, TCP, ... other application protocol )   &vArr;
+  &vArr; ( HTTP, TCP, ... other application protocol ) 
 
- ( Google, Facebook, Twitter ... ... )                 **App Server**
-
-
-
-### Choose proxy target
-
-- Select mode : You can write a list of App's uid into `/data/v2ray/appid.list` file so that the script would select these App's network proxy via V2Ray. Each App's uid should separate by space or just One App's uid per line.
-
-- Global mode : You can write a single number "0" into `/data/v2ray/appid.list` file to make all App's network proxy via V2Ray.
-
-
-
-### Enable/Disable proxy
-
-- Only when the V2Ray service start normally on boot and  `/data/v2ray/appid.list` file is not empty, the transparent proxy iptables script can run automatically.
-
-- Otherwise, you can execute iptables script in `$MODDIR/v2ray.redirect` . For example, in my environment:
-
-  Enable transparent proxy:
-
-  `/sbin/.magisk/img/v2ray/v2ray.redirect enable`
-
-  Disable transparent proxy:
-
-  `/sbin/.magisk/img/v2ray/v2ray.redirect disable`
+**App Server** ( Google, Facebook, Twitter ... )
 
 
 

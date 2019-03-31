@@ -132,15 +132,15 @@ print_modname() {
 on_install() {
   # The following is the default implementation: extract $ZIPFILE/system to $MODPATH
   # Extend/change the logic to whatever you want
-  ui_print "- Extracting module files"
-  unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
+  ## ui_print "- Extracting module files"
+  ## unzip -o "$ZIPFILE" 'system/*' -d $MODPATH >&2
 
   # install v2ray execute file
   ui_print "- Install V2Ray core $ARCH execute files"
+  mkdir -p $MODPATH/scripts
   mkdir -p $MODPATH/system/bin
   mkdir -p $MODPATH/system/etc
-  unzip -j -o "$ZIPFILE" "v2ray/etc/v2ray.service" -d $MODPATH >&2
-  unzip -j -o "$ZIPFILE" "v2ray/etc/v2ray.redirect" -d $MODPATH >&2
+  unzip -j -o "$ZIPFILE" 'v2ray/scripts/*' -d $MODPATH/scripts >&2
   unzip -j -o "$ZIPFILE" "v2ray/bin/$ARCH/*" -d $MODPATH/system/bin >&2
 
   # copy v2ray data and config
@@ -149,6 +149,7 @@ on_install() {
   mkdir -p /data/v2ray/run
   [ -f /data/v2ray/config.json ] || \
   unzip -j -o "$ZIPFILE" "v2ray/etc/config.json" -d /data/v2ray >&2
+  [ -f /data/v2ray/resolv.conf ] || \
   unzip -j -o "$ZIPFILE" "v2ray/etc/resolv.conf" -d /data/v2ray >&2
   unzip -j -o "$ZIPFILE" "v2ray/etc/geosite.dat" -d /data/v2ray >&2
   unzip -j -o "$ZIPFILE" "v2ray/etc/geoip.dat" -d /data/v2ray >&2
@@ -163,10 +164,11 @@ set_permissions() {
   inet_uid="3003"
   # The following is the default rule, DO NOT remove
   set_perm_recursive $MODPATH 0 0 0755 0644
-  set_perm  $MODPATH/v2ray.service     0  0  0755
-  set_perm  $MODPATH/v2ray.redirect    0  0  0755
-  set_perm  $MODPATH/system/bin/v2ray  ${inet_uid}  ${inet_uid}  6755
-  set_perm  $MODPATH/system/bin/v2ctl  ${inet_uid}  ${inet_uid}  6755
+  set_perm  $MODPATH/scripts/v2ray.inotify    0  0  0755
+  set_perm  $MODPATH/scripts/v2ray.service    0  0  0755
+  set_perm  $MODPATH/scripts/v2ray.tproxy     0  0  0755
+  set_perm  $MODPATH/system/bin/v2ray  ${inet_uid}  ${inet_uid}  0755
+  set_perm  $MODPATH/system/bin/v2ctl  ${inet_uid}  ${inet_uid}  0755
   set_perm  /data/v2ray                ${inet_uid}  ${inet_uid}  0755
 
   # Here are some examples:
