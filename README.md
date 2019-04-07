@@ -55,6 +55,14 @@ You can download the release installer zip file and install it via the Magisk Ma
 
 
 
+#### Share transparent proxy to WiFi guest
+
+- Transparent proxy is share to WiFi guest by default.
+- If you don't want to share proxy to WiFi guest, delete the file `/data/v2ray/softap.list` or empty it.
+- For most situation, Android WiFi hotspot interface is `softap0` . If your device is not conform to it , please write down the name of your WiFi hotspot name in `/data/v2ray/softap.list`. ( You can run command `ip addr` to search the name of WiFi hotspot interface )
+
+
+
 ### Advanced usage ( for Debug and Develop only )
 
 #### Enter manual mode

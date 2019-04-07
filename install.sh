@@ -147,6 +147,8 @@ on_install() {
   ui_print "- Copy V2Ray config and data files"
   mkdir -p /data/v2ray
   mkdir -p /data/v2ray/run
+  [ -f /data/v2ray/softap.list ] || \
+  echo "softap0" > /data/v2ray/softap.list
   [ -f /data/v2ray/config.json ] || \
   unzip -j -o "$ZIPFILE" "v2ray/etc/config.json" -d /data/v2ray >&2
   [ -f /data/v2ray/resolv.conf ] || \
