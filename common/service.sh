@@ -12,6 +12,7 @@ if [ ! -f /data/v2ray/manual ] ; then
   $MODDIR/scripts/v2ray.service start &> /data/v2ray/run/service.log && \
   if [ -f /data/v2ray/appid.list ] || [ -f /data/v2ray/softap.list ] ; then
     $MODDIR/scripts/v2ray.tproxy enable &>> /data/v2ray/run/service.log
+    [ -f "$MODDIR/scripts/v2ray-dns.keeper" ] && $MODDIR/scripts/v2ray-dns.service start &>> /data/v2ray/run/service.log &
   fi
 fi
 
