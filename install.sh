@@ -145,7 +145,7 @@ on_install() {
   # download latest v2ray core from official link
   ui_print "- Connect official V2Ray download link."
   official_v2ray_link="https://github.com/v2ray/v2ray-core/releases"
-  latest_v2ray_version=`curl -s -I "${official_v2ray_link}/latest" | grep Location | grep -o "tag.*" | grep -o "v[0-9.]*"`
+  latest_v2ray_version=`curl -s -I "${official_v2ray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
   if [ "${latest_v2ray_version}" = "" ] ; then
     ui_print "Error: Connect official V2Ray download link failed." 
     exit 1
