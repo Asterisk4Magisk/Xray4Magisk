@@ -48,16 +48,9 @@ is_legacy_script() {
 }
 
 print_modname() {
-  local len
-  len=`echo -n $MODNAME | wc -c`
-  len=$((len + 2))
-  local pounds=`printf "%${len}s" | tr ' ' '*'`
-  ui_print "$pounds"
-  ui_print " $MODNAME "
-  ui_print "$pounds"
-  ui_print "*******************"
-  ui_print " Powered by Magisk "
-  ui_print "*******************"
+  ui_print "*******************************"
+  ui_print "       V2Ray for Android       "
+  ui_print "*******************************"
 }
 
 # Override abort as old scripts have some issues
