@@ -69,7 +69,7 @@ echo "id=v2ray" > $MODPATH/module.prop
 echo "name=V2ray for Android" >> $MODPATH/module.prop
 echo -n "version=" >> $MODPATH/module.prop
 echo ${latest_v2ray_version} >> $MODPATH/module.prop
-echo "versionCode=20200326" >> $MODPATH/module.prop
+echo "versionCode=20200611" >> $MODPATH/module.prop
 echo "author=chendefine" >> $MODPATH/module.prop
 echo "description=V2ray core with service scripts for Android" >> $MODPATH/module.prop
 

@@ -1,6 +1,6 @@
 id=v2ray
 name=V2ray for Android
 version=latest_version
-versionCode=20200326
+versionCode=20200611
 author=chendefine
 description=V2ray core with service scripts for Android
