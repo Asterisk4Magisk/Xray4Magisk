@@ -51,7 +51,7 @@ You can download the release installer zip file and install it via the Magisk Ma
 
 - If you expect all Apps proxy by V2Ray with transparent proxy, just write a single number `0` in file `/data/v2ray/appid.list` .
 
-- If you expect all Apps proxy by V2Ray with transparent proxy EXCEPT specific Apps, just write down these Apps' uid in file `/data/v2ray/appid.list` fellowed by '#bypass'. 
+- If you expect all Apps proxy by V2Ray with transparent proxy EXCEPT specific Apps, just write down these Apps' uid in file `/data/v2ray/appid.list` fellowed by `#bypass`. 
 
 - Transparent proxy won't take effect until the V2Ray service start normally and file `/data/v2ray/appid.list` is not empty.
 
