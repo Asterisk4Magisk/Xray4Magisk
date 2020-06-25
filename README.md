@@ -45,11 +45,13 @@ You can download the release installer zip file and install it via the Magisk Ma
 
 #### Select which App to proxy
 
-- If you expect transparent proxy ( read Transparent proxy section for more detail ) for some Apps, just write down these App' uid in file `/data/v2ray/appid.list` . 
+- If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/v2ray/appid.list` . 
 
   Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
 
 - If you expect all Apps proxy by V2Ray with transparent proxy, just write a single number `0` in file `/data/v2ray/appid.list` .
+
+- If you expect all Apps proxy by V2Ray with transparent proxy EXCEPT specific Apps, just write down these Apps' uid in file `/data/v2ray/appid.list` fellowed by '#bypass'. 
 
 - Transparent proxy won't take effect until the V2Ray service start normally and file `/data/v2ray/appid.list` is not empty.
 
