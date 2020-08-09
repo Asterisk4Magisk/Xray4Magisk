@@ -6,7 +6,7 @@ This is a v2ray module for Magisk, and includes binaries for arm, arm64, x86, x6
 
 ## Included
 
-* [V2Ray core](<https://github.com/v2ray/v2ray-core>)
+* [V2Ray core](<https://github.com/v2fly/v2ray-core>)
 * [magisk-module-installer](https://github.com/topjohnwu/magisk-module-installer)
 
 - V2Ray service script and Android transparent proxy iptables script
@@ -150,10 +150,10 @@ Android system **iptables**      [ localhost inside ]
 
 ## Project V
 
-Project V is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [ProjectV website](https://www.v2ray.com/) for more information.
+Project V is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [ProjectV website](https://www.v2fly.org/) for more information.
 
 
 
 ## License
 
-[The MIT License (MIT)](https://raw.githubusercontent.com/v2ray/v2ray-core/master/LICENSE)
+[The MIT License (MIT)](https://raw.githubusercontent.com/v2fly/v2ray-core/master/LICENSE)
