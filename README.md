@@ -6,7 +6,8 @@ This is a v2ray module for Magisk, and includes binaries for arm, arm64, x86, x6
 
 ## Included
 
-* [V2Ray core](<https://github.com/v2ray/v2ray-core>)
+* [V2Ray core](<https://github.com/v2fly/v2ray-core>)
+* [dnscrypt-proxy](<https://github.com/DNSCrypt/dnscrypt-proxy>)
 * [magisk-module-installer](https://github.com/topjohnwu/magisk-module-installer)
 
 - V2Ray service script and Android transparent proxy iptables script
@@ -23,10 +24,11 @@ You can download the release installer zip file and install it via the Magisk Ma
 
 - V2ray config file is store in `/data/v2ray/config.json` .
 
-
 - Please make sure the config is correct. You can check it by running a command :
 
    `export V2RAY_LOCATION_ASSET=/data/v2ray; v2ray -test -config /data/v2ray/config.json`  in android terminal or ssh.
+
+- dnscrypt-proxy config file is store in `/data/v2ray/dnscrypt-proxy/` folder, you can update cn domains list via run the shell script `update-rule` or if you dislike the default rules, you can edit them by yourself.
 
 - Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/v2ray/appid.list` to select which App to proxy.
 
@@ -150,10 +152,10 @@ Android system **iptables**      [ localhost inside ]
 
 ## Project V
 
-Project V is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [ProjectV website](https://www.v2ray.com/) for more information.
+Project V is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [ProjectV website](https://www.v2fly.org/) for more information.
 
 
 
 ## License
 
-[The MIT License (MIT)](https://raw.githubusercontent.com/v2ray/v2ray-core/master/LICENSE)
+[The MIT License (MIT)](https://raw.githubusercontent.com/v2fly/v2ray-core/master/LICENSE)
