@@ -59,7 +59,21 @@ echo "softap0" > /data/v2ray/softap.list
 [ -f /data/v2ray/resolv.conf ] || \
 unzip -j -o "${ZIPFILE}" "v2ray/etc/resolv.conf" -d /data/v2ray >&2
 unzip -j -o "${ZIPFILE}" "v2ray/etc/config.json.template" -d /data/v2ray >&2
-unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/*' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/dnscrypt-blacklist-domains.txt ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/dnscrypt-blacklist-domains.txt' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/dnscrypt-blacklist-ips.txt ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/dnscrypt-blacklist-ips.txt' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/dnscrypt-cloaking-rules.txt ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/dnscrypt-cloaking-rules.txt' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/dnscrypt-forwarding-rules.txt ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/dnscrypt-forwarding-rules.txt' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/dnscrypt-proxy.toml ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/dnscrypt-proxy.toml' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/dnscrypt-whitelist.txt ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/dnscrypt-whitelist.txt' -d /data/v2ray/dnscrypt-proxy >&2
+[ -f /data/v2ray/dnscrypt-proxy/example-dnscrypt-proxy.toml ] || \
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/example-dnscrypt-proxy.toml' -d /data/v2ray/dnscrypt-proxy >&2
+unzip -j -o "${ZIPFILE}" 'v2ray/etc/dnscrypt-proxy/update-rules.sh' -d /data/v2ray/dnscrypt-proxy >&2
 [ -f /data/v2ray/config.json ] || \
 cp /data/v2ray/config.json.template /data/v2ray/config.json
 ln -s /data/v2ray/resolv.conf $MODPATH/system/etc/resolv.conf
