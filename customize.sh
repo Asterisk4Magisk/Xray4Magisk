@@ -13,7 +13,7 @@ mkdir -p $MODPATH/system/bin
 mkdir -p $MODPATH/system/etc
 # download latest v2ray core from official link
 ui_print "- Connect official V2Ray download link."
-official_v2ray_link="https://github.com/v2ray/v2ray-core/releases"
+official_v2ray_link="https://github.com/v2fly/v2ray-core/releases"
 latest_v2ray_version=`curl -k -s -I "${official_v2ray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
 if [ "${latest_v2ray_version}" = "" ] ; then
   ui_print "Error: Connect official V2Ray download link failed." 
@@ -22,10 +22,10 @@ fi
 ui_print "- Download latest V2Ray core ${latest_v2ray_version}-${ARCH}"
 case "${ARCH}" in
   arm)
-    download_v2ray_link="${official_v2ray_link}/download/${latest_v2ray_version}/v2ray-linux-arm.zip"
+    download_v2ray_link="${official_v2ray_link}/download/${latest_v2ray_version}/v2ray-linux-arm32-v7a.zip"
     ;;
   arm64)
-    download_v2ray_link="${official_v2ray_link}/download/${latest_v2ray_version}/v2ray-linux-arm64.zip"
+    download_v2ray_link="${official_v2ray_link}/download/${latest_v2ray_version}/v2ray-linux-arm64-v8a.zip"
     ;;
   x86)
     download_v2ray_link="${official_v2ray_link}/download/${latest_v2ray_version}/v2ray-linux-32.zip"
