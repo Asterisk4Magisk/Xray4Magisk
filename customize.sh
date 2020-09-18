@@ -55,7 +55,7 @@ rm "${download_v2ray_zip}"
 # copy v2ray data and config
 ui_print "- Copy V2Ray config and data files"
 [ -f /data/v2ray/softap.list ] || \
-echo "softap0" > /data/v2ray/softap.list
+echo "192.168.43.0/24" > /data/v2ray/softap.list
 [ -f /data/v2ray/resolv.conf ] || \
 unzip -j -o "${ZIPFILE}" "v2ray/etc/resolv.conf" -d /data/v2ray >&2
 unzip -j -o "${ZIPFILE}" "v2ray/etc/config.json.template" -d /data/v2ray >&2
@@ -85,11 +85,12 @@ echo "id=v2ray" > $MODPATH/module.prop
 echo "name=V2ray for Android" >> $MODPATH/module.prop
 echo -n "version=" >> $MODPATH/module.prop
 echo ${latest_v2ray_version} >> $MODPATH/module.prop
-echo "versionCode=20200815" >> $MODPATH/module.prop
+echo "versionCode=20200918" >> $MODPATH/module.prop
 echo "author=chendefine" >> $MODPATH/module.prop
 echo "description=V2ray core with service scripts for Android" >> $MODPATH/module.prop
 
 inet_uid="3003"
+net_raw_uid="3004"
 set_perm_recursive $MODPATH 0 0 0755 0644
 set_perm  $MODPATH/service.sh    0  0  0755
 set_perm  $MODPATH/uninstall.sh    0  0  0755
@@ -98,7 +99,7 @@ set_perm  $MODPATH/scripts/v2ray.inotify    0  0  0755
 set_perm  $MODPATH/scripts/v2ray.service    0  0  0755
 set_perm  $MODPATH/scripts/v2ray.tproxy     0  0  0755
 set_perm  $MODPATH/scripts/dnscrypt-proxy.service   0  0  0755
-set_perm  $MODPATH/system/bin/dnscrypt-proxy        0  0  0755
 set_perm  $MODPATH/system/bin/v2ray  ${inet_uid}  ${inet_uid}  0755
 set_perm  $MODPATH/system/bin/v2ctl  ${inet_uid}  ${inet_uid}  0755
 set_perm  /data/v2ray                ${inet_uid}  ${inet_uid}  0755
+set_perm  $MODPATH/system/bin/dnscrypt-proxy ${net_raw_uid} ${net_raw_uid} 0755
