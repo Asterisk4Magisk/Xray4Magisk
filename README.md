@@ -28,7 +28,7 @@ You can download the release installer zip file and install it via the Magisk Ma
 
    `export V2RAY_LOCATION_ASSET=/data/v2ray; v2ray -test -config /data/v2ray/config.json`  in android terminal or ssh.
 
-- dnscrypt-proxy config file is store in `/data/v2ray/dnscrypt-proxy/` folder, you can update cn domains list via running the shell script `update-rules.sh` or if you dislike the default rules, you can edit them by yourself.
+- dnscrypt-proxy config file is store in `/data/v2ray/dnscrypt-proxy/` folder, you can update cn domains list via running the shell script `update-rules.sh` or if you dislike the default rules, you can edit them by yourself. ( If you want to disable dnscrypt-proxy, just delete the config file `/data/v2ray/dnscrypt-proxy/dnscrypt-proxy.toml` )
 
 - Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/v2ray/appid.list` to select which App to proxy.
 
@@ -59,11 +59,11 @@ You can download the release installer zip file and install it via the Magisk Ma
 
 
 
-#### Share transparent proxy to WiFi guest
+#### Share transparent proxy to WiFi guest or USB guest
 
 - Transparent proxy is share to WiFi guest by default.
-- If you don't want to share proxy to WiFi guest, delete the file `/data/v2ray/softap.list` or empty it.
-- For most situation, Android WiFi hotspot interface is `softap0` . If your device is not conform to it , please write down the name of your WiFi hotspot name in `/data/v2ray/softap.list`. ( You can run command `ip addr` to search the name of WiFi hotspot interface )
+- If you don't want to share proxy to WiFi guest or USB guest, delete the file `/data/v2ray/softap.list` or empty it.
+- For most situation, Android WiFi hotspot subnet is `192.168.43.0/24`, and USB subnet is `192.168.42.0/24`. If your device is not conform to it , please write down the subnet you want proxy in `/data/v2ray/softap.list`. ( You can run command `ip addr` to search the subnet )
 
 
 
