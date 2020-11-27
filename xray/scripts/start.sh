@@ -3,15 +3,15 @@
 MODDIR=${0%/*}
 
 start_proxy () {
-  ${MODDIR}/v2ray.service start &> /data/v2ray/run/service.log && \
-  if [ -f /data/v2ray/appid.list ] || [ -f /data/v2ray/softap.list ] ; then
-    ${MODDIR}/v2ray.tproxy enable &>> /data/v2ray/run/service.log && \
-    if [ -f /data/v2ray/dnscrypt-proxy/dnscrypt-proxy.toml ] ; then
-      ${MODDIR}/dnscrypt-proxy.service enable &>> /data/v2ray/run/service.log &
+  ${MODDIR}/xray.service start &> /data/xray/run/service.log && \
+  if [ -f /data/xray/appid.list ] || [ -f /data/xray/softap.list ] ; then
+    ${MODDIR}/xray.tproxy enable &>> /data/xray/run/service.log && \
+    if [ -f /data/xray/dnscrypt-proxy/dnscrypt-proxy.toml ] ; then
+      ${MODDIR}/dnscrypt-proxy.service enable &>> /data/xray/run/service.log &
     fi
   fi
 }
-if [ ! -f /data/v2ray/manual ] ; then
+if [ ! -f /data/xray/manual ] ; then
   start_proxy
-  inotifyd ${MODDIR}/v2ray.inotify ${MODDIR}/.. &>> /data/v2ray/run/service.log &
+  inotifyd ${MODDIR}/xray.inotify ${MODDIR}/.. &>> /data/xray/run/service.log &
 fi

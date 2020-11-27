@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-bin_name="v2ray"
+bin_name="xray"
 bin_path="/system/bin/${bin_name}"
 data_path="/data/${bin_name}"
 run_path="${data_path}/run"
@@ -25,13 +25,13 @@ suit_iptables_version() {
   fi
 }
 
-probe_v2ray_alive() {
+probe_xray_alive() {
   [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
   [ -f ${cmd_file} ] && grep -q ${bin_path} ${cmd_file} && return 0 || return 1
 }
 
-display_v2ray_pid() {
-  if probe_v2ray_alive ; then
+display_xray_pid() {
+  if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
   else
@@ -46,16 +46,16 @@ find_netstat_path() {
   return 1
 }
 
-wait_v2ray_listen() {
+wait_xray_listen() {
   wait_count=0
-  v2ray_pid=`cat ${pid_file}`
+  xray_pid=`cat ${pid_file}`
   find_netstat_path && \
-  check_v2ray_cmd="netstat -tnlp | grep v2ray | grep -q LISTEN" || \
-  check_v2ray_cmd="ls -lh /proc/${v2ray_pid}/fd | grep -q socket"
-  while probe_v2ray_alive && ! eval "${check_v2ray_cmd}" && [ ${wait_count} -lt 100 ] ; do
+  check_xray_cmd="netstat -tnlp | grep xray | grep -q LISTEN" || \
+  check_xray_cmd="ls -lh /proc/${xray_pid}/fd | grep -q socket"
+  while probe_xray_alive && ! eval "${check_xray_cmd}" && [ ${wait_count} -lt 100 ] ; do
     sleep 1 ; wait_count=$((${wait_count} + 1))
   done
-  if probe_v2ray_alive && eval "${check_v2ray_cmd}" ; then
+  if probe_xray_alive && eval "${check_xray_cmd}" ; then
     return 0
   else
     return 1
@@ -65,16 +65,16 @@ wait_v2ray_listen() {
 simple_clean_iptables() {
   suit_iptables_version
   echo "[Info]: Clean relevant iptables simply."
-  ${iptables_wait} -t filter -D INPUT -j PROTECT_V2RAY 2>/dev/null
+  ${iptables_wait} -t filter -D INPUT -j PROTECT_xray 2>/dev/null
   ${iptables_wait} -t nat -D PREROUTING -p tcp -j GUEST_TCP_PROXY 2>/dev/null
   ${iptables_wait} -t nat -D OUTPUT -p tcp -j APP_TCP_PROXY 2>/dev/null
   ${iptables_wait} -t mangle -D OUTPUT -p udp -j APP_UDP_PROXY 2>/dev/null
-  ${iptables_wait} -t mangle -D PREROUTING -p udp -j V2RAY 2>/dev/null
+  ${iptables_wait} -t mangle -D PREROUTING -p udp -j xray 2>/dev/null
 }
 
 start_service() {
-  export V2RAY_LOCATION_ASSET=${data_path}
-  if probe_v2ray_alive ; then
+  export xray_LOCATION_ASSET=${data_path}
+  if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
   elif [ -f ${conf_file} ] && ${bin_path} ${bin_opts} -test ; then
@@ -85,11 +85,11 @@ start_service() {
     chmod 6755 ${bin_path}
     nohup ${bin_path} ${bin_opts} &>${error_log} &
     echo -n $! > ${pid_file}
-    if wait_v2ray_listen ; then
+    if wait_xray_listen ; then
       echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
       return 0
     else
-      if probe_v2ray_alive ; then
+      if probe_xray_alive ; then
         echo "[Warning]: ${bin_name} service is running but may not listening. ( PID: `cat ${pid_file}` )"
         return 0
       else
@@ -104,11 +104,11 @@ start_service() {
 }
 
 stop_service() {
-  if display_v2ray_pid ; then
+  if display_xray_pid ; then
     echo "[Info]: Stopping ${bin_name} service."
     kill `cat ${pid_file}`
     sleep 1
-    display_v2ray_pid
+    display_xray_pid
   fi
   rm -f ${pid_file}
 }
@@ -127,7 +127,7 @@ case "$1" in
     simple_clean_iptables
     ;;
   status)
-    display_v2ray_pid
+    display_xray_pid
     ;;
   *)
     echo "$0:  usage:  $0 {start|stop|restart|status}"

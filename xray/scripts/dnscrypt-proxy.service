@@ -3,14 +3,14 @@
 dnsmasq_uid="1052"
 bin_name="dnscrypt-proxy"
 bin_file="/system/bin/${bin_name}"
-run_path="/data/v2ray/run"
+run_path="/data/xray/run"
 pid_file="${run_path}/dnscrypt-proxy.pid"
-conf_path="/data/v2ray/dnscrypt-proxy"
+conf_path="/data/xray/dnscrypt-proxy"
 conf_file="${conf_path}/dnscrypt-proxy.toml"
 bin_opts="-config ${conf_file}"
 iptables_wait="iptables"
-v2ray_share=false
-softap_file="/data/v2ray/softap.list"
+xray_share=false
+softap_file="/data/xray/softap.list"
 appid_list=()
 proxy_for_guest=false
 host_ip="127.0.0.1"
@@ -42,11 +42,11 @@ probe_dnscrypt-proxy_alive() {
   [ -f ${cmd_file} ] && grep -q "dnscrypt-proxy" ${cmd_file} && return 0 || return 1
 }
 
-probe_v2ray_listen() {
+probe_xray_listen() {
   find_netstat_path || return
-  v2ray_listen=`netstat -unlp | grep v2ray`
-  if eval "echo \"${v2ray_listen}\" | grep -q :::${proxy_port}" || eval "echo \"${v2ray_listen}\" | grep -q 0.0.0.0:${proxy_port}" ; then
-    v2ray_share=true
+  xray_listen=`netstat -unlp | grep xray`
+  if eval "echo \"${xray_listen}\" | grep -q :::${proxy_port}" || eval "echo \"${xray_listen}\" | grep -q 0.0.0.0:${proxy_port}" ; then
+    xray_share=true
     return 0
   else
     return 1
@@ -59,7 +59,7 @@ check_proxy_guest() {
   ## trim empty line in softap file
   sed -i '/^$/d' "${softap_file}"
   ## probe proxy wifi interface
-  ${v2ray_share} && [ -f ${softap_file} ] && softap_list=(`cat ${softap_file}`) || unset softap_list
+  ${xray_share} && [ -f ${softap_file} ] && softap_list=(`cat ${softap_file}`) || unset softap_list
   ## check proxy wifi guest or not
   [ ${#softap_list[@]} -gt 0 ] && proxy_for_guest=true
 }
@@ -95,7 +95,7 @@ start_dnscrypt-proxy() {
   if probe_dnscrypt-proxy_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
-  elif probe_v2ray_listen ; then
+  elif probe_xray_listen ; then
     echo "[Info]: Starting ${bin_name} service."
     mkdir -p ${run_path}
     echo -n "" > ${conf_path}/dnscrypt-nxdomain.log
@@ -115,7 +115,7 @@ start_dnscrypt-proxy() {
       return 1
     fi
   else
-    echo "[Error]: V2Ray service is not listening on port ${proxy_port} for DNS proxy."
+    echo "[Error]: xray service is not listening on port ${proxy_port} for DNS proxy."
     exit 1
     return 2
   fi

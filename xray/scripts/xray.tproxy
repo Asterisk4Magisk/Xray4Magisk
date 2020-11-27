@@ -3,17 +3,17 @@
 route_id="1130"
 inet_uid="3003"
 net_raw_uid="3004"
-route_name="v2ray"
+route_name="xray"
 proxy_port="65535"
 proxy_mark="0x20151130"
 table_file="/data/misc/net/rt_tables"
-appid_file="/data/v2ray/appid.list"
-softap_file="/data/v2ray/softap.list"
+appid_file="/data/xray/appid.list"
+softap_file="/data/xray/softap.list"
 iptables_wait="iptables"
 app_proxy_mode="none"
 appid_list=()
 softap_list=()
-v2ray_share=false
+xray_share=false
 proxy_for_app=false
 proxy_for_guest=false
 intranet=(0.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 224.0.0.0/4 240.0.0.0/4)
@@ -44,21 +44,21 @@ find_netstat_path() {
   return 1
 }
 
-probe_v2ray_listen() {
+probe_xray_listen() {
   find_netstat_path || return
-  v2ray_listen=`netstat -tnlp | grep v2ray | grep LISTEN`
-  if eval "echo \"${v2ray_listen}\" | grep -q :::${proxy_port}" || eval "echo \"${v2ray_listen}\" | grep -q 0.0.0.0:${proxy_port}" ; then
-    v2ray_share=true
+  xray_listen=`netstat -tnlp | grep xray | grep LISTEN`
+  if eval "echo \"${xray_listen}\" | grep -q :::${proxy_port}" || eval "echo \"${xray_listen}\" | grep -q 0.0.0.0:${proxy_port}" ; then
+    xray_share=true
     return
-  elif eval "echo \"${v2ray_listen}\" | grep -q :${proxy_port}" ; then
+  elif eval "echo \"${xray_listen}\" | grep -q :${proxy_port}" ; then
     return
   else
-    echo "[Error]: V2Ray service is not listening on port ${proxy_port} ."
+    echo "[Error]: xray service is not listening on port ${proxy_port} ."
     exit 1
   fi
 }
 
-probe_v2ray_target() {
+probe_xray_target() {
   ## add eof to appid and softap file
   echo "" >> "${appid_file}"
   echo "" >> "${softap_file}"
@@ -86,7 +86,7 @@ probe_v2ray_target() {
     done < ${appid_file}
   fi
   ## probe proxy wifi interface
-  ${v2ray_share} && [ -f ${softap_file} ] && softap_list=(`cat ${softap_file}`) || unset softap_list
+  ${xray_share} && [ -f ${softap_file} ] && softap_list=(`cat ${softap_file}`) || unset softap_list
   ## check proxy app or not
   if ( [ "${app_proxy_mode}" = "skip" ] || ( [ "${app_proxy_mode}" = "pick" ] && [ ${#appid_list[@]} -gt 0 ] ) ) ; then
     proxy_for_app=true
@@ -95,7 +95,7 @@ probe_v2ray_target() {
   [ ${#softap_list[@]} -gt 0 ] && proxy_for_guest=true
   ## check enable proxy iptables or not
   if ! ( ${proxy_for_app} || ${proxy_for_guest} ) ; then
-    echo "[Error]: V2Ray service is not proxy for APP or WiFi guest."
+    echo "[Error]: xray service is not proxy for APP or WiFi guest."
     exit 1
   fi
 }
@@ -129,20 +129,20 @@ flush_nat_iptables() {
     ${iptables_wait} -t nat -F APP_TCP_PROXY
     ${iptables_wait} -t nat -X APP_TCP_PROXY
   fi
-  if eval "echo \"${iptables_chains}\" | grep -q \":V2RAY \"" ; then
-    ${iptables_wait} -t nat -F V2RAY
-    ${iptables_wait} -t nat -X V2RAY
+  if eval "echo \"${iptables_chains}\" | grep -q \":xray \"" ; then
+    ${iptables_wait} -t nat -F xray
+    ${iptables_wait} -t nat -X xray
   fi
   unset iptables_chains
 }
 
 flush_filter_iptables() {
   iptables_chains=`iptables-save -t filter | cut -d ' ' -f 1 | tr "\n" " "`
-  if eval "echo \"${iptables_chains}\" | grep -q \":PROTECT_V2RAY \"" ; then
+  if eval "echo \"${iptables_chains}\" | grep -q \":PROTECT_xray \"" ; then
     echo "[Info]: Clean filter proxy iptables rules."
-    ${iptables_wait} -t filter -D INPUT -j PROTECT_V2RAY
-    ${iptables_wait} -t filter -F PROTECT_V2RAY
-    ${iptables_wait} -t filter -X PROTECT_V2RAY
+    ${iptables_wait} -t filter -D INPUT -j PROTECT_xray
+    ${iptables_wait} -t filter -F PROTECT_xray
+    ${iptables_wait} -t filter -X PROTECT_xray
   fi
   unset iptables_chains
 }
@@ -150,21 +150,21 @@ flush_filter_iptables() {
 proxy_app_tcp_iptables() {
   ## create iptables proxy chains for app tcp
   ${iptables_wait} -t nat -N APP_TCP_PROXY
-  ## bypass v2ray program
+  ## bypass xray program
   ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${inet_uid} -j RETURN
   ## white-list mode
   if [ "${app_proxy_mode}" = "pick" ] ; then
     ## proxy all apps network
     if [ "${appid_list[*]}" = "0" ] ; then
       echo "[Info]: Proxy all APP's TCP network."
-      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j V2RAY
+      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j xray
     ## proxy assign app
     else
       for appid in ${appid_list[@]}; do
         probe_uid_app_name ${appid} "Proxy" && \
-        ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j V2RAY
+        ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j xray
       done
-      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${net_raw_uid} -j V2RAY
+      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${net_raw_uid} -j xray
     fi
   ## black-list mode
   elif [ "${app_proxy_mode}" = "skip" ] ; then
@@ -173,7 +173,7 @@ proxy_app_tcp_iptables() {
       ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j RETURN
     done
     echo "[Info]: Proxy all remaining APP's TCP network."
-    ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j V2RAY
+    ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j xray
   fi
   ## apply proxy rules to iptables
   ${iptables_wait} -t nat -A OUTPUT -p tcp -j APP_TCP_PROXY
@@ -185,7 +185,7 @@ proxy_guest_tcp_iptables() {
   ## proxy assign softap
   for softap in ${softap_list[@]}; do
     echo "[Info]: Proxy ${softap} guest's TCP network."
-    ${iptables_wait} -t nat -A GUEST_TCP_PROXY -s ${softap} -j V2RAY
+    ${iptables_wait} -t nat -A GUEST_TCP_PROXY -s ${softap} -j xray
   done
   ${iptables_wait} -t nat -A PREROUTING -p tcp -j GUEST_TCP_PROXY
 }
@@ -193,13 +193,13 @@ proxy_guest_tcp_iptables() {
 create_proxy_iptables() {
   echo "[Info]: Create proxy iptables chains."
   ## create basic iptables proxy chains
-  ${iptables_wait} -t nat -N V2RAY
+  ${iptables_wait} -t nat -N xray
   ## set proxy chains bypass intranet
   for subnet in ${intranet[@]}; do
-    ${iptables_wait} -t nat -A V2RAY -d ${subnet} -j RETURN
+    ${iptables_wait} -t nat -A xray -d ${subnet} -j RETURN
   done
-  ## redirect to v2ray service port
-  ${iptables_wait} -t nat -A V2RAY -p tcp -j REDIRECT --to-ports ${proxy_port}
+  ## redirect to xray service port
+  ${iptables_wait} -t nat -A xray -p tcp -j REDIRECT --to-ports ${proxy_port}
   ## proxy app network
   if ${proxy_for_app} ; then
     proxy_app_tcp_iptables
@@ -211,21 +211,21 @@ create_proxy_iptables() {
 }
 
 filter_proxy_iptables() {
-  if ${v2ray_share} ; then
-    echo "[Info]: Block illegal v2ray visit."
+  if ${xray_share} ; then
+    echo "[Info]: Block illegal xray visit."
     ## create iptables firewall chains
-    ${iptables_wait} -t filter -N PROTECT_V2RAY
+    ${iptables_wait} -t filter -N PROTECT_xray
     ## permit localhost
-    ${iptables_wait} -t filter -A PROTECT_V2RAY -i lo -j RETURN
+    ${iptables_wait} -t filter -A PROTECT_xray -i lo -j RETURN
     ## permit assign softap
     for softap in ${softap_list[@]}; do
-      ${iptables_wait} -t filter -A PROTECT_V2RAY -s ${softap} -j RETURN
+      ${iptables_wait} -t filter -A PROTECT_xray -s ${softap} -j RETURN
     done
     ## deny all other visit
-    ${iptables_wait} -t filter -A PROTECT_V2RAY -p tcp --dport ${proxy_port} -j DROP
-    ${iptables_wait} -t filter -A PROTECT_V2RAY -p udp --dport ${proxy_port} -j DROP
+    ${iptables_wait} -t filter -A PROTECT_xray -p tcp --dport ${proxy_port} -j DROP
+    ${iptables_wait} -t filter -A PROTECT_xray -p udp --dport ${proxy_port} -j DROP
     ## apply to iptables
-    ${iptables_wait} -t filter -A INPUT -j PROTECT_V2RAY
+    ${iptables_wait} -t filter -A INPUT -j PROTECT_xray
   fi
 }
 
@@ -235,8 +235,8 @@ disable_proxy() {
 }
 
 enable_proxy() {
-  probe_v2ray_listen
-  probe_v2ray_target
+  probe_xray_listen
+  probe_xray_target
   create_proxy_iptables
   filter_proxy_iptables
 }
