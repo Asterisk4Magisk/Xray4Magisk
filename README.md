@@ -1,5 +1,5 @@
 # Xray Magisk Module
-
+A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
 This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64.
 
 
