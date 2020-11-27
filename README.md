@@ -150,9 +150,9 @@ Android system **iptables**      [ localhost inside ]
 
 
 
-## Project V
+## Project X
 
-Project V is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [Project X](https://github.com/XTLS/xray-core) for more information.
+Project X is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [Project X](https://github.com/XTLS/xray-core) for more information.
 
 
 
