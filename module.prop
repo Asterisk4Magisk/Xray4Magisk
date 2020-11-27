@@ -1,6 +1,6 @@
-id=v2ray
-name=V2ray for Android
+id=xray4magisk
+name=Xray for Magisk
 version=latest_version
-versionCode=20200918
-author=chendefine
-description=V2ray core with service scripts for Android
+versionCode=20201127
+author=CerteKim
+description=Xray core with service scripts for Android

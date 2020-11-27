@@ -1,0 +1,150 @@
+#!/system/bin/sh
+
+dnsmasq_uid="1052"
+bin_name="dnscrypt-proxy"
+bin_file="/system/bin/${bin_name}"
+run_path="/data/v2ray/run"
+pid_file="${run_path}/dnscrypt-proxy.pid"
+conf_path="/data/v2ray/dnscrypt-proxy"
+conf_file="${conf_path}/dnscrypt-proxy.toml"
+bin_opts="-config ${conf_file}"
+iptables_wait="iptables"
+v2ray_share=false
+softap_file="/data/v2ray/softap.list"
+appid_list=()
+proxy_for_guest=false
+host_ip="127.0.0.1"
+dns_port="65534"
+proxy_port="65535"
+
+suit_iptables_version() {
+  iptables_version=`iptables -V | grep -o "v1\.[0-9]"`
+  if [ "${iptables_version}" = "v1.4" ] ; then
+    ## fix options for lower version iptables
+    export ANDROID_DATA=/data
+    export ANDROID_ROOT=/system
+    iptables_wait="iptables -w"
+  elif [ "${iptables_version}" = "v1.6" ] || [ "${iptables_version}" = "v1.8" ] ; then
+    iptables_wait="iptables -w 100"
+  else
+    iptables_wait="echo iptables"
+  fi
+}
+
+find_netstat_path() {
+  [ -f /system/bin/netstat ] && alias netstat="/system/bin/netstat" && return 0
+  [ -f /system/xbin/netstat ] && alias netstat="/system/xbin/netstat" && return 0
+  return 1
+}
+
+probe_dnscrypt-proxy_alive() {
+  [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
+  [ -f ${cmd_file} ] && grep -q "dnscrypt-proxy" ${cmd_file} && return 0 || return 1
+}
+
+probe_v2ray_listen() {
+  find_netstat_path || return
+  v2ray_listen=`netstat -unlp | grep v2ray`
+  if eval "echo \"${v2ray_listen}\" | grep -q :::${proxy_port}" || eval "echo \"${v2ray_listen}\" | grep -q 0.0.0.0:${proxy_port}" ; then
+    v2ray_share=true
+    return 0
+  else
+    return 1
+  fi
+}
+
+check_proxy_guest() {
+  ## add eof to appid and softap file
+  echo "" >> "${softap_file}"
+  ## trim empty line in softap file
+  sed -i '/^$/d' "${softap_file}"
+  ## probe proxy wifi interface
+  ${v2ray_share} && [ -f ${softap_file} ] && softap_list=(`cat ${softap_file}`) || unset softap_list
+  ## check proxy wifi guest or not
+  [ ${#softap_list[@]} -gt 0 ] && proxy_for_guest=true
+}
+
+create_proxy_iptables() {
+  echo "[Info]: Proxy local system's DNS request."
+  ${iptables_wait} -t nat -A OUTPUT -p udp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port}
+  ## proxy wifi guest DNS
+  check_proxy_guest && \
+  if ${proxy_for_guest} ; then
+    echo "[Info]: Proxy dnsmasq's DNS request."
+    ${iptables_wait} -t nat -A OUTPUT -p udp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port}
+  fi
+}
+
+display_dnscrypt-proxy_pid() {
+  if probe_dnscrypt-proxy_alive ; then
+    echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+    return 0
+  else
+    echo "[Info]: ${bin_name} service is stopped."
+    return 1
+  fi
+}
+
+flush_dns_iptables() {
+  echo "[Info]: Clean DNS proxy iptables rules."
+  ${iptables_wait} -t nat -D OUTPUT -p udp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port} 2>/dev/null
+  ${iptables_wait} -t nat -D OUTPUT -p udp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port} 2>/dev/null
+}
+
+start_dnscrypt-proxy() {
+  if probe_dnscrypt-proxy_alive ; then
+    echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+    return 0
+  elif probe_v2ray_listen ; then
+    echo "[Info]: Starting ${bin_name} service."
+    mkdir -p ${run_path}
+    echo -n "" > ${conf_path}/dnscrypt-nxdomain.log
+    echo -n "" > ${conf_path}/dnscrypt-query.log
+    chown -R net_raw:net_raw ${conf_path}
+    chown net_raw:net_raw ${bin_file}
+    chmod 6755 ${bin_file}
+    nohup ${bin_file} ${bin_opts} &
+    sleep 1
+    echo -n $! > ${pid_file}
+    if probe_dnscrypt-proxy_alive ; then
+      echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+      return 0
+    else
+      echo "[Error]: Start ${bin_name} service Failed."
+      rm -f ${pid_file}
+      return 1
+    fi
+  else
+    echo "[Error]: V2Ray service is not listening on port ${proxy_port} for DNS proxy."
+    exit 1
+    return 2
+  fi
+}
+
+stop_dnscrypt-proxy() {
+  if display_dnscrypt-proxy_pid ; then
+    echo "[Info]: Stopping ${bin_name} service."
+    kill `cat ${pid_file}`
+    sleep 1
+    display_dnscrypt-proxy_pid
+  fi
+  rm -f ${pid_file}
+}
+
+suit_iptables_version
+
+case "$1" in
+  enable)
+    start_dnscrypt-proxy && create_proxy_iptables
+    ;;
+  disable)
+    flush_dns_iptables
+    stop_dnscrypt-proxy
+    ;;
+  status)
+    display_dnscrypt-proxy_pid
+    ;;
+  *)
+    echo "$0:  usage:  $0 {enable|disable|status}"
+    ;;
+esac

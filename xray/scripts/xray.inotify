@@ -1,0 +1,48 @@
+#!/system/bin/sh
+
+inotify=`realpath $0`
+scripts_dir=`dirname ${inotify}`
+service="${scripts_dir}/v2ray.service"
+tproxy="${scripts_dir}/v2ray.tproxy"
+dns_proxy_binary="/system/bin/dnscrypt-proxy"
+dns_proxy_service="${scripts_dir}/dnscrypt-proxy.service"
+dnscrypt_conf="/data/v2ray/dnscrypt-proxy/dnscrypt-proxy.toml"
+
+events=$1
+monitor_dir=$2
+monitor_file=$3
+
+start_v2ray() {
+  ${service} start && \
+  if [ -f /data/v2ray/appid.list ] || [ -f /data/v2ray/softap.list ] ; then
+    ${tproxy} enable
+    [ -f "${dnscrypt_conf}" ] && ${dns_proxy_service} enable
+    settings put global airplane_mode_on 1
+    sleep 1
+    am broadcast -a android.intent.action.AIRPLANE_MODE
+    sleep 1
+    settings put global airplane_mode_on 0
+    sleep 1
+    am broadcast -a android.intent.action.AIRPLANE_MODE
+  fi
+}
+
+stop_v2ray() {
+  ${tproxy} disable
+  [ -f "${dnscrypt_conf}" ] && ${dns_proxy_service} disable
+  ${service} stop
+}
+
+main() {
+if [ ! -f /data/v2ray/manual ] ; then
+  if [ "${monitor_file}" = "disable" ] ; then
+    if [ "${events}" = "d" ] ; then
+      start_v2ray
+    elif [ "${events}" = "n" ] ; then
+      stop_v2ray
+    fi
+  fi
+fi
+}
+
+main
