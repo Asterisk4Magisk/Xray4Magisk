@@ -2,19 +2,19 @@
 
 inotify=`realpath $0`
 scripts_dir=`dirname ${inotify}`
-service="${scripts_dir}/v2ray.service"
-tproxy="${scripts_dir}/v2ray.tproxy"
+service="${scripts_dir}/xray.service"
+tproxy="${scripts_dir}/xray.tproxy"
 dns_proxy_binary="/system/bin/dnscrypt-proxy"
 dns_proxy_service="${scripts_dir}/dnscrypt-proxy.service"
-dnscrypt_conf="/data/v2ray/dnscrypt-proxy/dnscrypt-proxy.toml"
+dnscrypt_conf="/data/xray/dnscrypt-proxy/dnscrypt-proxy.toml"
 
 events=$1
 monitor_dir=$2
 monitor_file=$3
 
-start_v2ray() {
+start_xray() {
   ${service} start && \
-  if [ -f /data/v2ray/appid.list ] || [ -f /data/v2ray/softap.list ] ; then
+  if [ -f /data/xray/appid.list ] || [ -f /data/xray/softap.list ] ; then
     ${tproxy} enable
     [ -f "${dnscrypt_conf}" ] && ${dns_proxy_service} enable
     settings put global airplane_mode_on 1
@@ -27,19 +27,19 @@ start_v2ray() {
   fi
 }
 
-stop_v2ray() {
+stop_xray() {
   ${tproxy} disable
   [ -f "${dnscrypt_conf}" ] && ${dns_proxy_service} disable
   ${service} stop
 }
 
 main() {
-if [ ! -f /data/v2ray/manual ] ; then
+if [ ! -f /data/xray/manual ] ; then
   if [ "${monitor_file}" = "disable" ] ; then
     if [ "${events}" = "d" ] ; then
-      start_v2ray
+      start_xray
     elif [ "${events}" = "n" ] ; then
-      stop_v2ray
+      stop_xray
     fi
   fi
 fi

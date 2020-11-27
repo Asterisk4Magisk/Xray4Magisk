@@ -73,7 +73,7 @@ simple_clean_iptables() {
 }
 
 start_service() {
-  export xray_LOCATION_ASSET=${data_path}
+  export XRAY_LOCATION_ASSET=${data_path}
   if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
