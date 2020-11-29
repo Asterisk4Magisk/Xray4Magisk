@@ -14,33 +14,56 @@ mkdir -p $MODPATH/system/bin
 mkdir -p $MODPATH/system/etc
 # download latest xray core from official link
 ui_print "- Connect official xray download link."
-official_xray_link="https://github.com/XTLS/Xray-core/releases"
+official_xray_link="https://github.com.cnpmjs.org/XTLS/Xray-core/releases"
 latest_xray_version=`curl -k -s -I "${official_xray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
 if [ "${latest_xray_version}" = "" ] ; then
   ui_print "Error: Connect official xray download link failed." 
   exit 1
 fi
-ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
-case "${ARCH}" in
-  arm)
-    download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-arm32-v7a.zip"
-    ;;
-  arm64)
-    download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-arm64-v8a.zip"
-    ;;
-  x86)
-    download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-32.zip"
-    ;;
-  x64)
-    download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-64.zip"
-    ;;
-esac
+
 download_xray_zip="/data/xray/run/xray-core.zip"
-curl "${download_xray_link}" -k -L -o "${download_xray_zip}" >&2
-if [ "$?" != "0" ] ; then
-  ui_print "Error: Download xray core failed."
-  exit 1
+case "${ARCH}" in
+    arm)
+      custom="/sdcard/Download/Xray-linux-arm32-v7a.zip"
+      ;;
+    arm64)
+      custom="/sdcard/Download/Xray-linux-arm64-v8a.zip"
+      ;;
+    x86)
+      custom="/sdcard/Download/Xray-linux-32.zip"
+      ;;
+    x64)
+      custom="/sdcard/Download/Xray-linux-64.zip"
+      ;;
+  esac
+if [ -f "$custom" ]; then
+  cp "${custom}" "${download_xray_zip}"
+  ui_print "Info: xray-core found, starting installer"
+else
+  ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
+  case "${ARCH}" in
+    arm)
+      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-arm32-v7a.zip"
+      ;;
+    arm64)
+      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-arm64-v8a.zip"
+      ;;
+    x86)
+      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-32.zip"
+      ;;
+    x64)
+      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-64.zip"
+      ;;
+  esac
+  curl "${download_xray_link}" -k -L -o "${download_xray_zip}" >&2
+  if [ "$?" != "0" ] ; then
+    ui_print "Error: Download xray core failed."
+    ui_print "Tips: You can download xray core manually,"
+    ui_print "      and put it in /sdcard/Downloads"
+    exit 1
+  fi
 fi
+
 # install xray execute file
 ui_print "- Install xray core $ARCH execute files"
 unzip -j -o "${download_xray_zip}" "geoip.dat" -d /data/xray >&2
