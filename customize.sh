@@ -14,21 +14,21 @@ mkdir -p $MODPATH/system/bin
 mkdir -p $MODPATH/system/etc
 download_xray_zip="/data/xray/run/xray-core.zip"
 case "${ARCH}" in
-    arm)
-      custom="/sdcard/Download/Xray-linux-arm32-v7a.zip"
-      ;;
-    arm64)
-      custom="/sdcard/Download/Xray-linux-arm64-v8a.zip"
-      ;;
-    x86)
-      custom="/sdcard/Download/Xray-linux-32.zip"
-      ;;
-    x64)
-      custom="/sdcard/Download/Xray-linux-64.zip"
-      ;;
-  esac
+  arm)
+    custom="Xray-linux-arm32-v7a.zip"
+    ;;
+  arm64)
+    custom="Xray-linux-arm64-v8a.zip"
+    ;;
+  x86)
+    custom="Xray-linux-32.zip"
+    ;;
+  x64)
+    custom="Xray-linux-64.zip"
+    ;;
+esac
 if [ -f "$custom" ]; then
-  cp "${custom}" "${download_xray_zip}"
+  cp /sdcard/Download"${custom}" "${download_xray_zip}"
   ui_print "Info: xray-core found, starting installer"
 else
   # download latest xray core from official link
@@ -42,21 +42,7 @@ else
     exit 1
   fi
   ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
-  case "${ARCH}" in
-    arm)
-      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-arm32-v7a.zip"
-      ;;
-    arm64)
-      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-arm64-v8a.zip"
-      ;;
-    x86)
-      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-32.zip"
-      ;;
-    x64)
-      download_xray_link="${official_xray_link}/download/${latest_xray_version}/xray-linux-64.zip"
-      ;;
-  esac
-  curl "${download_xray_link}" -k -L -o "${download_xray_zip}" >&2
+  curl "${official_xray_link}/download/${latest_xray_version}/${custom}" -k -L -o "${download_xray_zip}" >&2
   if [ "$?" != "0" ] ; then
     ui_print "Error: Download xray core failed."
     ui_print "Tips: You can download xray core manually,"
