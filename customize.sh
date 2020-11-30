@@ -12,42 +12,50 @@ mkdir -p /data/xray/run
 mkdir -p $MODPATH/scripts
 mkdir -p $MODPATH/system/bin
 mkdir -p $MODPATH/system/etc
+
 download_xray_zip="/data/xray/run/xray-core.zip"
-case "${ARCH}" in
-  arm)
-    custom="Xray-linux-arm32-v7a.zip"
-    ;;
-  arm64)
-    custom="Xray-linux-arm64-v8a.zip"
-    ;;
-  x86)
-    custom="Xray-linux-32.zip"
-    ;;
-  x64)
-    custom="Xray-linux-64.zip"
-    ;;
-esac
-if [ -f "$custom" ]; then
-  cp /sdcard/Download"${custom}" "${download_xray_zip}"
-  ui_print "Info: xray-core found, starting installer"
+custom="/sdcard/Download/Xray-core.zip"
+
+if [ -f "${custom}" ]; then
+  cp "${custom}" "${download_xray_zip}"
+  ui_print "Info: Custom Xray-core found, starting installer"
 else
-  # download latest xray core from official link
-  ui_print "- Connect official xray download link."
-  official_xray_link="https://github.com.cnpmjs.org/XTLS/Xray-core/releases"
-  latest_xray_version=`curl -k -s -I "${official_xray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
-  if [ "${latest_xray_version}" = "" ] ; then
-    ui_print "Error: Connect official xray download link failed." 
-    ui_print "Tips: You can download xray core manually,"
-    ui_print "      and put it in /sdcard/Downloads"
-    exit 1
-  fi
-  ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
-  curl "${official_xray_link}/download/${latest_xray_version}/${custom}" -k -L -o "${download_xray_zip}" >&2
-  if [ "$?" != "0" ] ; then
-    ui_print "Error: Download xray core failed."
-    ui_print "Tips: You can download xray core manually,"
-    ui_print "      and put it in /sdcard/Downloads"
-    exit 1
+  case "${ARCH}" in
+    arm)
+      version="Xray-linux-arm32-v7a.zip"
+      ;;
+    arm64)
+      version="Xray-linux-arm64-v8a.zip"
+      ;;
+    x86)
+      version="Xray-linux-32.zip"
+      ;;
+    x64)
+      version="Xray-linux-64.zip"
+      ;;
+  esac
+  if [ -f /sdcard/Download"${version}" ]; then
+    cp /sdcard/Download"${version}" "${download_xray_zip}"
+    ui_print "Info: Xray-core already downloaded, starting installer"
+  else
+    # download latest xray core from official link
+    ui_print "- Connect official xray download link."
+    official_xray_link="https://github.com.cnpmjs.org/XTLS/Xray-core/releases"
+    latest_xray_version=`curl -k -s -I "${official_xray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
+    if [ "${latest_xray_version}" = "" ] ; then
+      ui_print "Error: Connect official xray download link failed." 
+      ui_print "Tips: You can download xray core manually,"
+      ui_print "      and put it in /sdcard/Downloads"
+      exit 1
+    fi
+    ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
+    curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
+    if [ "$?" != "0" ] ; then
+      ui_print "Error: Download xray core failed."
+      ui_print "Tips: You can download xray core manually,"
+      ui_print "      and put it in /sdcard/Downloads"
+      exit 1
+    fi
   fi
 fi
 
