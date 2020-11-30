@@ -1,11 +1,11 @@
 ##########################################################################################
 #
-# V2Ray Magisk Module Uninstaller Script
+# Xray Magisk Module Uninstaller Script
 #
 ##########################################################################################
 
-remove_v2ray_data_dir() {
-  rm -rf /data/v2ray
+remove_xray_data_dir() {
+  rm -rf /data/xray
 }
 
-remove_v2ray_data_dir
+remove_xray_data_dir
