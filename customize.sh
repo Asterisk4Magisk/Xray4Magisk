@@ -34,8 +34,8 @@ else
       version="Xray-linux-64.zip"
       ;;
   esac
-  if [ -f /sdcard/Download"${version}" ]; then
-    cp /sdcard/Download"${version}" "${download_xray_zip}"
+  if [ -f /sdcard/Download/"${version}" ]; then
+    cp /sdcard/Download/"${version}" "${download_xray_zip}"
     ui_print "Info: Xray-core already downloaded, starting installer"
   else
     # download latest xray core from official link
