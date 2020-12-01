@@ -3,7 +3,7 @@
 route_id="1130"
 inet_uid="3003"
 net_raw_uid="3004"
-route_name="xray"
+route_name="XRAY"
 proxy_port="65535"
 proxy_mark="0x20151130"
 table_file="/data/misc/net/rt_tables"
@@ -17,6 +17,8 @@ xray_share=false
 proxy_for_app=false
 proxy_for_guest=false
 intranet=(0.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 224.0.0.0/4 240.0.0.0/4)
+
+server_ip=$(grep -Po '\s*"address"\s*:\s*"\K[^"]+' /data/xray/config.json)
 
 suit_iptables_version() {
   iptables_version=`iptables -V | grep -o "v1\.[0-9]"`
@@ -129,20 +131,20 @@ flush_nat_iptables() {
     ${iptables_wait} -t nat -F APP_TCP_PROXY
     ${iptables_wait} -t nat -X APP_TCP_PROXY
   fi
-  if eval "echo \"${iptables_chains}\" | grep -q \":xray \"" ; then
-    ${iptables_wait} -t nat -F xray
-    ${iptables_wait} -t nat -X xray
+  if eval "echo \"${iptables_chains}\" | grep -q \":XRAY \"" ; then
+    ${iptables_wait} -t nat -F XRAY
+    ${iptables_wait} -t nat -X XRAY
   fi
   unset iptables_chains
 }
 
 flush_filter_iptables() {
   iptables_chains=`iptables-save -t filter | cut -d ' ' -f 1 | tr "\n" " "`
-  if eval "echo \"${iptables_chains}\" | grep -q \":PROTECT_xray \"" ; then
+  if eval "echo \"${iptables_chains}\" | grep -q \":PROTECT_XRAY \"" ; then
     echo "[Info]: Clean filter proxy iptables rules."
-    ${iptables_wait} -t filter -D INPUT -j PROTECT_xray
-    ${iptables_wait} -t filter -F PROTECT_xray
-    ${iptables_wait} -t filter -X PROTECT_xray
+    ${iptables_wait} -t filter -D INPUT -j PROTECT_XRAY
+    ${iptables_wait} -t filter -F PROTECT_XRAY
+    ${iptables_wait} -t filter -X PROTECT_XRAY
   fi
   unset iptables_chains
 }
@@ -157,14 +159,14 @@ proxy_app_tcp_iptables() {
     ## proxy all apps network
     if [ "${appid_list[*]}" = "0" ] ; then
       echo "[Info]: Proxy all APP's TCP network."
-      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j xray
+      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j XRAY
     ## proxy assign app
     else
       for appid in ${appid_list[@]}; do
         probe_uid_app_name ${appid} "Proxy" && \
-        ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j xray
+        ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j XRAY
       done
-      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${net_raw_uid} -j xray
+      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${net_raw_uid} -j XRAY
     fi
   ## black-list mode
   elif [ "${app_proxy_mode}" = "skip" ] ; then
@@ -173,7 +175,7 @@ proxy_app_tcp_iptables() {
       ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j RETURN
     done
     echo "[Info]: Proxy all remaining APP's TCP network."
-    ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j xray
+    ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j XRAY
   fi
   ## apply proxy rules to iptables
   ${iptables_wait} -t nat -A OUTPUT -p tcp -j APP_TCP_PROXY
@@ -185,7 +187,7 @@ proxy_guest_tcp_iptables() {
   ## proxy assign softap
   for softap in ${softap_list[@]}; do
     echo "[Info]: Proxy ${softap} guest's TCP network."
-    ${iptables_wait} -t nat -A GUEST_TCP_PROXY -s ${softap} -j xray
+    ${iptables_wait} -t nat -A GUEST_TCP_PROXY -s ${softap} -j XRAY
   done
   ${iptables_wait} -t nat -A PREROUTING -p tcp -j GUEST_TCP_PROXY
 }
@@ -193,13 +195,13 @@ proxy_guest_tcp_iptables() {
 create_proxy_iptables() {
   echo "[Info]: Create proxy iptables chains."
   ## create basic iptables proxy chains
-  ${iptables_wait} -t nat -N xray
+  ${iptables_wait} -t nat -N XRAY
   ## set proxy chains bypass intranet
   for subnet in ${intranet[@]}; do
-    ${iptables_wait} -t nat -A xray -d ${subnet} -j RETURN
+    ${iptables_wait} -t nat -A XRAY -d ${subnet} -j RETURN
   done
   ## redirect to xray service port
-  ${iptables_wait} -t nat -A xray -p tcp -j REDIRECT --to-ports ${proxy_port}
+  ${iptables_wait} -t nat -A XRAY -p tcp -j REDIRECT --to-ports ${proxy_port}
   ## proxy app network
   if ${proxy_for_app} ; then
     proxy_app_tcp_iptables
@@ -214,24 +216,80 @@ filter_proxy_iptables() {
   if ${xray_share} ; then
     echo "[Info]: Block illegal xray visit."
     ## create iptables firewall chains
-    ${iptables_wait} -t filter -N PROTECT_xray
+    ${iptables_wait} -t filter -N PROTECT_XRAY
     ## permit localhost
-    ${iptables_wait} -t filter -A PROTECT_xray -i lo -j RETURN
+    ${iptables_wait} -t filter -A PROTECT_XRAY -i lo -j RETURN
     ## permit assign softap
     for softap in ${softap_list[@]}; do
-      ${iptables_wait} -t filter -A PROTECT_xray -s ${softap} -j RETURN
+      ${iptables_wait} -t filter -A PROTECT_XRAY -s ${softap} -j RETURN
     done
     ## deny all other visit
-    ${iptables_wait} -t filter -A PROTECT_xray -p tcp --dport ${proxy_port} -j DROP
-    ${iptables_wait} -t filter -A PROTECT_xray -p udp --dport ${proxy_port} -j DROP
+    ${iptables_wait} -t filter -A PROTECT_XRAY -p tcp --dport ${proxy_port} -j DROP
+    ${iptables_wait} -t filter -A PROTECT_XRAY -p udp --dport ${proxy_port} -j DROP
     ## apply to iptables
-    ${iptables_wait} -t filter -A INPUT -j PROTECT_xray
+    ${iptables_wait} -t filter -A INPUT -j PROTECT_XRAY
   fi
+}
+
+enable_udp() {
+  if ! grep -q TPROXY /proc/net/ip_tables_targets; then
+    return 0
+  fi
+  # mangle OUTPUT
+  ${iptables_wait} -t mangle -A OUTPUT -m owner --uid-owner ${inet_uid} -j ACCEPT
+  if ${proxy_for_guest}; then
+    ${iptables_wait} -t mangle -A OUTPUT -o wlan+ -j ACCEPT
+  fi
+  ${iptables_wait} -t mangle -A OUTPUT -o tun+ -j ACCEPT
+  # mangle PREROUTING
+  for subnet in ${intranet[@]}; do
+    ${iptables_wait} -t mangle -A PREROUTING -d ${subnet} -j RETURN
+  done
+  # TPROXY
+  ip route add local default dev lo table 1234
+  ip rule add fwmark 0x1234 lookup 1234
+  ${iptables_wait} -t mangle -A PREROUTING ! -i tun+ -p udp -j TPROXY --on-port 1231 --tproxy-mark 0x1234
+  ${iptables_wait} -t mangle -A OUTPUT ! -d 192.168/16 ! -o lo -p udp -j MARK --set-mark 0x1234
+  # mangle OUTPUT
+  ## white-list mode
+  if [ "${app_proxy_mode}" = "pick" ] ; then
+    ## proxy all apps network
+    if [ "${appid_list[*]}" = "0" ] ; then
+      echo "[Info]: Proxy all APP's TCP network."
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid ! --uid-owner ${inet_uid} -j ACCEPT
+    ## proxy assign app
+    else
+      for appid in ${appid_list[@]}; do
+        probe_uid_app_name ${appid} "Proxy" && \
+        ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid --uid-owner ${appid} -j ACCEPT
+      done
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid --uid-owner ${net_raw_uid} -j ACCEPT
+    fi
+  ## black-list mode
+  elif [ "${app_proxy_mode}" = "skip" ] ; then
+    for appid in ${appid_list[@]}; do
+      probe_uid_app_name ${appid} "Ignore" && \
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid --uid-owner ${appid} -j RETURN
+    done
+    echo "[Info]: Proxy all remaining APP's TCP network."
+    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid ! --uid-owner ${inet_uid} -j ACCEPT
+  fi
+}
+
+flush_udp() {
+  if ! grep -q TPROXY /proc/net/ip_tables_targets; then
+    return 0
+  fi
+  ${iptables_wait} -t mangle -F OUTPUT
+  ${iptables_wait} -t mangle -F PREROUTING
+  ip route del local default dev lo table 1234
+  ip rule del fwmark 0x1234 lookup 1234
 }
 
 disable_proxy() {
   flush_nat_iptables
   flush_filter_iptables
+  flush_udp
 }
 
 enable_proxy() {
@@ -239,6 +297,7 @@ enable_proxy() {
   probe_xray_target
   create_proxy_iptables
   filter_proxy_iptables
+  enable_udp
 }
 
 # find_ip_path
