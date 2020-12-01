@@ -40,13 +40,16 @@ else
   else
     # download latest xray core from official link
     ui_print "- Connect official xray download link."
+    if [ $BOOTMODE ! = true ] ; then
+      abort "Error: Please install in Magisk Manager"
+    fi
     official_xray_link="https://github.com.cnpmjs.org/XTLS/Xray-core/releases"
     latest_xray_version=`curl -k -s -I "${official_xray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
     if [ "${latest_xray_version}" = "" ] ; then
       ui_print "Error: Connect official xray download link failed." 
       ui_print "Tips: You can download xray core manually,"
       ui_print "      and put it in /sdcard/Downloads"
-      exit 1
+      abort
     fi
     ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
     curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
@@ -54,7 +57,7 @@ else
       ui_print "Error: Download xray core failed."
       ui_print "Tips: You can download xray core manually,"
       ui_print "      and put it in /sdcard/Downloads"
-      exit 1
+      abort
     fi
   fi
 fi
