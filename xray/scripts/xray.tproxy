@@ -256,8 +256,8 @@ enable_udp() {
     ## proxy all apps network
     if [ "${appid_list[*]}" = "0" ] ; then
       echo "[Info]: Proxy all APP's UDP network."
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${inet_uid} -j ACCEPT
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${net_raw_uid} -j ACCEPT
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${inet_uid} -j RETURN
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${net_raw_uid} -j RETURN
     ## proxy assign app
     else
       for appid in ${appid_list[@]}; do
@@ -273,8 +273,8 @@ enable_udp() {
       ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${appid} -j RETURN
     done
     echo "[Info]: Proxy all remaining APP's UDP network."
-    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${inet_uid} -j ACCEPT
-    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${net_raw_uid} -j ACCEPT
+    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${inet_uid} -j RETURN
+    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${net_raw_uid} -j RETURN
   fi
 }
 
