@@ -65,11 +65,11 @@ wait_xray_listen() {
 simple_clean_iptables() {
   suit_iptables_version
   echo "[Info]: Clean relevant iptables simply."
-  ${iptables_wait} -t filter -D INPUT -j PROTECT_xray 2>/dev/null
+  ${iptables_wait} -t filter -D INPUT -j PROTECT_XRAY 2>/dev/null
   ${iptables_wait} -t nat -D PREROUTING -p tcp -j GUEST_TCP_PROXY 2>/dev/null
   ${iptables_wait} -t nat -D OUTPUT -p tcp -j APP_TCP_PROXY 2>/dev/null
   ${iptables_wait} -t mangle -D OUTPUT -p udp -j APP_UDP_PROXY 2>/dev/null
-  ${iptables_wait} -t mangle -D PREROUTING -p udp -j xray 2>/dev/null
+  ${iptables_wait} -t mangle -D PREROUTING -p udp -j XRAY 2>/dev/null
 }
 
 start_service() {

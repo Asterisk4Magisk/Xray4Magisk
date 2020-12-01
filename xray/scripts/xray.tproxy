@@ -255,24 +255,26 @@ enable_udp() {
   if [ "${app_proxy_mode}" = "pick" ] ; then
     ## proxy all apps network
     if [ "${appid_list[*]}" = "0" ] ; then
-      echo "[Info]: Proxy all APP's TCP network."
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid ! --uid-owner ${inet_uid} -j ACCEPT
+      echo "[Info]: Proxy all APP's UDP network."
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${inet_uid} -j ACCEPT
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${net_raw_uid} -j ACCEPT
     ## proxy assign app
     else
       for appid in ${appid_list[@]}; do
         probe_uid_app_name ${appid} "Proxy" && \
-        ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid --uid-owner ${appid} -j ACCEPT
+        ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${appid} -j ACCEPT
       done
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid --uid-owner ${net_raw_uid} -j ACCEPT
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${net_raw_uid} -j ACCEPT
     fi
   ## black-list mode
   elif [ "${app_proxy_mode}" = "skip" ] ; then
     for appid in ${appid_list[@]}; do
       probe_uid_app_name ${appid} "Ignore" && \
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid --uid-owner ${appid} -j RETURN
+      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${appid} -j RETURN
     done
-    echo "[Info]: Proxy all remaining APP's TCP network."
-    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid ! --uid-owner ${inet_uid} -j ACCEPT
+    echo "[Info]: Proxy all remaining APP's UDP network."
+    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${inet_uid} -j ACCEPT
+    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner ! --uid-owner ${net_raw_uid} -j ACCEPT
   fi
 }
 
