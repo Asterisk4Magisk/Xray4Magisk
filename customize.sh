@@ -48,7 +48,7 @@ else
     if [ "${latest_xray_version}" = "" ] ; then
       ui_print "Error: Connect official xray download link failed." 
       ui_print "Tips: You can download xray core manually,"
-      ui_print "      and put it in /sdcard/Downloads"
+      ui_print "      and put it in /sdcard/Download"
       abort
     fi
     ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
@@ -56,7 +56,7 @@ else
     if [ "$?" != "0" ] ; then
       ui_print "Error: Download xray core failed."
       ui_print "Tips: You can download xray core manually,"
-      ui_print "      and put it in /sdcard/Downloads"
+      ui_print "      and put it in /sdcard/Download"
       abort
     fi
   fi

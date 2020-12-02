@@ -231,63 +231,6 @@ filter_proxy_iptables() {
   fi
 }
 
-enable_udp() {
-  if ! grep -q TPROXY /proc/net/ip_tables_targets; then
-    return 0
-  fi
-  # mangle OUTPUT
-  ${iptables_wait} -t mangle -A OUTPUT -m owner --uid-owner ${inet_uid} -j ACCEPT
-  if ${proxy_for_guest}; then
-    ${iptables_wait} -t mangle -A OUTPUT -o wlan+ -j ACCEPT
-  fi
-  ${iptables_wait} -t mangle -A OUTPUT -o tun+ -j ACCEPT
-  # mangle PREROUTING
-  for subnet in ${intranet[@]}; do
-    ${iptables_wait} -t mangle -A PREROUTING -d ${subnet} -j RETURN
-  done
-  # TPROXY
-  ip route add local default dev lo table 1234
-  ip rule add fwmark 0x1234 lookup 1234
-  ${iptables_wait} -t mangle -A PREROUTING ! -i tun+ -p udp -j TPROXY --on-port 1231 --tproxy-mark 0x1234
-  ${iptables_wait} -t mangle -A OUTPUT ! -d 192.168/16 ! -o lo -p udp -j MARK --set-mark 0x1234
-  # mangle OUTPUT
-  ## white-list mode
-  if [ "${app_proxy_mode}" = "pick" ] ; then
-    ## proxy all apps network
-    if [ "${appid_list[*]}" = "0" ] ; then
-      echo "[Info]: Proxy all APP's UDP network."
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${inet_uid} -j RETURN
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${net_raw_uid} -j RETURN
-    ## proxy assign app
-    else
-      for appid in ${appid_list[@]}; do
-        probe_uid_app_name ${appid} "Proxy" && \
-        ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${appid} -j ACCEPT
-      done
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${net_raw_uid} -j ACCEPT
-    fi
-  ## black-list mode
-  elif [ "${app_proxy_mode}" = "skip" ] ; then
-    for appid in ${appid_list[@]}; do
-      probe_uid_app_name ${appid} "Ignore" && \
-      ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${appid} -j RETURN
-    done
-    echo "[Info]: Proxy all remaining APP's UDP network."
-    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${inet_uid} -j RETURN
-    ${iptables_wait} -t mangle -I OUTPUT -p udp -m owner --uid-owner ${net_raw_uid} -j RETURN
-  fi
-}
-
-flush_udp() {
-  if ! grep -q TPROXY /proc/net/ip_tables_targets; then
-    return 0
-  fi
-  ${iptables_wait} -t mangle -F OUTPUT
-  ${iptables_wait} -t mangle -F PREROUTING
-  ip route del local default dev lo table 1234
-  ip rule del fwmark 0x1234 lookup 1234
-}
-
 disable_proxy() {
   flush_nat_iptables
   flush_filter_iptables
@@ -299,7 +242,6 @@ enable_proxy() {
   probe_xray_target
   create_proxy_iptables
   filter_proxy_iptables
-  enable_udp
 }
 
 # find_ip_path
