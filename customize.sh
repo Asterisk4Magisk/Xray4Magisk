@@ -67,7 +67,6 @@ ui_print "- Install xray core $ARCH execute files"
 unzip -j -o "${download_xray_zip}" "geoip.dat" -d /data/xray >&2
 unzip -j -o "${download_xray_zip}" "geosite.dat" -d /data/xray >&2
 unzip -j -o "${download_xray_zip}" "xray" -d $MODPATH/system/bin >&2
-unzip -j -o "${download_xray_zip}" "v2ctl" -d $MODPATH/system/bin >&2
 unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d $MODPATH/scripts >&2
 unzip -j -o "${ZIPFILE}" "xray/bin/$ARCH/dnscrypt-proxy" -d $MODPATH/system/bin >&2
 unzip -j -o "${ZIPFILE}" 'service.sh' -d $MODPATH >&2
@@ -122,6 +121,5 @@ set_perm  $MODPATH/scripts/xray.service    0  0  0755
 set_perm  $MODPATH/scripts/xray.tproxy     0  0  0755
 set_perm  $MODPATH/scripts/dnscrypt-proxy.service   0  0  0755
 set_perm  $MODPATH/system/bin/xray  ${inet_uid}  ${inet_uid}  0755
-set_perm  $MODPATH/system/bin/v2ctl  ${inet_uid}  ${inet_uid}  0755
 set_perm  /data/xray                ${inet_uid}  ${inet_uid}  0755
 set_perm  $MODPATH/system/bin/dnscrypt-proxy ${net_raw_uid} ${net_raw_uid} 0755
