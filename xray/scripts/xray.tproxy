@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-route_id="1132"
+route_id="1130"
 inet_uid="3003"
 net_raw_uid="3004"
 route_name="XRAY"
@@ -20,7 +20,6 @@ intranet=(0.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 224.0.0.0/4 240.0.0
 
 server_ip=$(grep -Po '\s*"address"\s*:\s*"\K[^"]+' /data/xray/config.json)
 table_file="/data/misc/net/rt_tables"
-route_id="1130"
 
 suit_iptables_version() {
   iptables_version=`iptables -V | grep -o "v1\.[0-9]"`
