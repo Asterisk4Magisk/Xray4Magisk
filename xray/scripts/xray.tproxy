@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-route_id="1130"
+route_id="1132"
 inet_uid="3003"
 net_raw_uid="3004"
 route_name="XRAY"
@@ -19,6 +19,8 @@ proxy_for_guest=false
 intranet=(0.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 224.0.0.0/4 240.0.0.0/4)
 
 server_ip=$(grep -Po '\s*"address"\s*:\s*"\K[^"]+' /data/xray/config.json)
+table_file="/data/misc/net/rt_tables"
+route_id="1130"
 
 suit_iptables_version() {
   iptables_version=`iptables -V | grep -o "v1\.[0-9]"`
@@ -231,10 +233,142 @@ filter_proxy_iptables() {
   fi
 }
 
+proxy_app_udp_iptables() {
+  ## white-list mode
+  if [ "${app_proxy_mode}" = "pick" ] ; then
+    ## proxy all apps network
+    if [ "${appid_list[*]}" = "0" ] ; then
+      echo "[Info]: Proxy all APP's UDP network."
+      ${iptables_wait} -t mangle -A UDP_PRE_PROXY -m owner ! --uid-owner ${inet_uid} -j MARK --set-mark ${proxy_mark}
+    ## proxy assign app
+    else
+      for appid in ${appid_list[@]}; do
+        probe_uid_app_name ${appid} "Proxy" && \
+        ${iptables_wait} -t mangle -A UDP_PRE_PROXY -m owner --uid-owner ${appid} -j MARK --set-mark ${proxy_mark}
+      done
+    fi
+  ## black-list mode
+  elif [ "${app_proxy_mode}" = "skip" ] ; then
+    for appid in ${appid_list[@]}; do
+      probe_uid_app_name ${appid} "Ignore" && \
+      echo "[Info]: Ignoring APP's UDP network."
+    done
+    echo "[Info]: Proxy all remaining APP's UDP network."
+    echo "[Info]: Still working on black-list mode."
+    #${iptables_wait} -t mangle -A UDP_PRE_PROXY -m owner ! --uid-owner ${inet_uid} -j XRAY
+  fi
+  # apply
+  ${iptables_wait} -t mangle -A OUTPUT -p udp -j UDP_PRE_PROXY
+  ${iptables_wait} -t mangle -A PREROUTING -p udp -j XRAY
+}
+
+proxy_guest_udp_iptables() {
+  ## create iptables proxy chains for wifi guest (only udp)
+  ${iptables_wait} -t mangle -N GUEST_UDP_PROXY
+  ## bypass intranet
+  for subnet in ${intranet[@]}; do
+    ${iptables_wait} -t mangle -A GUEST_UDP_PROXY -d ${subnet} -j RETURN
+  done
+  ${iptables_wait} -t mangle -A GUEST_UDP_PROXY -d 192.168.0.0/16 -p tcp -j RETURN
+  ${iptables_wait} -t mangle -A GUEST_UDP_PROXY -d 192.168.0.0/16 -p udp ! --dport 65534 -j RETURN
+  ## proxy assign softap
+  for softap in ${softap_list[@]}; do
+    echo "[Info]: Proxy ${softap} guest's UDP network."
+    ${iptables_wait} -t mangle -A GUEST_UDP_PROXY -p udp -s ${softap} -m mark --mark ${proxy_mark} -j TPROXY --on-port ${proxy_port}
+    # ${iptables_wait} -t mangle -A GUEST_UDP_PROXY -p udp -s ${softap} -j TPROXY --on-port 65535 --tproxy-mark ${proxy_mark}
+  done
+  ${iptables_wait} -t mangle -A PREROUTING -p udp -j GUEST_UDP_PROXY
+}
+
+create_udp() {
+  echo "[Info]: Create udp proxy iptables chains."
+  ## create Mangle iptables proxy chains
+  ${iptables_wait} -t mangle -N XRAY
+  ${iptables_wait} -t mangle -N UDP_PRE_PROXY
+  ## bypass intranet
+  for subnet in ${intranet[@]}; do
+    ${iptables_wait} -t mangle -A UDP_PRE_PROXY -d ${subnet} -j RETURN
+  done
+  # 直连局域网
+  ${iptables_wait} -t mangle -A UDP_PRE_PROXY -d 192.168.0.0/16 -p tcp -j RETURN
+  ${iptables_wait} -t mangle -A XRAY -d 192.168.0.0/16 -p tcp -j RETURN
+  # 直连局域网，65534 端口除外
+  ${iptables_wait} -t mangle -A UDP_PRE_PROXY -d 192.168.0.0/16 -p udp ! --dport 65534 -j RETURN
+  ${iptables_wait} -t mangle -A XRAY -d 192.168.0.0/16 -p udp ! --dport 65534 -j RETURN
+  ## bypass xray & dnscrypt-proxy program
+  ${iptables_wait} -t mangle -A UDP_PRE_PROXY -m owner --uid-owner ${inet_uid} -j RETURN
+  ${iptables_wait} -t mangle -A UDP_PRE_PROXY -m owner --uid-owner ${net_raw_uid} -j RETURN
+
+  ## apply to Mangle iptables OUTPUT & PREROUTING
+  ${iptables_wait} -t mangle -A XRAY -p udp -m mark --mark ${proxy_mark} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port}
+  
+  ## proxy app network
+  if ${proxy_for_app} ; then
+    proxy_app_udp_iptables
+  fi
+  ## proxy wifi guest network
+  if ${proxy_for_guest} ; then
+    proxy_guest_udp_iptables
+  fi
+}
+
+create_route_table() {
+  echo "Create UDP redirection route table."
+  echo "${route_id} ${route_name}" >> ${table_file}
+  ip route add local default dev lo table ${route_id}
+  ip rule add fwmark ${proxy_mark} lookup ${route_id}
+}
+
+delete_route_table() {
+  if eval "ip rule | grep -q \"from all fwmark ${proxy_mark} lookup\"" ; then
+    echo "Clean UDP redirection route table."
+    ip rule del fwmark ${proxy_mark} lookup ${route_id}
+    ip route flush table ${route_id}
+  fi
+  sed -i "/${route_id} ${route_name}/d" ${table_file}
+}
+
+enable_udp() {
+  if grep -q TPROXY /proc/net/ip_tables_targets; then
+    echo "[Info]: Enabling UDP PROXY"
+    create_udp
+    create_route_table
+  else
+    echo "[Info]: TPROXY is not supported by kernel. Skip UDP proxy."
+  fi
+}
+
+flush_udp() {
+  echo "Clean UDP redirection iptables rules."
+  ${iptables_wait} -t mangle -D PREROUTING -p udp -j XRAY 2>/dev/null
+  ${iptables_wait} -t mangle -D OUTPUT -p udp -j UDP_PRE_PROXY 2>/dev/null
+  ${iptables_wait} -t mangle -D PREROUTING -p udp -j GUEST_UDP_PROXY 2>/dev/null
+  if eval "iptables-save -t mangle | grep -q ':UDP_PRE_PROXY '" ; then
+    ${iptables_wait} -t mangle -F UDP_PRE_PROXY
+    ${iptables_wait} -t mangle -X UDP_PRE_PROXY
+  fi
+   if eval "iptables-save -t mangle | grep -q ':GUEST_UDP_PROXY '" ; then
+    ${iptables_wait} -t mangle -F GUEST_UDP_PROXY
+    ${iptables_wait} -t mangle -X GUEST_UDP_PROXY
+  fi
+  if eval "iptables-save -t mangle | grep -q ':XRAY '" ; then
+    ${iptables_wait} -t mangle -F XRAY
+    ${iptables_wait} -t mangle -X XRAY
+  fi
+}
+
+disable_udp() {
+  if grep -q TPROXY /proc/net/ip_tables_targets; then
+    echo "[Info]: Disabling UDP PROXY"
+    flush_udp
+    delete_route_table
+  fi
+}
+
 disable_proxy() {
   flush_nat_iptables
   flush_filter_iptables
-  flush_udp
+  # disable_udp
 }
 
 enable_proxy() {
@@ -242,6 +376,7 @@ enable_proxy() {
   probe_xray_target
   create_proxy_iptables
   filter_proxy_iptables
+  # enable_udp
 }
 
 # find_ip_path

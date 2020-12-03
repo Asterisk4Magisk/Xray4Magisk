@@ -80,6 +80,7 @@ echo "192.168.43.0/24" > /data/xray/softap.list
 [ -f /data/xray/resolv.conf ] || \
 unzip -j -o "${ZIPFILE}" "xray/etc/resolv.conf" -d /data/xray >&2
 unzip -j -o "${ZIPFILE}" "xray/etc/config.json.template" -d /data/xray >&2
+unzip -j -o "${ZIPFILE}" "xray/etc/config.json.example" -d /data/xray >&2
 [ -f /data/xray/dnscrypt-proxy/dnscrypt-blacklist-domains.txt ] || \
 unzip -j -o "${ZIPFILE}" 'xray/etc/dnscrypt-proxy/dnscrypt-blacklist-domains.txt' -d /data/xray/dnscrypt-proxy >&2
 [ -f /data/xray/dnscrypt-proxy/dnscrypt-blacklist-ips.txt ] || \
@@ -104,9 +105,9 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray" > $MODPATH/module.prop
 echo "name=Xray4magisk" >> $MODPATH/module.prop
-echo -n "version=v1.0.1" >> $MODPATH/module.prop
+echo -n "version=v1.0.2" >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20201201" >> $MODPATH/module.prop
+echo "versionCode=20201203" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
