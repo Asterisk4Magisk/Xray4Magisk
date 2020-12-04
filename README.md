@@ -19,16 +19,14 @@ This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64
 You can download the release installer zip file and install it via the Magisk Manager App.
 
 ### Manual download Xray-core
-Download the correct CPU Architecture Xray-core zip file and put it in your /sdcard/Download folder.
+Download the correct CPU Architecture Xray-core zip file and put it in the same folder where you place Xray4Magisk.zip.
 
 such as "Xray-linux-arm64-v8a.zip"
 
-The Installer will install it.
 
 ### Custom Xray-core
-Put any Xray-core.zip in /sdcard/Download folder.
+Put any Xray-core.zip in the same folder where you place Xray4Magisk.zip.
 
-The Installer will install it.
 
 ## Config
 
