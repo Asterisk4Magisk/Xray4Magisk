@@ -59,9 +59,9 @@ Put any Xray-core.zip in the same folder where you place Xray4Magisk.zip.
 
   Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
 
-- If you expect all Apps proxy by xray with transparent proxy, just write a single number `0` in file `/data/xray/appid.list` .
+- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/xray/appid.list` .
 
-- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `#bypass` at the first line then these Apps' uid separated as above in file `/data/xray/appid.list`. 
+- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/xray/appid.list`. 
 
 - Transparent proxy won't take effect until the xray service start normally and file `/data/xray/appid.list` is not empty.
 
