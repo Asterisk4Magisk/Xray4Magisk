@@ -9,6 +9,7 @@ error_log="${run_path}/error.log"
 conf_file="${data_path}/config.json"
 bin_opts="-config ${conf_file}"
 iptables_wait="iptables"
+proxy_port="10808"
 
 mark_id="2020"
 table_id="2020"
@@ -19,7 +20,7 @@ tun_start() {
   create_tun_link
   echo "[Info]: Starting tun"
   echo "" > ${run_path}/tun2socks.log
-  nohup tun2socks -tunName $tun_device -tunAddr 10.0.0.2 -tunMask 255.255.255.0 -proxyServer 127.0.0.1:65535 &>${run_path}/tun2socks.log &
+  nohup tun2socks -tunName $tun_device -tunAddr 10.0.0.2 -tunMask 255.255.255.0 -proxyServer 127.0.0.1:${proxy_port} &>${run_path}/tun2socks.log &
 }
 
 create_tun_link() {
