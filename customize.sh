@@ -15,7 +15,7 @@ mkdir -p $MODPATH/system/bin
 mkdir -p $MODPATH/system/etc
 
 download_xray_zip="/data/xray/run/xray-core.zip"
-custom="$(dirname ${ZIPFILE})/Xray-core.zip"
+custom="/sdcard/Download/Xray-core.zip"
 
 if [ -f "${custom}" ]; then
   cp "${custom}" "${download_xray_zip}"
