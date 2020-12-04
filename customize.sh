@@ -25,7 +25,7 @@ else
       version="Xray-linux-arm32-v7a.zip"
       ;;
     arm64)
-      version="Xray-linux-arm64-v8a.zip"
+      version="Xray-android-arm64-v8a.zip"
       ;;
     x86)
       version="Xray-linux-32.zip"
@@ -44,7 +44,7 @@ else
       abort "Error: Please install in Magisk Manager"
     fi
     official_xray_link="https://github.com.cnpmjs.org/XTLS/Xray-core/releases"
-    latest_xray_version=`curl -k -s -I "${official_xray_link}/latest" | grep -i location | grep -o "tag.*" | grep -o "v[0-9.]*"`
+    latest_trojan_version=`curl -k -s https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
     if [ "${latest_xray_version}" = "" ] ; then
       ui_print "Error: Connect official xray download link failed." 
       ui_print "Tips: You can download xray core manually,"
@@ -104,7 +104,7 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray" > $MODPATH/module.prop
 echo "name=Xray4magisk" >> $MODPATH/module.prop
-echo -n "version=" >> $MODPATH/module.prop
+echo -n "version=v1.0.3" >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
 echo "versionCode=20201203" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop

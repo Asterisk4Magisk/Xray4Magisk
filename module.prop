@@ -1,6 +1,6 @@
 id=xray4magisk
 name=Xray for Magisk
-version=latest_version
-versionCode=20201201
+version=v1.0.3
+versionCode=20201204
 author=CerteKim
 description=Xray core with service scripts for Android
