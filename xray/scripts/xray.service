@@ -10,6 +10,51 @@ conf_file="${data_path}/config.json"
 bin_opts="-config ${conf_file}"
 iptables_wait="iptables"
 
+mark_id="2020"
+table_id="2020"
+tun_device="xraytun"
+tun_ip="198.18.0.0/16"
+
+tun_start() {
+  create_tun_link
+  echo "[Info]: Starting tun"
+  echo "" > ${run_path}/tun2socks.log
+  nohup tun2socks -tunName $tun_device -tunAddr 10.0.0.2 -tunMask 255.255.255.0 -proxyServer 127.0.0.1:65535 &>${run_path}/tun2socks.log &
+}
+
+create_tun_link() {
+    echo "[Info]: Creating tun dev"
+    mkdir -p /dev/net
+    if [ ! -L /dev/net/tun ] ; then
+        ln -s /dev/tun /dev/net/tun
+    fi
+    ip tuntap add mode tun $tun_device >/dev/null 2>&1
+    ip addr add 10.0.0.1/24 dev $tun_device >/dev/null 2>&1
+    ip link set $tun_device up >/dev/null 2>&1
+}
+
+add_rule() {
+  echo "[Info]: Add ip rule"
+    ip rule add fwmark ${mark_id} table ${table_id} pref 5000
+    ip rule add from ${tun_ip} to ${tun_ip} table ${table_id} pref 14000
+}
+
+del_rule() {
+  echo "[Info]: del ip rule"
+    ip rule del fwmark ${mark_id} table ${table_id} pref 5000
+    ip rule del from ${tun_ip} to ${tun_ip} table ${table_id} pref 14000
+}
+
+add_route() {
+  echo "[Info]: add route"
+    ip route add default dev ${tun_device} table ${table_id}
+    ip route add ${tun_ip} dev ${tun_device} table ${table_id}
+}
+
+flush_route() {
+  echo "[Info]: flush route"
+    ip route flush table ${table_id}
+}
 
 suit_iptables_version() {
   iptables_version=`iptables -V | grep -o "v1\.[0-9]"`
@@ -62,16 +107,6 @@ wait_xray_listen() {
   fi
 }
 
-simple_clean_iptables() {
-  suit_iptables_version
-  echo "[Info]: Clean relevant iptables simply."
-  ${iptables_wait} -t filter -D INPUT -j PROTECT_XRAY 2>/dev/null
-  ${iptables_wait} -t nat -D PREROUTING -p tcp -j GUEST_TCP_PROXY 2>/dev/null
-  ${iptables_wait} -t nat -D OUTPUT -p tcp -j APP_TCP_PROXY 2>/dev/null
-  ${iptables_wait} -t mangle -D OUTPUT -p udp -j APP_UDP_PROXY 2>/dev/null
-  ${iptables_wait} -t mangle -D PREROUTING -p udp -j XRAY 2>/dev/null
-}
-
 start_service() {
   export XRAY_LOCATION_ASSET=${data_path}
   if probe_xray_alive ; then
@@ -87,6 +122,9 @@ start_service() {
     echo -n $! > ${pid_file}
     if wait_xray_listen ; then
       echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+      tun_start
+      add_rule
+      add_route
       return 0
     else
       if probe_xray_alive ; then
@@ -108,6 +146,8 @@ stop_service() {
     echo "[Info]: Stopping ${bin_name} service."
     kill `cat ${pid_file}`
     sleep 1
+    del_rule
+    flush_route
     display_xray_pid
   fi
   rm -f ${pid_file}
@@ -118,13 +158,12 @@ case "$1" in
     start_service
     ;;
   stop)
-    simple_clean_iptables
+
     stop_service
     ;;
   restart)
     stop_service
-    start_service || \
-    simple_clean_iptables
+    start_service
     ;;
   status)
     display_xray_pid

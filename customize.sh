@@ -3,6 +3,7 @@
 # xray Customization
 #####################
 SKIPUNZIP=1
+ASH_STANDALONE=1
 
 # prepare xray execute environment
 ui_print "- Prepare xray execute environment."
@@ -67,6 +68,7 @@ ui_print "- Install xray core $ARCH execute files"
 unzip -j -o "${download_xray_zip}" "geoip.dat" -d /data/xray >&2
 unzip -j -o "${download_xray_zip}" "geosite.dat" -d /data/xray >&2
 unzip -j -o "${download_xray_zip}" "xray" -d $MODPATH/system/bin >&2
+unzip -j -o "${ZIPFILE}" "xray/bin/tun2socks" -d $MODPATH/system/bin >&2
 unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d $MODPATH/scripts >&2
 unzip -j -o "${ZIPFILE}" "xray/bin/$ARCH/dnscrypt-proxy" -d $MODPATH/system/bin >&2
 unzip -j -o "${ZIPFILE}" 'service.sh' -d $MODPATH >&2
@@ -97,6 +99,7 @@ unzip -j -o "${ZIPFILE}" 'xray/etc/dnscrypt-proxy/example-dnscrypt-proxy.toml' -
 unzip -j -o "${ZIPFILE}" 'xray/etc/dnscrypt-proxy/update-rules.sh' -d /data/xray/dnscrypt-proxy >&2
 [ -f /data/xray/config.json ] || \
 cp /data/xray/config.json.template /data/xray/config.json
+cp /data/xray/config.json.example /data/xray/config.json
 ln -s /data/xray/resolv.conf $MODPATH/system/etc/resolv.conf
 # generate module.prop
 ui_print "- Generate module.prop"
@@ -104,7 +107,7 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray" > $MODPATH/module.prop
 echo "name=Xray4magisk" >> $MODPATH/module.prop
-echo -n "version=v1.0.3" >> $MODPATH/module.prop
+echo -n "version=v1.1.0" >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
 echo "versionCode=20201203" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
@@ -121,5 +124,6 @@ set_perm  $MODPATH/scripts/xray.service    0  0  0755
 set_perm  $MODPATH/scripts/xray.tproxy     0  0  0755
 set_perm  $MODPATH/scripts/dnscrypt-proxy.service   0  0  0755
 set_perm  $MODPATH/system/bin/xray  ${inet_uid}  ${inet_uid}  0755
+set_perm  $MODPATH/system/bin/tun2socks  0  0  0755
 set_perm  /data/xray                ${inet_uid}  ${inet_uid}  0755
 set_perm  $MODPATH/system/bin/dnscrypt-proxy ${net_raw_uid} ${net_raw_uid} 0755

@@ -135,10 +135,10 @@ suit_iptables_version
 
 case "$1" in
   enable)
-    start_dnscrypt-proxy && create_proxy_iptables
+    start_dnscrypt-proxy # && create_proxy_iptables
     ;;
   disable)
-    flush_dns_iptables
+    # flush_dns_iptables
     stop_dnscrypt-proxy
     ;;
   status)
