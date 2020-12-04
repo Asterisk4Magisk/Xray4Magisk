@@ -98,8 +98,7 @@ unzip -j -o "${ZIPFILE}" 'xray/etc/dnscrypt-proxy/dnscrypt-whitelist.txt' -d /da
 unzip -j -o "${ZIPFILE}" 'xray/etc/dnscrypt-proxy/example-dnscrypt-proxy.toml' -d /data/xray/dnscrypt-proxy >&2
 unzip -j -o "${ZIPFILE}" 'xray/etc/dnscrypt-proxy/update-rules.sh' -d /data/xray/dnscrypt-proxy >&2
 [ -f /data/xray/config.json ] || \
-cp /data/xray/config.json.template /data/xray/config.json
-cp /data/xray/config.json.example /data/xray/config.json
+cp /data/xray/config.json.example /data/xray/config.json.example
 ln -s /data/xray/resolv.conf $MODPATH/system/etc/resolv.conf
 # generate module.prop
 ui_print "- Generate module.prop"

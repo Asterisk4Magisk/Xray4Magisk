@@ -9,10 +9,14 @@
         "tag": "proxy-inboud",
         "port": 65535,
         "listen": "0.0.0.0",
-        "protocol": "dokodemo-door",
+        "protocol": "socks",
         "settings": {
-          "network": "udp,tcp",
-          "followRedirect": true
+          "auth": "noauth",
+          "udp": true,
+          "ip": null,
+          "address": null,
+          "clients": null,
+          "decryption": null
         },
         "sniffing": {
           "enabled": true,
