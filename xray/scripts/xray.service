@@ -12,7 +12,7 @@ iptables_wait="iptables"
 
 mark_id="2020"
 table_id="2020"
-tun_device="xraytun"
+tun_device="utun"
 tun_ip="198.18.0.0/16"
 
 tun_start() {
