@@ -19,6 +19,7 @@ custom="/sdcard/Download/Xray-core.zip"
 if [ -f "${custom}" ]; then
   cp "${custom}" "${download_xray_zip}"
   ui_print "Info: Custom Xray-core found, starting installer"
+  latest_xray_version=custom
 else
   case "${ARCH}" in
     arm)
@@ -37,6 +38,7 @@ else
   if [ -f /sdcard/Download/"${version}" ]; then
     cp /sdcard/Download/"${version}" "${download_xray_zip}"
     ui_print "Info: Xray-core already downloaded, starting installer"
+    latest_xray_version=custom
   else
     # download latest xray core from official link
     ui_print "- Connect official xray download link."
