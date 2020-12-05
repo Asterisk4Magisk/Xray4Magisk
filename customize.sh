@@ -106,7 +106,7 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray" > $MODPATH/module.prop
 echo "name=Xray4magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.0.6, Core " >> $MODPATH/module.prop
+echo -n "version=Module Door_v1.0.6, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
 echo "versionCode=20201205" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
