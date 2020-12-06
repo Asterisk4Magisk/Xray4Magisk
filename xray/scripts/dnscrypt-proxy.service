@@ -100,8 +100,8 @@ start_dnscrypt-proxy() {
     mkdir -p ${run_path}
     echo -n "" > ${conf_path}/dnscrypt-nxdomain.log
     echo -n "" > ${conf_path}/dnscrypt-query.log
-    chown -R net_raw:net_raw ${conf_path}
-    chown net_raw:net_raw ${bin_file}
+    chown -R root:net_raw ${conf_path}
+    chown root:net_raw ${bin_file}
     chmod 6755 ${bin_file}
     nohup ${bin_file} ${bin_opts} &
     sleep 1

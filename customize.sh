@@ -122,6 +122,6 @@ set_perm  $MODPATH/scripts/xray.inotify    0  0  0755
 set_perm  $MODPATH/scripts/xray.service    0  0  0755
 set_perm  $MODPATH/scripts/xray.tproxy     0  0  0755
 set_perm  $MODPATH/scripts/dnscrypt-proxy.service   0  0  0755
-set_perm  $MODPATH/system/bin/xray  ${inet_uid}  ${inet_uid}  0755
-set_perm  /data/xray                ${inet_uid}  ${inet_uid}  0755
-set_perm  $MODPATH/system/bin/dnscrypt-proxy ${net_raw_uid} ${net_raw_uid} 0755
+set_perm  $MODPATH/system/bin/xray  0  ${inet_uid}  0755
+set_perm  /data/xray                0  ${inet_uid}  0755
+set_perm  $MODPATH/system/bin/dnscrypt-proxy 0 ${net_raw_uid} 0755
