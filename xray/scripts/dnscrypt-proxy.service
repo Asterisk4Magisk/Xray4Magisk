@@ -1,6 +1,7 @@
 #!/system/bin/sh
 
 dnsmasq_uid="1052"
+net_raw_uid="3004"
 bin_name="dnscrypt-proxy"
 bin_file="/system/bin/${bin_name}"
 run_path="/data/xray/run"
@@ -66,7 +67,7 @@ check_proxy_guest() {
 
 create_proxy_iptables() {
   echo "[Info]: Proxy local system's DNS request."
-  ${iptables_wait} -t nat -A OUTPUT -p udp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port}
+  ${iptables_wait} -t nat -A OUTPUT -p udp -m owner --gid-owner ${net_raw_uid} --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port}
   ## proxy wifi guest DNS
   check_proxy_guest && \
   if ${proxy_for_guest} ; then
@@ -87,7 +88,7 @@ display_dnscrypt-proxy_pid() {
 
 flush_dns_iptables() {
   echo "[Info]: Clean DNS proxy iptables rules."
-  ${iptables_wait} -t nat -D OUTPUT -p udp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port} 2>/dev/null
+  ${iptables_wait} -t nat -D OUTPUT -p udp -m owner --gid-owner ${net_raw_uid} --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port} 2>/dev/null
   ${iptables_wait} -t nat -D OUTPUT -p udp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination ${host_ip}:${dns_port} 2>/dev/null
 }
 

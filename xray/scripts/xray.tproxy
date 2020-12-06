@@ -5,7 +5,7 @@ inet_uid="3003"
 net_raw_uid="3004"
 route_name="XRAY"
 proxy_port="65535"
-proxy_mark="0x20151130"
+proxy_mark="1"
 table_file="/data/misc/net/rt_tables"
 appid_file="/data/xray/appid.list"
 softap_file="/data/xray/softap.list"
@@ -49,7 +49,7 @@ find_netstat_path() {
 
 probe_xray_listen() {
   find_netstat_path || return
-  xray_listen=`netstat -tnlp | grep xray | grep LISTEN`
+  xray_listen=`netstat -tnlp | grep xray`
   if eval "echo \"${xray_listen}\" | grep -q :::${proxy_port}" || eval "echo \"${xray_listen}\" | grep -q 0.0.0.0:${proxy_port}" ; then
     xray_share=true
     return
@@ -154,13 +154,13 @@ proxy_app_tcp_iptables() {
   ## create iptables proxy chains for app tcp
   ${iptables_wait} -t nat -N APP_TCP_PROXY
   ## bypass xray program
-  ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${inet_uid} -j RETURN
+  ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --gid-owner ${inet_uid} -j RETURN
   ## white-list mode
   if [ "${app_proxy_mode}" = "pick" ] ; then
     ## proxy all apps network
     if [ "${appid_list[*]}" = "0" ] ; then
       echo "[Info]: Proxy all APP's TCP network."
-      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j XRAY
+      ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --gid-owner ${inet_uid} -j XRAY
     ## proxy assign app
     else
       for appid in ${appid_list[@]}; do
@@ -176,7 +176,7 @@ proxy_app_tcp_iptables() {
       ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner --uid-owner ${appid} -j RETURN
     done
     echo "[Info]: Proxy all remaining APP's TCP network."
-    ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --uid-owner ${inet_uid} -j XRAY
+    ${iptables_wait} -t nat -A APP_TCP_PROXY -m owner ! --gid-owner ${inet_uid} -j XRAY
   fi
   ## apply proxy rules to iptables
   ${iptables_wait} -t nat -A OUTPUT -p tcp -j APP_TCP_PROXY
@@ -238,12 +238,12 @@ proxy_app_udp_iptables() {
     ## proxy all apps network
     if [ "${appid_list[*]}" = "0" ] ; then
       echo "[Info]: Proxy all APP's UDP network."
-      ${iptables_wait} -t mangle -A XRAY_MASK -m owner ! --uid-owner 0 -j MARK --set-mark ${proxy_mark}
+      ${iptables_wait} -t mangle -A XRAY_MASK -p udp -m owner ! --uid-owner 0 -j MARK --set-mark ${proxy_mark}
     ## proxy assign app
     else
       for appid in ${appid_list[@]}; do
         probe_uid_app_name ${appid} "Proxy" && \
-        ${iptables_wait} -t mangle -A XRAY_MASK -m owner --uid-owner ${appid} -j MARK --set-mark ${proxy_mark}
+        ${iptables_wait} -t mangle -A XRAY_MASK -p udp -m owner --uid-owner ${appid} -j MARK --set-mark ${proxy_mark}
       done
     fi
   ## black-list mode
@@ -273,7 +273,7 @@ proxy_guest_udp_iptables() {
     echo "[Info]: Proxy ${softap} guest's UDP network."
     ${iptables_wait} -t mangle -A XRAY_UDP -p udp -s ${softap} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${proxy_mark}
   done
-  ${iptables_wait} -t mangle -A PREROUTING -p udp -j XRAY_UDP
+  ${iptables_wait} -t mangle -A PREROUTING -j XRAY_UDP
 }
 
 create_udp() {
