@@ -105,10 +105,10 @@ ui_print "- Generate module.prop"
 rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray" > $MODPATH/module.prop
-echo "name=Xray4magisk" >> $MODPATH/module.prop
-echo -n "version=Module Door_v1.1.2, Core " >> $MODPATH/module.prop
+echo "name=Xray4Magisk" >> $MODPATH/module.prop
+echo -n "version=Module Door_v1.1.3, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20201205" >> $MODPATH/module.prop
+echo "versionCode=20201207" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
@@ -124,4 +124,4 @@ set_perm  $MODPATH/scripts/xray.tproxy     0  0  0755
 set_perm  $MODPATH/scripts/dnscrypt-proxy.service   0  0  0755
 set_perm  $MODPATH/system/bin/xray  0  ${inet_uid}  0755
 set_perm  /data/xray                0  ${inet_uid}  0755
-set_perm  $MODPATH/system/bin/dnscrypt-proxy 0 ${net_raw_uid} 0755
+set_perm  $MODPATH/system/bin/dnscrypt-proxy ${net_raw_uid} ${net_raw_uid} 0755

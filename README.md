@@ -19,16 +19,14 @@ This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64
 You can download the release installer zip file and install it via the Magisk Manager App.
 
 ### Manual download Xray-core
-Download the correct CPU Architecture Xray-core zip file and put it in your /sdcard/Download folder.
+Download the correct CPU Architecture Xray-core zip file and put it in the same folder where you place Xray4Magisk.zip.
 
-such as "Xray-android-arm64-v8a.zip"
+such as "Xray-linux-arm64-v8a.zip"
 
-The Installer will install it.
 
 ### Custom Xray-core
-Put any Xray-core.zip in /sdcard/Download folder.
+Put any Xray-core.zip in the same folder where you place Xray4Magisk.zip.
 
-The Installer will install it.
 
 ## Config
 
@@ -61,9 +59,9 @@ The Installer will install it.
 
   Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
 
-- If you expect all Apps proxy by xray with transparent proxy, just write a single number `0` in file `/data/xray/appid.list` .
+- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/xray/appid.list` .
 
-- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `#bypass` at the first line then these Apps' uid separated as above in file `/data/xray/appid.list`. 
+- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/xray/appid.list`. 
 
 - Transparent proxy won't take effect until the xray service start normally and file `/data/xray/appid.list` is not empty.
 

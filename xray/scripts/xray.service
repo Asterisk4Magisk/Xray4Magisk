@@ -9,7 +9,10 @@ error_log="${run_path}/error.log"
 conf_file="${data_path}/config.json"
 bin_opts="-config ${conf_file}"
 iptables_wait="iptables"
+proxy_port="10808"
 
+mark_id="2020"
+table_id="2020"
 
 suit_iptables_version() {
   iptables_version=`iptables -V | grep -o "v1\.[0-9]"`
@@ -50,7 +53,7 @@ wait_xray_listen() {
   wait_count=0
   xray_pid=`cat ${pid_file}`
   find_netstat_path && \
-  check_xray_cmd="netstat -tnlp | grep xray" || \
+  check_xray_cmd="netstat -tnlp | grep xray | grep -q LISTEN" || \
   check_xray_cmd="ls -lh /proc/${xray_pid}/fd | grep -q socket"
   while probe_xray_alive && ! eval "${check_xray_cmd}" && [ ${wait_count} -lt 100 ] ; do
     sleep 1 ; wait_count=$((${wait_count} + 1))
@@ -60,16 +63,6 @@ wait_xray_listen() {
   else
     return 1
   fi
-}
-
-simple_clean_iptables() {
-  suit_iptables_version
-  echo "[Info]: Clean relevant iptables simply."
-  ${iptables_wait} -t filter -D INPUT -j PROTECT_XRAY 2>/dev/null
-  ${iptables_wait} -t nat -D PREROUTING -p tcp -j GUEST_TCP_PROXY 2>/dev/null
-  ${iptables_wait} -t nat -D OUTPUT -p tcp -j APP_TCP_PROXY 2>/dev/null
-  ${iptables_wait} -t mangle -D OUTPUT -p udp -j APP_UDP_PROXY 2>/dev/null
-  ${iptables_wait} -t mangle -D PREROUTING -p udp -j XRAY 2>/dev/null
 }
 
 start_service() {
@@ -118,13 +111,11 @@ case "$1" in
     start_service
     ;;
   stop)
-    simple_clean_iptables
     stop_service
     ;;
   restart)
     stop_service
-    start_service || \
-    simple_clean_iptables
+    start_service
     ;;
   status)
     display_xray_pid
