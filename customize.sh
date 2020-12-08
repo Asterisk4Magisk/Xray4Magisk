@@ -45,7 +45,7 @@ else
     if [ $BOOTMODE ! = true ] ; then
       abort "Error: Please install in Magisk Manager"
     fi
-    official_xray_link="https://github.com.cnpmjs.org/XTLS/Xray-core/releases"
+    official_xray_link="https://github.com/XTLS/Xray-core/releases"
     latest_xray_version=`curl -k -s https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
     if [ "${latest_xray_version}" = "" ] ; then
       ui_print "Error: Connect official xray download link failed." 

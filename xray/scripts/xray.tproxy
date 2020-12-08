@@ -84,12 +84,12 @@ create_proxy_iptables() {
     probe_proxy_mode
 
     if [ "${proxy_mode}" = "ALL" ] ; then
-        ${iptables_wait} -t mangle -A XRAY_MASK -m owner ! --uid-owner 0 -j MARK --set-mark ${mark_id}
+        ${iptables_wait} -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
     elif [ "${proxy_mode}" = "skip" ] ; then
         for appid in ${appid_list[@]} ; do
             ${iptables_wait} -t mangle -I XRAY_MASK -m owner --uid-owner ${appid} -j RETURN
         done
-        ${iptables_wait} -t mangle -A XRAY_MASK -m owner ! --uid-owner 0 -j MARK --set-mark ${mark_id}
+        ${iptables_wait} -t mangle -A XRAY_MASK -m owner -j MARK --set-mark ${mark_id}
     elif [ "${proxy_mode}" = "pick" ] ; then
         for appid in ${appid_list[@]} ; do
             ${iptables_wait} -t mangle -A XRAY_MASK -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
