@@ -21,7 +21,7 @@ You can download the release installer zip file and install it via the Magisk Ma
 ### Manual download Xray-core
 Download the correct CPU Architecture Xray-core zip file and put it in the same folder where you place Xray4Magisk.zip.
 
-such as "Xray-linux-arm64-v8a.zip"
+such as "Xray-android-arm64-v8a.zip"
 
 
 ### Custom Xray-core

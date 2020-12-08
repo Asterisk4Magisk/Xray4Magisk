@@ -76,6 +76,7 @@ start_service() {
     chown -R root:inet ${data_path}
     chown root:inet ${bin_path}
     chmod 6755 ${bin_path}
+    ulimit -SHn 1000000
     nohup ${bin_path} ${bin_opts} &>${error_log} &
     echo -n $! > ${pid_file}
     if wait_xray_listen ; then
