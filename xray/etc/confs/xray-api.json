@@ -1,0 +1,23 @@
+{
+    "inbounds": [
+        {
+            "tag": "api",
+            "port": 65533,
+            "listen": "127.0.0.1",
+            "protocol": "dokodemo-door",
+            "settings": {
+                "udp": false,
+                "address": "127.0.0.1",
+                "allowTransparent": false
+            }
+        }
+    ],
+    "api": {
+        "tag": "api",
+        "services": [
+            "HandlerService",
+            "LoggerService",
+            "StatsService"
+        ]
+    }
+}

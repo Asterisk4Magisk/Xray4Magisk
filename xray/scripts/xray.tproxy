@@ -1,0 +1,163 @@
+#!/system/bin/sh
+
+dnsmasq_uid="1052"
+table_id="100"
+inet_uid="3003"
+dns_port="65534"
+proxy_port="65535"
+mark_id="1"
+table_file="/data/misc/net/rt_tables"
+appid_file="/data/xray/appid.list"
+proxy_mode="none"
+appid_list=()
+intranet=(0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4)
+
+find_ip_path() {
+  [ -f /system/bin/ip ] && alias ip="/system/bin/ip" && return 0
+  [ -f /system/xbin/ip ] && alias ip="/system/xbin/ip" && return 0
+  return 1
+}
+
+find_netstat_path() {
+  [ -f /system/bin/netstat ] && alias netstat="/system/bin/netstat" && return 0
+  [ -f /system/xbin/netstat ] && alias netstat="/system/xbin/netstat" && return 0
+  return 1
+}
+
+add_route() {
+	ip rule add fwmark ${mark_id} table ${table_id}
+	ip route add local 0.0.0.0/0 dev lo table ${table_id}
+}
+
+del_route() {
+	ip rule del fwmark ${mark_id} table ${table_id}
+	ip route flush table ${table_id}
+}
+
+create_mangle_iptables() {
+  echo "[Info]: creating mangle chain"
+    iptables -t mangle -N XRAY
+
+    for subnet in ${intranet[@]} ; do
+        iptables -t mangle -A XRAY -d ${subnet} -j RETURN
+    done
+
+    iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+
+    iptables -t mangle -A PREROUTING -j XRAY
+    
+    create_dns_iptables
+    create_proxy_iptables
+}
+
+create_proxy_iptables() {
+  echo "[Info]: creating proxy"
+    iptables -t mangle -N XRAY_MASK
+    iptables -t nat -N FILTER_DNS
+    
+    for subnet in ${intranet[@]} ; do
+        iptables -t mangle -A XRAY_MASK -d ${subnet} -j RETURN
+    done
+
+    iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${inet_uid} -j RETURN
+    iptables -t nat -A FILTER_DNS -m owner --gid-owner ${inet_uid} -j RETURN
+    
+    probe_proxy_mode
+
+    if [ "${proxy_mode}" = "ALL" ] ; then
+        iptables -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
+        iptables -t nat -A FILTER_DNS -j DNS
+    elif [ "${proxy_mode}" = "skip" ] ; then
+        for appid in ${appid_list[@]} ; do
+            iptables -t mangle -I XRAY_MASK -m owner --uid-owner ${appid} -j RETURN
+            iptables -t nat -A FILTER_DNS -m owner --uid-owner ${appid} -j RETURN
+        done
+        iptables -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
+        iptables -t nat -A FILTER_DNS -j DNS
+    elif [ "${proxy_mode}" = "pick" ] ; then
+        for appid in ${appid_list[@]} ; do
+            iptables -t mangle -A XRAY_MASK -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
+            iptables -t nat -A FILTER_DNS -m owner --uid-owner ${appid} -j DNS
+        done
+    fi
+
+    iptables -t mangle -A OUTPUT -j XRAY_MASK
+    iptables -t nat -A OUTPUT -j FILTER_DNS
+}
+
+flush_iptables() {
+	echo "[Info]: flush iptables"
+	iptables -t mangle -D OUTPUT -j XRAY_MASK
+	iptables -t mangle -D PREROUTING -j XRAY
+	iptables -t mangle -F XRAY_MASK
+	iptables -t mangle -F XRAY
+	iptables -t mangle -X XRAY_MASK
+	iptables -t mangle -X XRAY
+  iptables -t nat -D OUTPUT -j FILTER_DNS
+  iptables -t nat -D PREROUTING -j DNS
+  iptables -t nat -F FILTER_DNS
+  iptables -t nat -F DNS
+  iptables -t nat -X FILTER_DNS
+  iptables -t nat -X DNS
+}
+
+probe_proxy_mode() {
+    echo "" >> ${appid_file}
+    sed -i '/^$/d' "${appid_file}"
+    if [ -f "${appid_file}" ] ; then
+        first_line=$(head -1 ${appid_file})
+        if [ "${first_line}" = "ALL" ] ; then
+            proxy_mode=ALL
+        elif [ "${first_line}" = "bypass" ] ; then
+            proxy_mode=skip
+        else
+            proxy_mode=pick
+        fi
+    fi
+
+    while read appid_line ; do
+        appid_text=(`echo ${appid_line}`)
+        for appid_word in ${appid_text[*]} ; do
+            if [ "${appid_word}" = "bypass" ] ; then
+                break
+            else
+                appid_list=(${appid_list[*]} ${appid_word})
+            fi
+        done
+    done < ${appid_file}
+    # echo ${appid_list[*]}
+}
+
+create_dns_iptables() {
+    iptables -t nat -N DNS
+    iptables -t nat -A DNS -p tcp --dport 53 -j REDIRECT --to-port ${dns_port}
+    iptables -t nat -A DNS -p udp --dport 53 -j REDIRECT --to-port ${dns_port}
+}
+
+disable_proxy() {
+	del_route
+	flush_iptables 2> /dev/null
+}
+
+enable_proxy() {
+	add_route
+	create_mangle_iptables
+}
+
+case "$1" in
+  enable)
+    disable_proxy
+    enable_proxy
+    ;;
+  disable)
+    disable_proxy
+    ;;
+  renew)
+    disable_proxy
+    enable_proxy
+    ;;
+  *)
+    echo "$0:  usage:  $0 {enable|disable|renew}"
+    ;;
+esac

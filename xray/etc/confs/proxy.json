@@ -1,0 +1,49 @@
+{
+    "outbounds": [
+        {
+            "tag": "proxy",
+            "protocol": "VLESS",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "1.1.1.1",
+                        "port": 443,
+                        "users": [
+                            {
+                                "id": "00000000-0000-0000-0000-000000000000",
+                                "alterId": 0,
+                                "email": "t@t.tt",
+                                "security": "none",
+                                "encryption": "none",
+                                "flow": "xtls-rprx-splice"
+                            }
+                        ]
+                    }
+                ],
+                "servers": null,
+                "response": null
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "xtls",
+                "xtlsSettings": {
+                    "allowInsecure": false,
+                    "serverName": "one.one.one.one"
+                },
+                "tcpSettings": null,
+                "kcpSettings": null,
+                "wsSettings": {
+                    "connectionReuse": true,
+                    "path": "/xray",
+                    "host": null,
+                    "headers": null
+                },
+                "httpSettings": null,
+                "quicSettings": null
+            },
+            "mux": {
+                "enabled": false
+            }
+        }
+    ]
+}

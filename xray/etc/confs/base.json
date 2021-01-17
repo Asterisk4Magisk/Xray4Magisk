@@ -1,0 +1,68 @@
+{
+    "log": {
+        "access": "/data/xray/run/access.log",
+        "error": "/data/xray/run/error.log",
+        "loglevel": "warning"
+    },
+    "api": {},
+    "dns": {},
+    "stats": {},
+    "policy": {
+        "system": {
+            "statsOutboundUplink": true,
+            "statsOutboundDownlink": true
+        }
+    },
+    "transport": {},
+    "routing": {},
+    "inbounds": [
+        {
+            "tag": "proxy-inboud",
+            "port": 65535,
+            "listen": "0.0.0.0",
+            "protocol": "dokodemo-door",
+            "settings": {
+                "network": "udp,tcp",
+                "followRedirect": true
+            },
+            "streamSettings": {
+                "sockopt": {
+                    "tproxy": "tproxy"
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls"
+                ]
+            }
+        }
+    ],
+    "outbounds": [
+        {
+            "tag": "direct",
+            "protocol": "freedom",
+            "settings": {
+                "vnext": null,
+                "servers": null,
+                "response": null
+            },
+            "streamSettings": null,
+            "mux": null
+        },
+        {
+            "tag": "block",
+            "protocol": "blackhole",
+            "settings": {
+                "vnext": null,
+                "servers": null,
+                "response": {
+                    "type": "http"
+                }
+            },
+            "streamSettings": null,
+            "mux": null
+        }
+    ]
+}

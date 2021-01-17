@@ -1,0 +1,43 @@
+#!/system/bin/sh
+
+inotify=`realpath $0`
+scripts_dir=`dirname ${inotify}`
+service="${scripts_dir}/xray.service"
+tproxy="${scripts_dir}/xray.tproxy"
+
+events=$1
+monitor_dir=$2
+monitor_file=$3
+
+start_xray() {
+  ${service} start
+  if [ -f /data/xray/appid.list ] ; then
+    ${tproxy} enable
+    settings put global airplane_mode_on 1
+    sleep 1
+    am broadcast -a android.intent.action.AIRPLANE_MODE
+    sleep 1
+    settings put global airplane_mode_on 0
+    sleep 1
+    am broadcast -a android.intent.action.AIRPLANE_MODE
+  fi
+}
+
+stop_xray() {
+  ${tproxy} disable
+  ${service} stop
+}
+
+main() {
+if [ ! -f /data/xray/manual ] ; then
+  if [ "${monitor_file}" = "disable" ] ; then
+    if [ "${events}" = "d" ] ; then
+      start_xray
+    elif [ "${events}" = "n" ] ; then
+      stop_xray
+    fi
+  fi
+fi
+}
+
+main
