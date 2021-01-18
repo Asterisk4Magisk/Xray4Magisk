@@ -10,7 +10,6 @@
             {
                 "type": "field",
                 "port": null,
-                "inboundTag": "proxy-in",
                 "outboundTag": "proxy",
                 "ip": [
                     "91.108.4.0/22",
@@ -30,6 +29,7 @@
                     "216.58.220.0/24"
                 ],
                 "domain": [
+                    "geolocation-!cn",
                     "geosite:google",
                     "geosite:github",
                     "geosite:netflix",
@@ -48,7 +48,6 @@
             {
                 "type": "field",
                 "port": null,
-                "inboundTag": "proxy-in",
                 "outboundTag": "direct",
                 "ip": [
                     "geoip:private",
@@ -193,7 +192,6 @@
             {
                 "type": "field",
                 "port": null,
-                "inboundTag": "proxy-in",
                 "outboundTag": "block",
                 "ip": null,
                 "domain": [

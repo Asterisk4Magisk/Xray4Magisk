@@ -2,7 +2,7 @@
     "log": {
         "access": "/data/xray/run/access.log",
         "error": "/data/xray/run/error.log",
-        "loglevel": "warning"
+        "loglevel": "debug"
     },
     "api": {},
     "dns": {},
@@ -46,7 +46,8 @@
             "settings": {
                 "vnext": null,
                 "servers": null,
-                "response": null
+                "response": null,
+                "domainStrategy": "UseIP"
             },
             "streamSettings": null,
             "mux": null
