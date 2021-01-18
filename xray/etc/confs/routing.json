@@ -11,7 +11,12 @@
             },
             {
                 "type": "field",
-                "inboundTag": "dns-in",
+                "network": "udp",
+                "port": 53,
+                "inboundTag": [
+                     "dns-in",
+                     "proxy-in"
+                ],
                 "outboundTag": "dns-out"
             },
             {
@@ -205,6 +210,7 @@
                     "geosite:category-ads"
                 ]
             }
-        ]
+        ],
+        "strategy": "rules"
     }
 }

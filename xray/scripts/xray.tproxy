@@ -44,12 +44,15 @@ create_mangle_iptables() {
     done
 
     # bypass 53
-    iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    # iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    # iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+
+    iptables -t mangle -A XRAY -p tcp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    iptables -t mangle -A XRAY -p udp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
     iptables -t mangle -A PREROUTING -j XRAY
 
-    create_dns_iptables
+    # create_dns_iptables
     create_proxy_iptables
 }
 
@@ -89,7 +92,7 @@ flush_iptables() {
   iptables -t mangle -F XRAY
   iptables -t mangle -X XRAY_MASK
   iptables -t mangle -X XRAY
-  flush_dns_iptables
+  # flush_dns_iptables
 }
 
 probe_proxy_mode() {

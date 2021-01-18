@@ -12,7 +12,7 @@
     "routing": {},
     "inbounds": [
         {
-            "tag": "proxy-inboud",
+            "tag": "proxy-in",
             "port": 65535,
             "listen": "0.0.0.0",
             "protocol": "dokodemo-door",
