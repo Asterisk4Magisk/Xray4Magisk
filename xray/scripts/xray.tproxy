@@ -60,7 +60,7 @@ create_proxy_iptables() {
     for subnet in ${intranet[@]} ; do
         iptables -t mangle -A XRAY_MASK -d ${subnet} -j RETURN
     done
-    iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${net_raw_uid} -j RETURN
+    # iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${net_raw_uid} -j RETURN
     iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${inet_uid} -j RETURN
 
     probe_proxy_mode
@@ -89,6 +89,7 @@ flush_iptables() {
   iptables -t mangle -F XRAY
   iptables -t mangle -X XRAY_MASK
   iptables -t mangle -X XRAY
+  flush_dns_iptables
 }
 
 probe_proxy_mode() {
@@ -121,10 +122,9 @@ probe_proxy_mode() {
 create_dns_iptables() {
     echo "[Info]: Create DNS proxy iptables rules."
     iptables -t nat -N DNS
-    iptables -t nat -A DNS -p udp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
-    iptables -t nat -A DNS -p tcp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
-    iptables -t nat -A DNS -p udp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
-    iptables -t nat -A DNS -p tcp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
+    iptables -t nat -A DNS -m owner --gid-owner ${inet_uid} -j RETURN
+    iptables -t nat -A DNS -p tcp --dport 53 -j REDIRECT --to-port ${dns_port}
+    iptables -t nat -A DNS -p udp --dport 53 -j REDIRECT --to-port ${dns_port}
     iptables -t nat -A OUTPUT -j DNS
 }
 
