@@ -3,6 +3,13 @@
         "domainStrategy": "IPIfNonMatch",
         "rules": [
             {
+                "inboundTag": [
+                    "api"
+                ],
+                "outboundTag": "api",
+                "type": "field"
+            },
+            {
                 "type": "field",
                 "inboundTag": "dns-in",
                 "outboundTag": "dns-out"

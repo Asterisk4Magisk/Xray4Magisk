@@ -3,6 +3,7 @@
 dnsmasq_uid="1052"
 table_id="100"
 inet_uid="3003"
+net_raw_uid="3004"
 dns_port="65534"
 proxy_port="65535"
 mark_id="1"
@@ -42,6 +43,7 @@ create_mangle_iptables() {
         iptables -t mangle -A XRAY -d ${subnet} -j RETURN
     done
 
+    # bypass 53
     iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
@@ -54,36 +56,29 @@ create_mangle_iptables() {
 create_proxy_iptables() {
   echo "[Info]: creating proxy"
     iptables -t mangle -N XRAY_MASK
-    iptables -t nat -N FILTER_DNS
 
     for subnet in ${intranet[@]} ; do
         iptables -t mangle -A XRAY_MASK -d ${subnet} -j RETURN
     done
-
+    iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${net_raw_uid} -j RETURN
     iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${inet_uid} -j RETURN
-    iptables -t nat -A FILTER_DNS -m owner --gid-owner ${inet_uid} -j RETURN
 
     probe_proxy_mode
 
     if [ "${proxy_mode}" = "ALL" ] ; then
         iptables -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
-        iptables -t nat -A FILTER_DNS -j DNS
     elif [ "${proxy_mode}" = "skip" ] ; then
         for appid in ${appid_list[@]} ; do
             iptables -t mangle -I XRAY_MASK -m owner --uid-owner ${appid} -j RETURN
-            iptables -t nat -A FILTER_DNS -m owner --uid-owner ${appid} -j RETURN
         done
         iptables -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
-        iptables -t nat -A FILTER_DNS -j DNS
     elif [ "${proxy_mode}" = "pick" ] ; then
         for appid in ${appid_list[@]} ; do
             iptables -t mangle -A XRAY_MASK -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
-            iptables -t nat -A FILTER_DNS -m owner --uid-owner ${appid} -j DNS
         done
     fi
 
     iptables -t mangle -A OUTPUT -j XRAY_MASK
-    iptables -t nat -A OUTPUT -j FILTER_DNS
 }
 
 flush_iptables() {
@@ -94,12 +89,6 @@ flush_iptables() {
   iptables -t mangle -F XRAY
   iptables -t mangle -X XRAY_MASK
   iptables -t mangle -X XRAY
-  iptables -t nat -D OUTPUT -j FILTER_DNS
-  iptables -t nat -D PREROUTING -j DNS
-  iptables -t nat -F FILTER_DNS
-  iptables -t nat -F DNS
-  iptables -t nat -X FILTER_DNS
-  iptables -t nat -X DNS
 }
 
 probe_proxy_mode() {
@@ -130,9 +119,20 @@ probe_proxy_mode() {
 }
 
 create_dns_iptables() {
+    echo "[Info]: Create DNS proxy iptables rules."
     iptables -t nat -N DNS
-    iptables -t nat -A DNS -p tcp --dport 53 -j DNAT --to 127.0.0.1:${dns_port}
-    iptables -t nat -A DNS -p udp --dport 53 -j DNAT --to 127.0.0.1:${dns_port}
+    iptables -t nat -A DNS -p udp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
+    iptables -t nat -A DNS -p tcp -m owner --uid-owner 0 --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
+    iptables -t nat -A DNS -p udp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
+    iptables -t nat -A DNS -p tcp -m owner --uid-owner ${dnsmasq_uid} --dport 53 -j DNAT --to-destination 127.0.0.1:${dns_port}
+    iptables -t nat -A OUTPUT -j DNS
+}
+
+flush_dns_iptables() {
+    echo "[Info]: Clean DNS proxy iptables rules."
+    iptables -t nat -D OUTPUT -j DNS
+    iptables -t nat -F DNS
+    iptables -t nat -X DNS
 }
 
 disable_proxy() {

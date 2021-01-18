@@ -7,12 +7,7 @@
     "api": {},
     "dns": {},
     "stats": {},
-    "policy": {
-        "system": {
-            "statsOutboundUplink": true,
-            "statsOutboundDownlink": true
-        }
-    },
+    "policy": {},
     "transport": {},
     "routing": {},
     "inbounds": [
