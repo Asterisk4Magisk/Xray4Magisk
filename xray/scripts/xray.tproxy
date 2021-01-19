@@ -41,9 +41,15 @@ create_mangle_iptables() {
   echo "[Info]: creating mangle chain"
     ${iptables} -t mangle -N XRAY
 
-    for subnet in ${intranet[@]} ; do
-        ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
-    done
+    if [ "${iptables}" = "ip6tables" ] ; then
+        for subnet in ${intranet6[@]} ; do
+            ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
+        done
+    elif [ "${iptables}" = "iptables" ] ; then
+        for subnet in ${intranet[@]} ; do
+            ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
+        done
+    fi
 
     # bypass 53
     ${iptables} -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
