@@ -11,7 +11,9 @@ table_file="/data/misc/net/rt_tables"
 appid_file="/data/xray/appid.list"
 proxy_mode="none"
 appid_list=()
-intranet=(0.0.0.0/8 10.0.0.0/8 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.168.0.0/16 224.0.0.0/4 240.0.0.0/4)
+iptables="iptables"
+intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
+intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10::/28 2001:20::/28 2001:db8::/32 2002::/16 fc00::/7 fe80::/10 ff00::/8)
 
 find_ip_path() {
   [ -f /system/bin/ip ] && alias ip="/system/bin/ip" && return 0
@@ -37,21 +39,21 @@ del_route() {
 
 create_mangle_iptables() {
   echo "[Info]: creating mangle chain"
-    iptables -t mangle -N XRAY
+    ${iptables} -t mangle -N XRAY
 
     for subnet in ${intranet[@]} ; do
-        iptables -t mangle -A XRAY -d ${subnet} -j RETURN
+        ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
     done
 
     # bypass 53
-    iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    ${iptables} -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    ${iptables} -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
     # mark all traffic
-    # iptables -t mangle -A XRAY -p tcp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    # iptables -t mangle -A XRAY -p udp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    # ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    # ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
-    iptables -t mangle -A PREROUTING -j XRAY
+    ${iptables} -t mangle -A PREROUTING -j XRAY
 
     create_dns_iptables
     create_proxy_iptables
@@ -59,40 +61,40 @@ create_mangle_iptables() {
 
 create_proxy_iptables() {
   echo "[Info]: creating proxy"
-    iptables -t mangle -N XRAY_MASK
+    ${iptables} -t mangle -N PROXY
 
     for subnet in ${intranet[@]} ; do
-        iptables -t mangle -A XRAY_MASK -d ${subnet} -j RETURN
+        ${iptables} -t mangle -A PROXY -d ${subnet} -j RETURN
     done
-    # iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${net_raw_uid} -j RETURN
-    iptables -t mangle -A XRAY_MASK -m owner --gid-owner ${inet_uid} -j RETURN
+    # ${iptables} -t mangle -A PROXY -m owner --gid-owner ${net_raw_uid} -j RETURN
+    ${iptables} -t mangle -A PROXY -m owner --gid-owner ${inet_uid} -j RETURN
 
     probe_proxy_mode
 
     if [ "${proxy_mode}" = "ALL" ] ; then
-        iptables -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
+        ${iptables} -t mangle -A PROXY -j MARK --set-mark ${mark_id}
     elif [ "${proxy_mode}" = "skip" ] ; then
         for appid in ${appid_list[@]} ; do
-            iptables -t mangle -I XRAY_MASK -m owner --uid-owner ${appid} -j RETURN
+            ${iptables} -t mangle -I PROXY -m owner --uid-owner ${appid} -j RETURN
         done
-        iptables -t mangle -A XRAY_MASK -j MARK --set-mark ${mark_id}
+        ${iptables} -t mangle -A PROXY -j MARK --set-mark ${mark_id}
     elif [ "${proxy_mode}" = "pick" ] ; then
         for appid in ${appid_list[@]} ; do
-            iptables -t mangle -A XRAY_MASK -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
+            ${iptables} -t mangle -A PROXY -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
         done
     fi
 
-    iptables -t mangle -A OUTPUT -j XRAY_MASK
+    ${iptables} -t mangle -A OUTPUT -j PROXY
 }
 
 flush_iptables() {
   echo "[Info]: flush iptables"
-  iptables -t mangle -D OUTPUT -j XRAY_MASK
-  iptables -t mangle -D PREROUTING -j XRAY
-  iptables -t mangle -F XRAY_MASK
-  iptables -t mangle -F XRAY
-  iptables -t mangle -X XRAY_MASK
-  iptables -t mangle -X XRAY
+  ${iptables} -t mangle -D OUTPUT -j PROXY
+  ${iptables} -t mangle -D PREROUTING -j XRAY
+  ${iptables} -t mangle -F PROXY
+  ${iptables} -t mangle -F XRAY
+  ${iptables} -t mangle -X PROXY
+  ${iptables} -t mangle -X XRAY
   flush_dns_iptables
 }
 
@@ -125,27 +127,33 @@ probe_proxy_mode() {
 
 create_dns_iptables() {
     echo "[Info]: Create DNS proxy iptables rules."
-    iptables -t nat -N DNS
-    iptables -t nat -A DNS -p tcp --dport 53 -m owner ! --gid-owner ${inet_uid} -j REDIRECT --to-port ${dns_port}
-    iptables -t nat -A DNS -p udp --dport 53 -m owner ! --gid-owner ${inet_uid} -j REDIRECT --to-port ${dns_port}
-    iptables -t nat -A OUTPUT -j DNS
+    ${iptables} -t nat -N DNS
+    ${iptables} -t nat -A DNS -p tcp --dport 53 -m owner ! --gid-owner ${inet_uid} -j REDIRECT --to-port ${dns_port}
+    ${iptables} -t nat -A DNS -p udp --dport 53 -m owner ! --gid-owner ${inet_uid} -j REDIRECT --to-port ${dns_port}
+    ${iptables} -t nat -I PREROUTING -j DNS
 }
 
 flush_dns_iptables() {
     echo "[Info]: Clean DNS proxy iptables rules."
-    iptables -t nat -D OUTPUT -j DNS
-    iptables -t nat -F DNS
-    iptables -t nat -X DNS
+    ${iptables} -t nat -D PREROUTING -j DNS
+    ${iptables} -t nat -F DNS
+    ${iptables} -t nat -X DNS
 }
 
 disable_proxy() {
 	del_route
-	flush_iptables 2> /dev/null
+    iptables="iptables" && flush_iptables 2> /dev/null
+	if [ -f /data/xray/ipv6 ] ; then
+        iptables="ip6tables" && flush_iptables 2> /dev/null
+    fi
 }
 
 enable_proxy() {
 	add_route
-	create_mangle_iptables
+    iptables="iptables" && create_mangle_iptables
+	if [ -f /data/xray/ipv6 ] ; then
+        iptables="ip6tables" && create_mangle_iptables
+    fi
 }
 
 case "$1" in

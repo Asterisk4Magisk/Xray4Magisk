@@ -3,7 +3,8 @@
         "hosts": {
             "doh.opendns.com": "146.112.41.2",
             "doh.pub": "162.14.21.56",
-            "domain:googleapis.cn": "googleapis.com"
+            "domain:googleapis.cn": "googleapis.com",
+            "domain:xray": "127.0.0.1"
         },
         "servers": [
             {
