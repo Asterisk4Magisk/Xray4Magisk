@@ -3,9 +3,7 @@
         "hosts": {
             "doh.opendns.com": "146.112.41.2",
             "doh.pub": "162.14.21.56",
-            "domain:googleapis.cn": "googleapis.com",
-            "domain:github.io": "185.199.110.153",
-            "domain:githubusercontent.com": "151.101.0.13"
+            "domain:googleapis.cn": "googleapis.com"
         },
         "servers": [
             {
@@ -33,6 +31,18 @@
             "localhost"
         ]
     },
+    "inbounds": [
+        {
+            "tag": "dns-in",
+            "port": 65533,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "port": 53,
+                "address": "8.8.8.8",
+                "network": "udp,tcp"
+            }
+        }
+    ],
     "outbounds": [
         {
             "protocol": "dns",

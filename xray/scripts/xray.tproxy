@@ -4,7 +4,7 @@ dnsmasq_uid="1052"
 table_id="100"
 inet_uid="3003"
 net_raw_uid="3004"
-dns_port="65534"
+dns_port="65533"
 proxy_port="65535"
 mark_id="1"
 table_file="/data/misc/net/rt_tables"
@@ -44,15 +44,16 @@ create_mangle_iptables() {
     done
 
     # bypass 53
-    # iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    # iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    iptables -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    iptables -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
-    iptables -t mangle -A XRAY -p tcp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    iptables -t mangle -A XRAY -p udp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    # mark all traffic
+    # iptables -t mangle -A XRAY -p tcp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    # iptables -t mangle -A XRAY -p udp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
     iptables -t mangle -A PREROUTING -j XRAY
 
-    # create_dns_iptables
+    create_dns_iptables
     create_proxy_iptables
 }
 
@@ -92,7 +93,7 @@ flush_iptables() {
   iptables -t mangle -F XRAY
   iptables -t mangle -X XRAY_MASK
   iptables -t mangle -X XRAY
-  # flush_dns_iptables
+  flush_dns_iptables
 }
 
 probe_proxy_mode() {
@@ -125,9 +126,8 @@ probe_proxy_mode() {
 create_dns_iptables() {
     echo "[Info]: Create DNS proxy iptables rules."
     iptables -t nat -N DNS
-    iptables -t nat -A DNS -m owner --gid-owner ${inet_uid} -j RETURN
-    iptables -t nat -A DNS -p tcp --dport 53 -j REDIRECT --to-port ${dns_port}
-    iptables -t nat -A DNS -p udp --dport 53 -j REDIRECT --to-port ${dns_port}
+    iptables -t nat -A DNS -p tcp --dport 53 -m owner ! --gid-owner ${inet_uid} -j REDIRECT --to-port ${dns_port}
+    iptables -t nat -A DNS -p udp --dport 53 -m owner ! --gid-owner ${inet_uid} -j REDIRECT --to-port ${dns_port}
     iptables -t nat -A OUTPUT -j DNS
 }
 
