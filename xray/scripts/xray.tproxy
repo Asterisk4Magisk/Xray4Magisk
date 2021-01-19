@@ -30,11 +30,19 @@ find_netstat_path() {
 add_route() {
 	ip rule add fwmark ${mark_id} table ${table_id}
 	ip route add local 0.0.0.0/0 dev lo table ${table_id}
+    if [ -f /data/xray/ipv6 ] ; then
+        ip -6 rule add fwmark ${mark_id} table ${table_id}
+	    ip -6 route add local ::/0 dev lo table ${table_id}
+    fi
 }
 
 del_route() {
 	ip rule del fwmark ${mark_id} table ${table_id}
 	ip route flush table ${table_id}
+    if [ -f /data/xray/ipv6 ] ; then
+        ip -6 rule del fwmark ${mark_id} table ${table_id}
+	    ip -6 route flush table ${table_id}
+    fi
 }
 
 create_mangle_iptables() {
@@ -42,10 +50,11 @@ create_mangle_iptables() {
     ${iptables} -t mangle -N XRAY
 
     if [ "${iptables}" = "ip6tables" ] ; then
-        for subnet in ${intranet6[@]} ; do
-            ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
+        for subnet6 in ${intranet6[@]} ; do
+            ${iptables} -t mangle -A XRAY -d ${subnet6} -j RETURN
         done
-    elif [ "${iptables}" = "iptables" ] ; then
+    fi
+    if [ "${iptables}" = "iptables" ] ; then
         for subnet in ${intranet[@]} ; do
             ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
         done
@@ -148,17 +157,21 @@ flush_dns_iptables() {
 
 disable_proxy() {
 	del_route
-    iptables="iptables" && flush_iptables 2> /dev/null
+    iptables="iptables"
+    flush_iptables 2> /dev/null
 	if [ -f /data/xray/ipv6 ] ; then
-        iptables="ip6tables" && flush_iptables 2> /dev/null
+        iptables="ip6tables"
+        flush_iptables 2> /dev/null
     fi
 }
 
 enable_proxy() {
 	add_route
-    iptables="iptables" && create_mangle_iptables
+    iptables="iptables"
+    create_mangle_iptables
 	if [ -f /data/xray/ipv6 ] ; then
-        iptables="ip6tables" && create_mangle_iptables
+        iptables="ip6tables"
+        create_mangle_iptables
     fi
 }
 
