@@ -14,7 +14,6 @@
         {
             "tag": "proxy-in",
             "port": 65535,
-            "listen": "::1",
             "protocol": "dokodemo-door",
             "settings": {
                 "network": "udp,tcp",
