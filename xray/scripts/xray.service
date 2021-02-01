@@ -1,13 +1,14 @@
 #!/system/bin/sh
 
 bin_name="xray"
-bin_path="/system/bin/${bin_name}"
+bin_path="/data/xray/bin/${bin_name}"
 data_path="/data/${bin_name}"
 run_path="${data_path}/run"
 pid_file="${run_path}/${bin_name}.pid"
 error_log="${run_path}/error.log"
 conf_file="${data_path}/confs"
 bin_opts="run -confdir ${conf_file}"
+inet_uid="3003"
 
 probe_xray_alive() {
   [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
@@ -58,7 +59,7 @@ start_service() {
     chown root:inet ${bin_path}
     chmod 6755 ${bin_path}
     ulimit -SHn 1000000
-    nohup ${bin_path} ${bin_opts} &>${error_log} &
+    nohup ${magisk_busybox} setuidgid 0:${inet_uid} ${bin_path} ${bin_opts} &>${error_log} &
     echo -n $! > ${pid_file}
     if wait_xray_listen ; then
       echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
