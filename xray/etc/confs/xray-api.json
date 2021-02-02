@@ -27,16 +27,16 @@
                 "connIdle": 300,
                 "uplinkOnly": 2,
                 "downlinkOnly": 5,
-                "statsUserUplink": false,
-                "statsUserDownlink": false,
+                "statsUserUplink": true,
+                "statsUserDownlink": true,
                 "bufferSize": 10240
             }
         },
         "system": {
-            "statsInboundUplink": false,
-            "statsInboundDownlink": false,
-            "statsOutboundUplink": false,
-            "statsOutboundDownlink": false
+            "statsInboundUplink": true,
+            "statsInboundDownlink": true,
+            "statsOutboundUplink": true,
+            "statsOutboundDownlink": true
         }
     }
 }

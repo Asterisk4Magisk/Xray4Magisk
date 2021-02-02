@@ -32,18 +32,6 @@
             "localhost"
         ]
     },
-    "inbounds": [
-        {
-            "tag": "dns-in",
-            "port": 65533,
-            "protocol": "dokodemo-door",
-            "settings": {
-                "port": 53,
-                "address": "8.8.8.8",
-                "network": "udp,tcp"
-            }
-        }
-    ],
     "outbounds": [
         {
             "protocol": "dns",
