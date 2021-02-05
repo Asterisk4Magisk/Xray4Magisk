@@ -8,7 +8,7 @@
         },
         "servers": [
             {
-                "address": "https://doh.opendns.com/dns-query",
+                "address": "https://1.1.1.1/dns-query",
                 "domains": [
                     "geosite:geolocation-!cn"
                 ]
@@ -32,6 +32,18 @@
             "localhost"
         ]
     },
+    "inbounds": [
+        {
+            "tag": "dns-in",
+            "port": 53,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "port": 53,
+                "address": "8.8.8.8",
+                "network": "udp,tcp"
+            }
+        }
+    ],
     "outbounds": [
         {
             "protocol": "dns",
