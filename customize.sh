@@ -97,5 +97,4 @@ set_perm  $MODPATH/scripts/start.sh    0  0  0755
 set_perm  $MODPATH/scripts/xray.inotify    0  0  0755
 set_perm  $MODPATH/scripts/xray.service    0  0  0755
 set_perm  $MODPATH/scripts/xray.tproxy     0  0  0755
-set_perm  $MODPATH/system/bin/xray  0  0  0755
 set_perm  /data/xray                0  0  0755
