@@ -16,7 +16,14 @@
                 "inboundTag": [
                     "proxy-in"
                 ],
-                "outboundTag": "dns-out"
+                "outboundTag": "dns-in"
+            },
+            {
+                "type": "field",
+                "inboundTag": [
+                    "dns-out"
+                ],
+                "outboundTag": "direct"
             },
             {
                 "type": "field",

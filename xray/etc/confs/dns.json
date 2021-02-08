@@ -30,12 +30,13 @@
             },
             "223.5.5.5",
             "localhost"
-        ]
+        ],
+        "tag": "dns-out"
     },
     "outbounds": [
         {
             "protocol": "dns",
-            "tag": "dns-out"
+            "tag": "dns-in"
         }
     ]
 }
