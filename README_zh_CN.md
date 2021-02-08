@@ -1,46 +1,44 @@
-# Xray Magisk Module
-A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
-This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64.
+# Magisk Xray 模块
+[V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray) 的一个 fork。
+支持 arm、arm64、x86、x86_64
 
 
-
-## Included
+## 内含
 
 * [Xray-core](<https://github.com/XTLS/Xray-core>)
 * [magisk-module-installer](https://github.com/topjohnwu/magisk-module-installer)
 
-- XRay service script and Android transparent proxy iptables script
+- 以及 Xray 服务脚本和安卓透明代理脚本
 
 
 
-## Install
+## 安装
 
-You can download the release installer zip file and install it via the Magisk Manager App.
+从 Release 下载压缩包，然后通过 Magisk Manager 安装
+在这个过程中，安装器会从 [Xray-core](<https://github.com/XTLS/Xray-core>) 下载最新的 Release 文件。
 
-### Manual download Xray-core
-Download the correct CPU Architecture Xray-core zip file and put it in `/sdcard/Download`.
+### 手动下载 Xray-core
 
-such as "Xray-android-arm64-v8a.zip"
-
+下载符合你的设备的 Xray，并将其放在 `/sdcard/Download`
+当然你也可以自己编译一份
 
 ## Config
 
-- Xray config file is store in `/data/xray/confs/`.
-- proxy config is `/data/xray/confs/proxy.json`.
+- Xray 的配置文件存放于 `/data/xray/confs/`
+- 其中，代理服务期的配置在 `/data/xray/confs/proxy.json`.
 
-- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/xray/appid.list` to select which App to proxy.
+- Tips: 配置文件的 Inbound 和其他的 Outbound 已经写好，所以基本上不需要动。所以，建议修改 `/data/xray/appid.list` 来选择需要代理的应用。当然你也可以修改 `routing.json`、`dns.json` 来修改路由规则和 DNS 配置。
 
 
 
-## Usage
+## 使用方法
 
-### Normal usage ( Default and Recommended )
+### 一般方法
 
-#### Manage service start / stop
+#### 管理服务
 
-- xray service is auto-run after system boot up by default.
-- You can start or stop xray service by simply turn on or turn off the module via Magisk Manager App. Start service may wait about 10 second and stop service may take effect immediately.
-
+- 模块将开机自启动
+- 你可以在 Magisk Manager 中开启/关闭模块，只不过可能需要等待一段时间生效，在这个过程中，会自动切换到飞行模式再复原。
 
 
 #### Select which App to proxy
@@ -95,10 +93,10 @@ If you want to control xray by running command totally, just add a file `/data/x
     `/sbin/.magisk/img/xray/scripts/xray.tproxy disable`
 
 
-## Uninstall
+## 卸载
 
-1. Uninstall the module via Magisk Manager App.
-2. You can clean xray data dir by running command `rm -rf /data/xray` .
+1. 在 Magisk Manager 中卸载模块
+2. 你可以删除 `/data/xray` 文件夹.
 
 
 
