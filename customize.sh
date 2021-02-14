@@ -63,15 +63,25 @@ else
   fi
 fi
 
+# install scripts
+unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d $MODPATH/scripts >&2
+unzip -j -o "${ZIPFILE}" 'service.sh' -d $MODPATH >&2
+unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
+set_perm  $MODPATH/scripts/xray.service    0  0  0755
+
+# stop service
+$MODPATH/scripts/xray.service stop
+
 # install xray execute file
 ui_print "- Install xray core $ARCH execute files"
 unzip -j -o "${download_xray_zip}" "geoip.dat" -d /data/xray >&2
 unzip -j -o "${download_xray_zip}" "geosite.dat" -d /data/xray >&2
 unzip -j -o "${download_xray_zip}" "xray" -d /data/xray/bin >&2
-unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d $MODPATH/scripts >&2
-unzip -j -o "${ZIPFILE}" 'service.sh' -d $MODPATH >&2
-unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
 rm "${download_xray_zip}"
+
+# start service
+$MODPATH/scripts/xray.service start
+
 # copy xray data and config
 ui_print "- Copy xray config and data files"
 [ -f /data/xray/confs/proxy.json ] || \
@@ -84,9 +94,9 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.2.3, Core " >> $MODPATH/module.prop
+echo -n "version=Module v1.2.4, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210201" >> $MODPATH/module.prop
+echo "versionCode=20210214" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
@@ -95,6 +105,5 @@ set_perm  $MODPATH/service.sh    0  0  0755
 set_perm  $MODPATH/uninstall.sh    0  0  0755
 set_perm  $MODPATH/scripts/start.sh    0  0  0755
 set_perm  $MODPATH/scripts/xray.inotify    0  0  0755
-set_perm  $MODPATH/scripts/xray.service    0  0  0755
 set_perm  $MODPATH/scripts/xray.tproxy     0  0  0755
 set_perm  /data/xray                0  0  0755
