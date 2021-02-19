@@ -38,9 +38,6 @@
             "tag": "direct",
             "protocol": "freedom",
             "settings": {
-                "vnext": null,
-                "servers": null,
-                "response": null,
                 "domainStrategy": "UseIP"
             },
             "streamSettings": null,
@@ -50,8 +47,6 @@
             "tag": "block",
             "protocol": "blackhole",
             "settings": {
-                "vnext": null,
-                "servers": null,
                 "response": {
                     "type": "http"
                 }
