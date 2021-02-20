@@ -2,34 +2,49 @@
     "routing": {
         "domainStrategy": "IPIfNonMatch",
         "rules": [
-            {
+            { // API routing
                 "inboundTag": [
                     "api"
                 ],
                 "outboundTag": "api",
                 "type": "field"
             },
-            {
+            { // Catch DNS
                 "type": "field",
                 "network": "udp",
                 "port": 53,
                 "inboundTag": [
                     "proxy-in"
                 ],
-                "outboundTag": "dns-in"
+                "outboundTag": "dns-out"
             },
-            {
-                "type": "field",
-                "inboundTag": [
-                    "dns-out"
+            //{ // DNS Routing
+            //    "type": "field",
+            //    "inboundTag": [
+            //        "dns"
+            //    ],
+            //    "outboundTag": "direct"
+            //},
+            { // DNS
+                "ip": [
+                    "1.1.1.1",
+                    "8.8.8.8"
                 ],
-                "outboundTag": "direct"
+                "outboundTag": "proxy",
+                "port": "53",
+                "type": "field"
+            },
+            { // DNS
+                "ip": [
+                    "119.29.29.29",
+                    "223.5.5.5",
+                    "114.114.114.114"
+                ],
+                "outboundTag": "direct",
+                "port": "53",
+                "type": "field"
             },
             {
-                "type": "field",
-                "port": null,
-                "outboundTag": "proxy",
-                "ip": null,
                 "domain": [
                     "geosite:google",
                     "geosite:github",
@@ -44,12 +59,11 @@
                     "domain:twitch.tv",
                     "domain:wikileaks.org",
                     "domain:naver.com"
-                ]
+                ],
+                "outboundTag": "proxy",
+                "type": "field"
             },
             {
-                "type": "field",
-                "port": null,
-                "outboundTag": "proxy",
                 "ip": [
                     "91.108.4.0/22",
                     "91.108.8.0/22",
@@ -65,15 +79,17 @@
                     "173.194.0.0/16",
                     "172.217.0.0/16",
                     "216.58.200.0/24",
-                    "216.58.220.0/24"
+                    "216.58.220.0/24",
+                    "91.108.56.116",
+                    "91.108.56.0/24",
+                    "109.239.140.0/24",
+                    "149.154.167.0/24",
+                    "149.154.175.0/24"
                 ],
-                "domain": null
+                "outboundTag": "proxy",
+                "type": "field"
             },
             {
-                "type": "field",
-                "port": null,
-                "outboundTag": "direct",
-                "ip": null,
                 "domain": [
                     "domain:12306.com",
                     "domain:51ym.me",
@@ -206,47 +222,39 @@
                     "domain:zgslb.net",
                     "domain:zimuzu.tv",
                     "domain:zmz002.com",
-                    "domain:samsungdm.com",
-                    "geosite:cn"
-                ]
-            },
-            {
-                "type": "field",
-                "port": null,
-                "outboundTag": "block",
-                "ip": null,
-                "domain": [
-                    "geosite:category-ads"
-                ]
-            },
-            {
-                "type": "field",
-                "port": null,
+                    "domain:samsungdm.com"
+                ],
                 "outboundTag": "direct",
+                "type": "field"
+            },
+            {
+                "domain": [
+                    "geosite:category-ads-all"
+                ],
+                "outboundTag": "block",
+                "type": "field"
+            },
+            {
                 "ip": [
                     "geoip:private"
                 ],
-                "domain": null
+                "outboundTag": "direct",
+                "type": "field"
             },
             {
-                "type": "field",
-                "port": null,
-                "outboundTag": "direct",
                 "ip": [
                     "geoip:cn"
                 ],
-                "domain": null
+                "outboundTag": "direct",
+                "type": "field"
             },
             {
-                "type": "field",
-                "port": null,
-                "outboundTag": "direct",
-                "ip": null,
                 "domain": [
                     "geosite:cn"
-                ]
+                ],
+                "outboundTag": "direct",
+                "type": "field"
             }
-        ],
-        "strategy": "rules"
+        ]
     }
 }
