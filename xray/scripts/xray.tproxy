@@ -166,13 +166,29 @@ flush_dns_iptables() {
     fi
 }
 
+disable_ipv6() {
+    echo 0 > /proc/sys/net/ipv6/conf/all/accept_ra
+    echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+    echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+}
+
+enable_ipv6() {
+    echo 1 > /proc/sys/net/ipv6/conf/all/accept_ra
+    echo 1 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+    echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+    echo 0 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+}
+
 disable_proxy() {
     del_route
     iptables="iptables"
     flush_iptables 2> /dev/null
-	if [ -f /data/xray/ipv6 ] ; then
+    if [ -f /data/xray/ipv6 ] ; then
         iptables="ip6tables"
         flush_iptables 2> /dev/null
+    else
+        enable_ipv6
     fi
 }
 
@@ -180,9 +196,11 @@ enable_proxy() {
     add_route
     iptables="iptables"
     create_mangle_iptables
-	if [ -f /data/xray/ipv6 ] ; then
+    if [ -f /data/xray/ipv6 ] ; then
         iptables="ip6tables"
         create_mangle_iptables
+    else
+        disable_ipv6
     fi
 }
 
