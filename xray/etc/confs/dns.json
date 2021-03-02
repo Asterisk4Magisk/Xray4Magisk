@@ -6,22 +6,6 @@
         },
         "servers": [
             {
-                "address": "https://1.1.1.1/dns-query",
-                "domains": [
-                    "geosite:geolocation-!cn"
-                ]
-            },
-            {
-                "address": "https+local://223.5.5.5/dns-query",
-                "domains": [
-                    "geosite:cn"
-                ],
-                "expectIPs": [
-                    "geoip:cn"
-                ]
-            },
-            "8.8.8.8",
-            {
                 "address": "8.8.8.8",
                 "domains": [
                     "geosite:google",
@@ -41,7 +25,7 @@
                 "port": 53
             },
             {
-                "address": "119.29.29.29",
+                "address": "223.5.5.5",
                 "domains": [
                     "domain:12306.com",
                     "domain:51ym.me",
@@ -182,7 +166,7 @@
                 "port": 53
             },
             {
-                "address": "119.29.29.29",
+                "address": "223.5.5.5",
                 "domains": [
                     "geosite:cn"
                 ],

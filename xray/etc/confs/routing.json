@@ -18,13 +18,13 @@
                 ],
                 "outboundTag": "dns-out"
             },
-            //{ // DNS Routing
-            //    "type": "field",
-            //    "inboundTag": [
-            //        "dns"
-            //    ],
-            //    "outboundTag": "direct"
-            //},
+            { // DNS Routing
+                "type": "field",
+                "inboundTag": [
+                    "dns"
+                ],
+                "outboundTag": "direct"
+            },
             { // DNS
                 "ip": [
                     "1.1.1.1",
