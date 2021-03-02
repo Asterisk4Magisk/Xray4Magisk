@@ -10,9 +10,9 @@ monitor_dir=$2
 monitor_file=$3
 
 start_xray() {
-  ${service} start
+  ${service} start &>> /data/xray/run/service.log &
   if [ -f /data/xray/appid.list ] ; then
-    ${tproxy} enable
+    ${tproxy} enable &>> /data/xray/run/service.log &
     settings put global airplane_mode_on 1
     sleep 1
     am broadcast -a android.intent.action.AIRPLANE_MODE
