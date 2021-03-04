@@ -25,7 +25,7 @@
                 "port": 53
             },
             {
-                "address": "223.5.5.5",
+                "address": "119.29.29.29",
                 "domains": [
                     "domain:12306.com",
                     "domain:51ym.me",
@@ -166,7 +166,7 @@
                 "port": 53
             },
             {
-                "address": "223.5.5.5",
+                "address": "119.29.29.29",
                 "domains": [
                     "geosite:cn"
                 ],
@@ -174,14 +174,10 @@
                     "geoip:cn"
                 ],
                 "port": 53
-            }
+            },
+            "8.8.8.8",
+            "1.1.1.1"
         ],
         "tag": "dns"
-    },
-    "outbounds": [
-        {
-            "protocol": "dns",
-            "tag": "dns-out"
-        }
-    ]
+    }
 }

@@ -13,6 +13,7 @@
     "inbounds": [
         {
             "tag": "proxy-in",
+            "listen": "127.0.0.1",
             "port": 65535,
             "protocol": "dokodemo-door",
             "settings": {
@@ -31,6 +32,17 @@
                     "tls"
                 ]
             }
+        },
+        {
+            "listen": "127.0.0.1",
+            "port": 65533,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "8.8.8.8",
+                "network": "tcp,udp",
+                "port": 53
+            },
+            "tag": "dns-in"
         }
     ],
     "outbounds": [
@@ -38,7 +50,7 @@
             "tag": "direct",
             "protocol": "freedom",
             "settings": {
-                "domainStrategy": "UseIP"
+                "domainStrategy": "UseIPv4"
             },
             "streamSettings": null,
             "mux": null
@@ -53,6 +65,13 @@
             },
             "streamSettings": null,
             "mux": null
+        },
+        {
+            "tag": "dns-out",
+            "protocol": "dns",
+            "settings": {
+                "address": "8.8.8.8"
+            }
         }
     ]
 }

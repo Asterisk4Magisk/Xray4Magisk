@@ -14,24 +14,20 @@
                 "network": "udp",
                 "port": 53,
                 "inboundTag": [
+                //    "dns-in",
                     "proxy-in"
                 ],
                 "outboundTag": "dns-out"
-            },
-            { // DNS Routing
-                "type": "field",
-                "inboundTag": [
-                    "dns"
-                ],
-                "outboundTag": "direct"
             },
             { // DNS
                 "ip": [
                     "1.1.1.1",
                     "8.8.8.8"
                 ],
+                "inboundTag": [
+                    "dns"
+                ],
                 "outboundTag": "proxy",
-                "port": "53",
                 "type": "field"
             },
             { // DNS
@@ -40,8 +36,17 @@
                     "223.5.5.5",
                     "114.114.114.114"
                 ],
+                "inboundTag": [
+                    "dns"
+                ],
                 "outboundTag": "direct",
-                "port": "53",
+                "type": "field"
+            },
+            {
+                "domain": [
+                    "domain:googleapis.cn"
+                ],
+                "outboundTag": "proxy",
                 "type": "field"
             },
             {

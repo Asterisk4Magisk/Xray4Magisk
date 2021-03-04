@@ -42,6 +42,7 @@
                 "quicSettings": null
             },
             "mux": {
+                "concurrency": -1,
                 "enabled": false
             }
         }
