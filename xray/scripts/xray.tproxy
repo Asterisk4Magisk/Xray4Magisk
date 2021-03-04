@@ -4,7 +4,6 @@ dnsmasq_uid="1052"
 table_id="100"
 inet_uid="3003"
 net_raw_uid="3004"
-dns_port="65533"
 proxy_port="65535"
 mark_id="1"
 table_file="/data/misc/net/rt_tables"
@@ -14,18 +13,6 @@ appid_list=()
 iptables="iptables -w 100"
 intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
 intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10::/28 2001:20::/28 2001:db8::/32 2002::/16 fc00::/7 fe80::/10 ff00::/8)
-
-find_ip_path() {
-  [ -f /system/bin/ip ] && alias ip="/system/bin/ip" && return 0
-  [ -f /system/xbin/ip ] && alias ip="/system/xbin/ip" && return 0
-  return 1
-}
-
-find_netstat_path() {
-  [ -f /system/bin/netstat ] && alias netstat="/system/bin/netstat" && return 0
-  [ -f /system/xbin/netstat ] && alias netstat="/system/xbin/netstat" && return 0
-  return 1
-}
 
 add_route() {
 	ip rule add fwmark ${mark_id} table ${table_id}
@@ -59,17 +46,12 @@ create_mangle_iptables() {
         done
     fi
 
-    # bypass 53
-    # ${iptables} -t mangle -A XRAY -p tcp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    # ${iptables} -t mangle -A XRAY -p udp ! --dport 53 -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-
     # mark all traffic
     ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
-    # create_dns_iptables
     create_proxy_iptables
 }
 
@@ -87,7 +69,6 @@ create_proxy_iptables() {
         done
     fi
 
-    # ${iptables} -t mangle -A PROXY -m owner --gid-owner ${net_raw_uid} -j RETURN
     ${iptables} -t mangle -A PROXY -m owner --gid-owner ${inet_uid} -j RETURN
 
     probe_proxy_mode
@@ -116,7 +97,6 @@ flush_iptables() {
     ${iptables} -t mangle -F XRAY
     ${iptables} -t mangle -X PROXY
     ${iptables} -t mangle -X XRAY
-    # flush_dns_iptables
 }
 
 probe_proxy_mode() {
@@ -144,26 +124,6 @@ probe_proxy_mode() {
         done
     done < ${appid_file}
     # echo ${appid_list[*]}
-}
-
-create_dns_iptables() {
-    if [ "${iptables}" != "ip6tables -w 100" ] ; then
-        echo "[Info]: Create DNS proxy iptables rules."
-        ${iptables} -t nat -N DNS
-        ${iptables} -t nat -A DNS -m owner --gid-owner ${inet_uid} -j RETURN
-        ${iptables} -t nat -A DNS -p tcp --dport 53 -j REDIRECT --to-port ${dns_port}
-        ${iptables} -t nat -A DNS -p udp --dport 53 -j REDIRECT --to-port ${dns_port}
-        ${iptables} -t nat -A OUTPUT -j DNS
-    fi
-}
-
-flush_dns_iptables() {
-    if [ "${iptables}" != "ip6tables -w 100" ] ; then
-        echo "[Info]: Clean DNS proxy iptables rules."
-        ${iptables} -t nat -D OUTPUT -j DNS
-        ${iptables} -t nat -F DNS
-        ${iptables} -t nat -X DNS
-    fi
 }
 
 disable_ipv6() {

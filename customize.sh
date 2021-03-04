@@ -96,7 +96,7 @@ echo "id=xray" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
 echo -n "version=Module v1.2.6, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210303" >> $MODPATH/module.prop
+echo "versionCode=20210304" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
