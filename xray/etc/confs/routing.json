@@ -9,6 +9,13 @@
                 "outboundTag": "api",
                 "type": "field"
             },
+            { // web Routing
+                "type": "field",
+                "inboundTag": [
+                    "web"
+                ],
+                "outboundTag": "web"
+            },
             { // Catch DNS
                 "type": "field",
                 "port": 53,

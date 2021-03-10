@@ -1,0 +1,31 @@
+{
+    "web":{
+        "tag":"web",
+        "api": {
+            "address": "127.0.0.1",
+            "port": 65534
+        },
+        "pprof": true,
+        "static": [
+            {
+                "filePath": "/data/xray/app",
+                "uri": "/app"
+            },
+            {
+                "filePath": "/data/xray/doc",
+                "uri": "/"
+            }
+        ]
+    },
+    "inbounds": [
+        {
+            "tag": "web",
+            "port": 65533,
+            "listen": "127.0.0.1",
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1"
+            }
+        }
+    ]
+}

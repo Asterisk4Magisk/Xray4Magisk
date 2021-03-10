@@ -1,8 +1,7 @@
 {
     "dns": {
         "hosts": {
-            "domain:googleapis.cn": "googleapis.com",
-            "domain:xray.helper": "127.0.0.1"
+            "domain:googleapis.cn": "googleapis.com"
         },
         "servers": [
             {
