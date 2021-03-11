@@ -24,22 +24,23 @@
                 ],
                 "outboundTag": "dns-out"
             },
-            { // DNS
-                "ip": [
+            {
+		"type": "field",
+                "domain": [
+                    "domain:1.1.1.1",
+                    "domain:223.5.5.5"
+                ],
+		"ip": [
                     "1.1.1.1",
-                    "8.8.8.8"
+                    "8.8.8.8",
+		    "114.114.114.114",
+		    "223.5.5.5",
+		    "119.29.29.29"
                 ],
-                "outboundTag": "proxy",
-                "type": "field"
-            },
-            { // DNS
-                "ip": [
-                    "119.29.29.29",
-                    "223.5.5.5",
-                    "114.114.114.114"
-                ],
-                "outboundTag": "direct",
-                "type": "field"
+		"inboundTag": [
+		    "dns"
+		],
+		"outboundTag": "direct"
             },
             {
                 "domain": [

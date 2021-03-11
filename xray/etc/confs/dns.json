@@ -5,28 +5,16 @@
         },
         "servers": [
             {
-                "address": "119.29.29.29",
+                "address": "https://223.5.5.5/dns-query",
                 "domains": [
                     "geosite:cn"
                 ],
                 "expectIPs": [
                     "geoip:cn"
-                ],
-                "port": 53
+                ]
             },
-            {
-                "address": "223.5.5.5",
-                "domains": [
-                    "geosite:cn"
-                ],
-                "expectIPs": [
-                    "geoip:cn"
-                ],
-                "port": 53
-            },
-            "8.8.8.8",
-            "1.1.1.1",
-            "https+local://doh.dns.sb/dns-query"
+            "https+local://1.1.1.1/dns-query",
+            "8.8.8.8"
         ],
         "tag": "dns"
     }

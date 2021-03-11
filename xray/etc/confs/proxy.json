@@ -39,7 +39,10 @@
                     "headers": null
                 },
                 "httpSettings": null,
-                "quicSettings": null
+                "quicSettings": null,
+                "sockopt": {
+                    "domainStrategy": "UseIP"
+		}
             },
             "mux": {
                 "concurrency": -1,
