@@ -4,6 +4,7 @@
             "domain:googleapis.cn": "googleapis.com"
         },
         "servers": [
+            "fakedns",
             {
                 "address": "https://223.5.5.5/dns-query",
                 "domains": [
@@ -17,5 +18,9 @@
             "8.8.8.8"
         ],
         "tag": "dns"
+    },
+    "fakedns": {
+        "ipPool": "198.18.0.0/16",
+        "poolSize": 65535
     }
 }

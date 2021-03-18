@@ -31,15 +31,6 @@
                     "serverName": "one.one.one.one"
                 },
                 "tcpSettings": null,
-                "kcpSettings": null,
-                "wsSettings": {
-                    "connectionReuse": true,
-                    "path": "/xray",
-                    "host": null,
-                    "headers": null
-                },
-                "httpSettings": null,
-                "quicSettings": null,
                 "sockopt": {
                     "domainStrategy": "UseIP"
 		}
