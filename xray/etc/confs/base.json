@@ -1,60 +1,60 @@
 {
-    "log": {
-        "access": "/data/xray/run/access.log",
-        "error": "/data/xray/run/error.log",
-        "loglevel": "debug"
+  "log": {
+    "access": "/data/xray/run/access.log",
+    "error": "/data/xray/run/error.log",
+    "loglevel": "debug"
+  },
+  "inbounds": [
+    {
+      "tag": "proxy-in",
+      "listen": "127.0.0.1",
+      "port": 65535,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "network": "udp,tcp",
+        "followRedirect": true
+      },
+      "streamSettings": {
+        "sockopt": {
+          "tproxy": "tproxy"
+        }
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "direct",
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIPv4"
+      },
+      "streamSettings": null,
+      "mux": null
     },
-    "inbounds": [
-        {
-            "tag": "proxy-in",
-            "listen": "127.0.0.1",
-            "port": 65535,
-            "protocol": "dokodemo-door",
-            "settings": {
-                "network": "udp,tcp",
-                "followRedirect": true
-            },
-            "streamSettings": {
-                "sockopt": {
-                    "tproxy": "tproxy"
-                }
-            },
-            "sniffing": {
-                "enabled": true,
-                "destOverride": [
-                    "http",
-                    "tls"
-                ]
-            }
+    {
+      "tag": "block",
+      "protocol": "blackhole",
+      "settings": {
+        "response": {
+          "type": "http"
         }
-    ],
-    "outbounds": [
-        {
-            "tag": "direct",
-            "protocol": "freedom",
-            "settings": {
-                "domainStrategy": "UseIPv4"
-            },
-            "streamSettings": null,
-            "mux": null
-        },
-        {
-            "tag": "block",
-            "protocol": "blackhole",
-            "settings": {
-                "response": {
-                    "type": "http"
-                }
-            },
-            "streamSettings": null,
-            "mux": null
-        },
-        {
-            "tag": "dns-out",
-            "protocol": "dns",
-            "settings": {
-                "address": "8.8.8.8"
-            }
-        }
-    ]
+      },
+      "streamSettings": null,
+      "mux": null
+    },
+    {
+      "tag": "dns-out",
+      "protocol": "dns",
+      "settings": {
+        "address": "8.8.8.8"
+      }
+    }
+  ]
 }

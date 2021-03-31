@@ -20,7 +20,7 @@
     "inbounds": [
         {
             "tag": "web",
-            "port": 65533,
+            "port": 80,
             "listen": "127.0.0.1",
             "protocol": "dokodemo-door",
             "settings": {
