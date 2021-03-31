@@ -75,7 +75,7 @@ create_proxy_iptables() {
             ${iptables} -t mangle -A PROXY -d ${subnet} -j RETURN
         done
     fi
-    
+
     # Bypass Xray itself
     ${iptables} -t mangle -A PROXY -m owner --gid-owner ${inet_uid} -j RETURN
 
@@ -157,8 +157,8 @@ enable_ipv6() {
 
 disable_proxy() {
     del_route
-    iptables="iptables"
-    
+    iptables="iptables -w 100"
+
     echo "using ipv4"
     clean_mangle_iptables 2> /dev/null
 
@@ -173,11 +173,11 @@ disable_proxy() {
 
 enable_proxy() {
     add_route
-    iptables="iptables"
-    
+    iptables="iptables -w 100"
+
     echo "cleaning ipv4"
     create_mangle_iptables
-    
+
     if [ -f /data/xray/ipv6 ] ; then
         echo "cleaning ipv6"
         iptables="ip6tables -w 100"
