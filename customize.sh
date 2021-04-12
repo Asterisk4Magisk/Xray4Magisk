@@ -88,6 +88,9 @@ ui_print "- Copy xray config and data files"
 unzip -j -o "${ZIPFILE}" "xray/etc/confs/*" -d /data/xray/confs >&2
 [ -f /data/xray/appid.list] || \
 echo ALL > /data/xray/appid.list
+[ -f /data/xray/ignore_out.list] || \
+touch /data/xray/ignore_out.list
+
 # generate module.prop
 ui_print "- Generate module.prop"
 rm -rf $MODPATH/module.prop
