@@ -1,16 +1,14 @@
 #!/system/bin/sh
 
-dnsmasq_uid="1052"
 table_id="100"
 inet_uid="3003"
-net_raw_uid="3004"
 proxy_port="65535"
-dns_port="65533"
 mark_id="1"
-table_file="/data/misc/net/rt_tables"
 appid_file="/data/xray/appid.list"
 proxy_mode="none"
 appid_list=()
+ignore_out="/data/xray/ignore_out.list"
+ignore_out_list=()
 iptables="iptables -w 100"
 intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8  169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
 # intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
@@ -65,6 +63,21 @@ create_mangle_iptables() {
 create_proxy_iptables() {
     echo "[Info]: creating proxy"
     ${iptables} -t mangle -N PROXY
+    
+    # ignore output interface
+    if [ -f ${ignore_out} ] ; then
+        echo "" >> "${ignore_out}"
+        sed -i '/^$/d' "${ignore_out}"
+        while read ignore_out_line ; do
+            ignore_out_text=(`echo ${ignore_out_line}`)
+            for ignore_out_word in ${ignore_out_text[*]} ; do
+                ignore_out_list=(${ignore_out_list[*]} ${ignore_out_word})
+            done
+        done < ${ignore_out}    
+    fi
+    for ignore in ${ignore_out_list[@]} ; do
+        ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
+    done
 
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
@@ -98,13 +111,6 @@ create_proxy_iptables() {
     fi
 
     ${iptables} -t mangle -A OUTPUT -j PROXY
-}
-
-create_divert() {
-    ${iptables} -t mangle -N DIVERT
-    ${iptables} -t mangle -A DIVERT -j MARK --set-mark 1
-    ${iptables} -t mangle -A DIVERT -j ACCEPT
-    ${iptables} -t mangle -I PREROUTING -p tcp -m socket -j DIVERT
 }
 
 clean_mangle_iptables() {
