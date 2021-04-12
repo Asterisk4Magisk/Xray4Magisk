@@ -96,13 +96,6 @@ create_proxy_iptables() {
     ${iptables} -t mangle -A OUTPUT -j PROXY
 }
 
-create_divert() {
-    ${iptables} -t mangle -N DIVERT
-    ${iptables} -t mangle -A DIVERT -j MARK --set-mark 1
-    ${iptables} -t mangle -A DIVERT -j ACCEPT
-    ${iptables} -t mangle -I PREROUTING -p tcp -m socket -j DIVERT
-}
-
 clean_mangle_iptables() {
     echo "[Info]: cleaning mangle iptables"
     ${iptables} -t mangle -D OUTPUT -j PROXY
