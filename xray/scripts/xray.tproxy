@@ -1,13 +1,9 @@
 #!/system/bin/sh
 
-dnsmasq_uid="1052"
 table_id="100"
 inet_uid="3003"
-net_raw_uid="3004"
 proxy_port="65535"
-dns_port="65533"
 mark_id="1"
-table_file="/data/misc/net/rt_tables"
 appid_file="/data/xray/appid.list"
 proxy_mode="none"
 appid_list=()
