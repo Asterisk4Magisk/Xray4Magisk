@@ -3,7 +3,7 @@
 #####################
 SKIPUNZIP=1
 
-# migration of old configuration
+# migrate old configuration
 if [ -d "/data/xray" ]; then
   ui_print "- Old configuration detected, migrating."
   if [ -d "/data/adb/xray" ]; then
@@ -18,9 +18,9 @@ mkdir -p /data/adb/xray
 mkdir -p /data/adb/xray/run
 mkdir -p /data/adb/xray/bin
 mkdir -p /data/adb/xray/confs
-mkdir -p /data/adb/scripts
+mkdir -p /data/adb/xray/scripts
 
-download_xray_zip="/data/xray/run/xray-core.zip"
+download_xray_zip="/data/adb/xray/run/xray-core.zip"
 custom="/sdcard/Download/Xray-core.zip"
 
 if [ -f "${custom}" ]; then
@@ -72,13 +72,16 @@ else
 fi
 
 # install scripts
-unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d /data/adb/scripts >&2
-unzip -j -o "${ZIPFILE}" 'service.sh' -d $MODPATH >&2
+unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d /data/adb/xray/scripts >&2
+if [ ! -d /data/adb/service.d ] ; then
+  mkdir -p /data/adb/service.d
+fi
+unzip -j -o "${ZIPFILE}" 'xray4magisk_service.sh' -d /data/adb/service.d >&2
 unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
-set_perm  /data/adb/scripts/xray.service    0  0  0755
+set_perm  /data/adb/xray/scripts/xray.service    0  0  0755
 
 # stop service
-/data/adb/scripts/xray.service stop
+/data/adb/xray/scripts/xray.service stop
 
 # install xray execute file
 ui_print "- Install xray core $ARCH execute files"
@@ -88,7 +91,7 @@ unzip -j -o "${download_xray_zip}" "xray" -d /data/adb/xray/bin >&2
 rm "${download_xray_zip}"
 
 # start service
-/data/adb/scripts/xray.service start
+/data/adb/xray/scripts/xray.service start
 
 # copy xray data and config
 ui_print "- Copy xray config and data files"
@@ -112,12 +115,12 @@ echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
 set_perm_recursive $MODPATH 0 0 0755 0644
-set_perm  $MODPATH/service.sh    0  0  0755
-set_perm  $MODPATH/uninstall.sh    0  0  0755
-set_perm  /data/adb/scripts/start.sh    0  0  0755
-set_perm  /data/adb/scripts/xray.inotify    0  0  0755
-set_perm  /data/adb/scripts/xray.service    0  0  0755
-set_perm  /data/adb/scripts/xray.tproxy     0  0  0755
+set_perm  /data/adb/service.d/xray4magisk_service.sh    0  0  0755
+set_perm  $MODPATH/uninstall.sh         0  0  0755
+set_perm  /data/adb/xray/scripts/start.sh    0  0  0755
+set_perm  /data/adb/xray/scripts/xray.inotify    0  0  0755
+set_perm  /data/adb/xray/scripts/xray.service    0  0  0755
+set_perm  /data/adb/xray/scripts/xray.tproxy     0  0  0755
 set_perm  /data/adb/xray                       0  0  0755
 set_perm  /data/adb/xray/bin                   0  0  0755
 set_perm  /data/adb/xray/bin/xray              0  0  0755

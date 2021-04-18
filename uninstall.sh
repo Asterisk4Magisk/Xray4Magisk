@@ -9,3 +9,4 @@ remove_xray_data_dir() {
 }
 
 remove_xray_data_dir
+rm -rf /data/adb/service.d/xray4magisk_service.sh
