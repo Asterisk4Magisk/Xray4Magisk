@@ -27,8 +27,7 @@
 - Xray 的配置文件存放于 `/data/adb/xray/confs/`
 - 其中，代理服务期的配置在 `/data/adb/xray/confs/proxy.json`.
 
-- Tips: 配置文件的 Inbound 和其他的 Outbound 已经写好，所以基本上不需要动。所以，建议修改 `/data/adb/xray/appid.list` 来选择需要代理的应用。当然你也可以修改 `routing.json`、`dns.json` 来修改路由规则和 DNS 配置。
-
+- Tips: 配置文件的 Inbound 和其他的 Outbound 已经写好，所以基本上不需要动。所以，建议修改 `/data/adb/xray/appid.list` 来选择需要代理的应用。当然你也可以修改 `routing.json`、`dns.json` 来修改路由规则和 DNS 配置，编辑`ignore_out.list`文件可以忽略某些网络出口，例如可以实现连接WiFi时不走代理。
 
 
 ## 使用方法
@@ -96,7 +95,7 @@ If you want to control xray by running command totally, just add a file `/data/a
 ## 卸载
 
 1. 在 Magisk Manager 中卸载模块
-2. 你可以删除 `/data/adb/xray` 文件夹.
+2. 你可以删除 `/data/adb/xray` 文件夹和`/data/adb/service.d/xray4magisk_service.sh`启动脚本.
 
 
 

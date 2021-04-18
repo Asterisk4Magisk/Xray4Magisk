@@ -28,7 +28,7 @@ such as "Xray-android-arm64-v8a.zip"
 - Xray config file is store in `/data/adb/xray/confs/`.
 - proxy config is `/data/adb/xray/confs/proxy.json`.
 
-- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/adb/xray/appid.list` to select which App to proxy.
+- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/adb/xray/appid.list` to select which App to proxy, edit file `ignore_out.list` can help you to ignore some OUTPUT interfaces.
 
 
 
@@ -98,7 +98,7 @@ If you want to control xray by running command totally, just add a file `/data/a
 ## Uninstall
 
 1. Uninstall the module via Magisk Manager App.
-2. You can clean xray data dir by running command `rm -rf /data/adb/xray` .
+2. You can clean xray data dir by running command `rm -rf /data/adb/xray && rm -rf /data/adb/service.d/xray4magisk_service.sh` .
 
 
 
