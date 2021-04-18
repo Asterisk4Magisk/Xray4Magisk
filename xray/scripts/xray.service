@@ -2,8 +2,8 @@
 magisk_busybox="/data/adb/magisk/busybox"
 
 bin_name="xray"
-bin_path="/data/xray/bin/${bin_name}"
-data_path="/data/${bin_name}"
+bin_path="/data/adb/xray/bin/${bin_name}"
+data_path="/data/adb/${bin_name}"
 run_path="${data_path}/run"
 pid_file="${run_path}/${bin_name}.pid"
 error_log="${run_path}/error.log"
