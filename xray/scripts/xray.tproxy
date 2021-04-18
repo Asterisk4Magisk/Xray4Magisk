@@ -4,10 +4,10 @@ table_id="100"
 inet_uid="3003"
 proxy_port="65535"
 mark_id="1"
-appid_file="/data/xray/appid.list"
+appid_file="/data/adb/xray/appid.list"
 proxy_mode="none"
 appid_list=()
-ignore_out="/data/xray/ignore_out.list"
+ignore_out="/data/adb/xray/ignore_out.list"
 ignore_out_list=()
 iptables="iptables -w 100"
 intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8  169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
@@ -17,7 +17,7 @@ intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10:
 add_route() {
     ip rule add fwmark ${mark_id} table ${table_id}
     ip route add local 0.0.0.0/0 dev lo table ${table_id}
-    if [ -f /data/xray/ipv6 ] ; then
+    if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule add fwmark ${mark_id} table ${table_id}
         ip -6 route add local ::/0 dev lo table ${table_id}
     fi
@@ -26,7 +26,7 @@ add_route() {
 del_route() {
     ip rule del fwmark ${mark_id} table ${table_id}
     ip route flush table ${table_id}
-    if [ -f /data/xray/ipv6 ] ; then
+    if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule del fwmark ${mark_id} table ${table_id}
         ip -6 route flush table ${table_id}
     fi
@@ -172,7 +172,7 @@ disable_proxy() {
     clean_mangle_iptables 2> /dev/null
 
     enable_ipv6
-    if [ -f /data/xray/ipv6 ] ; then
+    if [ -f /data/adb/xray/ipv6 ] ; then
         echo "using ipv6"
         iptables="ip6tables -w 100"
         clean_mangle_iptables 2> /dev/null
@@ -187,7 +187,7 @@ enable_proxy() {
     echo "cleaning ipv4"
     create_mangle_iptables
 
-    if [ -f /data/xray/ipv6 ] ; then
+    if [ -f /data/adb/xray/ipv6 ] ; then
         echo "cleaning ipv6"
         iptables="ip6tables -w 100"
         create_mangle_iptables

@@ -5,7 +5,7 @@
 ##########################################################################################
 
 remove_xray_data_dir() {
-  rm -rf /data/xray
+  rm -rf /data/adb/xray
 }
 
 remove_xray_data_dir
