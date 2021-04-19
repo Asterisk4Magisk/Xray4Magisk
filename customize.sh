@@ -97,9 +97,9 @@ rm "${download_xray_zip}"
 ui_print "- Copy xray config and data files"
 [ -f /data/adb/xray/confs/proxy.json ] || \
 unzip -j -o "${ZIPFILE}" "xray/etc/confs/*" -d /data/adb/xray/confs >&2
-[ -f /data/adb/xray/appid.list] || \
+[ -f /data/adb/xray/appid.list ] || \
 echo ALL > /data/adb/xray/appid.list
-[ -f /data/adb/xray/ignore_out.list] || \
+[ -f /data/adb/xray/ignore_out.list ] || \
 touch /data/adb/xray/ignore_out.list
 
 # generate module.prop
