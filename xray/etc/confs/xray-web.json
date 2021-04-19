@@ -8,11 +8,11 @@
         "pprof": true,
         "static": [
             {
-                "filePath": "/data/xray/app",
+                "filePath": "/data/adb/xray/app",
                 "uri": "/app"
             },
             {
-                "filePath": "/data/xray/doc",
+                "filePath": "/data/adb/xray/doc",
                 "uri": "/"
             }
         ]

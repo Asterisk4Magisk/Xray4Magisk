@@ -1,7 +1,7 @@
 {
   "log": {
-    "access": "/data/xray/run/access.log",
-    "error": "/data/xray/run/error.log",
+    "access": "/data/adb/xray/run/access.log",
+    "error": "/data/adb/xray/run/error.log",
     "loglevel": "debug"
   },
   "inbounds": [
