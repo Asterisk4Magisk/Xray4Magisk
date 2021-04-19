@@ -10,9 +10,9 @@ monitor_dir=$2
 monitor_file=$3
 
 start_xray() {
-  ${service} start &>> /data/xray/run/service.log &
-  if [ -f /data/xray/appid.list ] ; then
-    ${tproxy} enable &>> /data/xray/run/service.log &
+  ${service} start &>> /data/adb/xray/run/service.log &
+  if [ -f /data/adb/xray/appid.list ] ; then
+    ${tproxy} enable &>> /data/adb/xray/run/service.log &
     settings put global airplane_mode_on 1
     sleep 1
     am broadcast -a android.intent.action.AIRPLANE_MODE
@@ -29,7 +29,7 @@ stop_xray() {
 }
 
 main() {
-if [ ! -f /data/xray/manual ] ; then
+if [ ! -f /data/adb/xray/manual ] ; then
   if [ "${monitor_file}" = "disable" ] ; then
     if [ "${events}" = "d" ] ; then
       start_xray
