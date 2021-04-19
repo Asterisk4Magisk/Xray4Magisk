@@ -25,10 +25,10 @@ such as "Xray-android-arm64-v8a.zip"
 
 ## Config
 
-- Xray config file is store in `/data/xray/confs/`.
-- proxy config is `/data/xray/confs/proxy.json`.
+- Xray config file is store in `/data/adb/xray/confs/`.
+- proxy config is `/data/adb/xray/confs/proxy.json`.
 
-- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/xray/appid.list` to select which App to proxy.
+- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/adb/xray/appid.list` to select which App to proxy, edit file `ignore_out.list` can help you to ignore some OUTPUT interfaces.
 
 
 
@@ -45,22 +45,22 @@ such as "Xray-android-arm64-v8a.zip"
 
 #### Select which App to proxy
 
-- If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/xray/appid.list` . 
+- If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/adb/xray/appid.list` . 
 
   Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
 
-- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/xray/appid.list` .
+- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/adb/xray/appid.list` .
 
-- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/xray/appid.list`. 
+- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/adb/xray/appid.list`. 
 
-- Transparent proxy won't take effect until the xray service start normally and file `/data/xray/appid.list` is not empty.
+- Transparent proxy won't take effect until the xray service start normally and file `/data/adb/xray/appid.list` is not empty.
 
 
 ### Advanced usage ( for Debug and Develop only )
 
 #### Enter manual mode
 
-If you want to control xray by running command totally, just add a file `/data/xray/manual`.  In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
+If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`.  In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
 
 
 
@@ -98,7 +98,7 @@ If you want to control xray by running command totally, just add a file `/data/x
 ## Uninstall
 
 1. Uninstall the module via Magisk Manager App.
-2. You can clean xray data dir by running command `rm -rf /data/xray` .
+2. You can clean xray data dir by running command `rm -rf /data/adb/xray && rm -rf /data/adb/service.d/xray4magisk_service.sh` .
 
 
 

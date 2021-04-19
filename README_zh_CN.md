@@ -24,11 +24,10 @@
 
 ## Config
 
-- Xray 的配置文件存放于 `/data/xray/confs/`
-- 其中，代理服务期的配置在 `/data/xray/confs/proxy.json`.
+- Xray 的配置文件存放于 `/data/adb/xray/confs/`
+- 其中，代理服务期的配置在 `/data/adb/xray/confs/proxy.json`.
 
-- Tips: 配置文件的 Inbound 和其他的 Outbound 已经写好，所以基本上不需要动。所以，建议修改 `/data/xray/appid.list` 来选择需要代理的应用。当然你也可以修改 `routing.json`、`dns.json` 来修改路由规则和 DNS 配置。
-
+- Tips: 配置文件的 Inbound 和其他的 Outbound 已经写好，所以基本上不需要动。所以，建议修改 `/data/adb/xray/appid.list` 来选择需要代理的应用。当然你也可以修改 `routing.json`、`dns.json` 来修改路由规则和 DNS 配置，编辑`ignore_out.list`文件可以忽略某些网络出口，例如可以实现连接WiFi时不走代理。
 
 
 ## 使用方法
@@ -43,22 +42,22 @@
 
 #### Select which App to proxy
 
-- If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/xray/appid.list` . 
+- If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/adb/xray/appid.list` . 
 
   Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
 
-- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/xray/appid.list` .
+- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/adb/xray/appid.list` .
 
-- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/xray/appid.list`. 
+- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/adb/xray/appid.list`. 
 
-- Transparent proxy won't take effect until the xray service start normally and file `/data/xray/appid.list` is not empty.
+- Transparent proxy won't take effect until the xray service start normally and file `/data/adb/xray/appid.list` is not empty.
 
 
 ### Advanced usage ( for Debug and Develop only )
 
 #### Enter manual mode
 
-If you want to control xray by running command totally, just add a file `/data/xray/manual`.  In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
+If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`.  In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
 
 
 
@@ -96,7 +95,7 @@ If you want to control xray by running command totally, just add a file `/data/x
 ## 卸载
 
 1. 在 Magisk Manager 中卸载模块
-2. 你可以删除 `/data/xray` 文件夹.
+2. 你可以删除 `/data/adb/xray` 文件夹和`/data/adb/service.d/xray4magisk_service.sh`启动脚本.
 
 
 
