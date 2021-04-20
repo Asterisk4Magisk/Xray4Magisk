@@ -72,27 +72,27 @@ If you want to control xray by running command totally, just add a file `/data/a
 
   - Start service : 
 
-    `/sbin/.magisk/img/xray/scripts/xray.service start`
+    `/data/adb/xray/scripts/xray.service start`
 
   - Stop service :
 
-    `/sbin/.magisk/img/xray/scripts/xray.service stop`
+    `/data/adb/img/xray/scripts/xray.service stop`
 
 
 
 #### Manage transparent proxy enable / disable
 
-- Transparent proxy script is `$MODDIR/scripts/xray.tproxy`.
+- Transparent proxy script is `/data/adb/xray/scripts/xray.tproxy`.
 
 - For example, in my environment ( Magisk version: 18100 ; Magisk Manager version v7.1.1 )
 
   - Enable Transparent proxy : 
 
-    `/sbin/.magisk/img/xray/scripts/xray.tproxy enable`
+    `/data/adb/xray/scripts/xray.tproxy enable`
 
   - Disable Transparent proxy :
 
-    `/sbin/.magisk/img/xray/scripts/xray.tproxy disable`
+    `/data/adb/xray/scripts/xray.tproxy disable`
 
 
 ## Uninstall

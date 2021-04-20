@@ -33,7 +33,7 @@
                 "tcpSettings": null,
                 "sockopt": {
                     "domainStrategy": "UseIP"
-		}
+                }
             },
             "mux": {
                 "concurrency": -1,
