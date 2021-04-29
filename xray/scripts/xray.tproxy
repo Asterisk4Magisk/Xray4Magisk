@@ -3,10 +3,14 @@
 table_id="100"
 inet_uid="3003"
 proxy_port="65535"
+proxy2_port="65534"
 mark_id="1"
+mark2_id="2"
 appid_file="/data/adb/xray/appid.list"
 proxy_mode="none"
 appid_list=()
+proxy2_enable=0
+proxy2_list=()
 ignore_out="/data/adb/xray/ignore_out.list"
 ignore_out_list=()
 iptables="iptables -w 100"
@@ -16,18 +20,22 @@ intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10:
 
 add_route() {
     ip rule add fwmark ${mark_id} table ${table_id}
+    ip rule add fwmark ${mark2_id} table ${table_id}
     ip route add local 0.0.0.0/0 dev lo table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule add fwmark ${mark_id} table ${table_id}
+        ip -6 rule add fwmark ${mark2_id} table ${table_id}
         ip -6 route add local ::/0 dev lo table ${table_id}
     fi
 }
 
 del_route() {
     ip rule del fwmark ${mark_id} table ${table_id}
+    ip rule del fwmark ${mark2_id} table ${table_id}
     ip route flush table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule del fwmark ${mark_id} table ${table_id}
+        ip -6 rule del fwmark ${mark2_id} table ${table_id}
         ip -6 route flush table ${table_id}
     fi
 }
@@ -41,6 +49,8 @@ create_mangle_iptables() {
             ${iptables} -t mangle -A XRAY -d ${subnet6} -j RETURN
         done
         # mark all traffic
+        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
+        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
         ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
         ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     else
@@ -48,6 +58,8 @@ create_mangle_iptables() {
             ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
         done
         # mark all traffic
+        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
+        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
         ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
         ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     fi
@@ -63,18 +75,7 @@ create_mangle_iptables() {
 create_proxy_iptables() {
     echo "[Info]: creating proxy"
     ${iptables} -t mangle -N PROXY
-    
-    # ignore output interface
-    if [ -f ${ignore_out} ] ; then
-        echo "" >> "${ignore_out}"
-        sed -i '/^$/d' "${ignore_out}"
-        while read ignore_out_line ; do
-            ignore_out_text=(`echo ${ignore_out_line}`)
-            for ignore_out_word in ${ignore_out_text[*]} ; do
-                ignore_out_list=(${ignore_out_list[*]} ${ignore_out_word})
-            done
-        done < ${ignore_out}    
-    fi
+
     for ignore in ${ignore_out_list[@]} ; do
         ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
     done
@@ -92,8 +93,6 @@ create_proxy_iptables() {
     # Bypass Xray itself
     ${iptables} -t mangle -A PROXY -m owner --gid-owner ${inet_uid} -j RETURN
 
-    probe_proxy_mode
-
     if [ "${proxy_mode}" = "ALL" ] ; then
         ${iptables} -t mangle -A PROXY -p tcp -j MARK --set-mark ${mark_id}
         ${iptables} -t mangle -A PROXY -p udp -j MARK --set-mark ${mark_id}
@@ -107,6 +106,14 @@ create_proxy_iptables() {
         for appid in ${appid_list[@]} ; do
             ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
             ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
+        done
+    fi
+    
+    # Bypass and transfer proxy2
+    if [ ! $proxy2_enable -eq 0 ] ; then
+	    for proxy2id in ${proxy2_list[@]} ; do
+	        ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner ${proxy2id} -j MARK --set-mark ${mark2_id}
+            ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner ${proxy2id} -j MARK --set-mark ${mark2_id}
         done
     fi
 
@@ -140,14 +147,30 @@ probe_proxy_mode() {
     while read appid_line ; do
         appid_text=(`echo ${appid_line}`)
         for appid_word in ${appid_text[*]} ; do
-            if [ "${appid_word}" = "bypass" ] ; then
+            if [ "${appid_word}" = "bypass" -o "${appid_word}" = "ALL" ] ; then
+                break
+            elif [ "${appid_word}" = "proxy2" ] ; then
+                proxy2_enable=1
                 break
             else
-                appid_list=(${appid_list[*]} ${appid_word})
+                [ $proxy2_enable -eq 0 ] && appid_list=(${appid_list[*]} ${appid_word})
+                [ ! $proxy2_enable -eq 0 ] && proxy2_list=(${proxy2_list[*]} ${appid_word})
             fi
         done
     done < ${appid_file}
     # echo ${appid_list[*]}
+
+    # ignore output interface
+    if [ -f ${ignore_out} ] ; then
+        echo "" >> "${ignore_out}"
+        sed -i '/^$/d' "${ignore_out}"
+        while read ignore_out_line ; do
+            ignore_out_text=(`echo ${ignore_out_line}`)
+            for ignore_out_word in ${ignore_out_text[*]} ; do
+                ignore_out_list=(${ignore_out_list[*]} ${ignore_out_word})
+            done
+        done < ${ignore_out}    
+    fi
 }
 
 disable_ipv6() {
@@ -183,6 +206,9 @@ disable_proxy() {
 enable_proxy() {
     add_route
     iptables="iptables -w 100"
+
+    echo "probing proxy mode"
+    probe_proxy_mode
 
     echo "cleaning ipv4"
     create_mangle_iptables
