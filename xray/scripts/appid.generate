@@ -1,0 +1,45 @@
+#!/system/bin/sh
+BASEDIR=/data/adb/xray
+APPFILE=$BASEDIR/app.list
+APPIDFILE=$BASEDIR/appid.list
+
+main() {
+if [ -f $APPFILE ] ; then
+    PACKAGES=`pm list packages -U`
+    
+    if [ ! -s $APPFILE ] ; then
+        echo "ALL" > ${APPIDFILE}
+        return 0
+    else
+        echo -n "" > ${APPIDFILE}
+    fi
+    
+    APPTEXT="$(cat ${APPFILE})\n"
+    APPTEXT=`sed '/^$/d' <<< $(echo -e "${APPTEXT}")`
+    
+    while read app_line ; do
+        app_text=(`echo ${app_line}`)
+        for app_word in ${app_text[*]} ; do
+            if [ "${app_word}" = "bypass" -o "${app_word}" = "ALL" -o "${app_word}" = "proxy2" ] ; then
+                echo "${app_word}" >> ${APPIDFILE}
+                break
+            else
+                LIST=()
+                while read line ; do
+                    LIST=(${LIST[*]} ${line})
+                done <<< $( echo "${PACKAGES}" | grep "${app_word}" | \
+                awk '{print $2}' | awk -F ':' '{print $2}' )
+                #echo "${LIST[*]}"
+                if [ ! ${#LIST[@]} -eq 0 ]; then
+                    echo "${LIST[*]}" >> ${APPIDFILE}
+                fi
+            fi
+        done
+    done <<< "${APPTEXT}"
+    echo "Success."
+else
+    echo "Fail: ${APPFILE} Not Found."
+fi
+}
+
+main

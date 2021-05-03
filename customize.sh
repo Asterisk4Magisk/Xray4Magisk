@@ -121,6 +121,7 @@ set_perm  /data/adb/xray/scripts/start.sh    0  0  0755
 set_perm  /data/adb/xray/scripts/xray.inotify    0  0  0755
 set_perm  /data/adb/xray/scripts/xray.service    0  0  0755
 set_perm  /data/adb/xray/scripts/xray.tproxy     0  0  0755
+set_perm  /data/adb/xray/scripts/appid.generate     0  0  0700
 set_perm  /data/adb/xray                       0  0  0755
 set_perm  /data/adb/xray/bin                   0  0  0755
 set_perm  /data/adb/xray/bin/xray              0  0  0755
