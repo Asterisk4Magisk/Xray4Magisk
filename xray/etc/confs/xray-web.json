@@ -3,7 +3,7 @@
         "tag":"web",
         "api": {
             "address": "127.0.0.1",
-            "port": 65534
+            "port": 8080
         },
         "pprof": true,
         "static": [
