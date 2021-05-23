@@ -1,8 +1,8 @@
 {
   "log": {
-    "access": "/data/adb/xray/run/access.log",
-    "error": "/data/adb/xray/run/error.log",
-    "loglevel": "debug"
+    "access": "none",
+    "loglevel": "warning",
+    "dnsLog": true
   },
   "inbounds": [
     {

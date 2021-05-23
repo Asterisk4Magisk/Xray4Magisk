@@ -20,22 +20,22 @@ intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10:
 
 add_route() {
     ip rule add fwmark ${mark_id} table ${table_id}
-    ip rule add fwmark ${mark2_id} table ${table_id}
+    [ $proxy2_enable -eq 1 ] && ip rule add fwmark ${mark2_id} table ${table_id}
     ip route add local 0.0.0.0/0 dev lo table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule add fwmark ${mark_id} table ${table_id}
-        ip -6 rule add fwmark ${mark2_id} table ${table_id}
+        [ $proxy2_enable -eq 1 ] && ip -6 rule add fwmark ${mark2_id} table ${table_id}
         ip -6 route add local ::/0 dev lo table ${table_id}
     fi
 }
 
 del_route() {
     ip rule del fwmark ${mark_id} table ${table_id}
-    ip rule del fwmark ${mark2_id} table ${table_id}
+    [ $proxy2_enable -eq 1 ] && ip rule del fwmark ${mark2_id} table ${table_id}
     ip route flush table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule del fwmark ${mark_id} table ${table_id}
-        ip -6 rule del fwmark ${mark2_id} table ${table_id}
+        [ $proxy2_enable -eq 1 ] && ip -6 rule del fwmark ${mark2_id} table ${table_id}
         ip -6 route flush table ${table_id}
     fi
 }
@@ -49,8 +49,8 @@ create_mangle_iptables() {
             ${iptables} -t mangle -A XRAY -d ${subnet6} -j RETURN
         done
         # mark all traffic
-        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
+        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
+        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
         ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
         ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     else
@@ -58,8 +58,8 @@ create_mangle_iptables() {
             ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
         done
         # mark all traffic
-        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
+        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
+        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
         ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
         ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     fi
@@ -188,15 +188,19 @@ enable_ipv6() {
 }
 
 disable_proxy() {
+    echo "probing proxy mode"
+    probe_proxy_mode
+
+    echo "rollback route settings"
     del_route
     iptables="iptables -w 100"
 
-    echo "using ipv4"
+    echo "disable ipv4 proxy"
     clean_mangle_iptables 2> /dev/null
 
     enable_ipv6
     if [ -f /data/adb/xray/ipv6 ] ; then
-        echo "using ipv6"
+        echo "disable ipv6 proxy"
         iptables="ip6tables -w 100"
         clean_mangle_iptables 2> /dev/null
         enable_ipv6
@@ -204,17 +208,18 @@ disable_proxy() {
 }
 
 enable_proxy() {
-    add_route
-    iptables="iptables -w 100"
-
     echo "probing proxy mode"
     probe_proxy_mode
 
-    echo "cleaning ipv4"
+    echo "apply route settings"
+    add_route
+    iptables="iptables -w 100"
+
+    echo "enable ipv4 proxy"
     create_mangle_iptables
 
     if [ -f /data/adb/xray/ipv6 ] ; then
-        echo "cleaning ipv6"
+        echo "enable ipv6 proxy"
         iptables="ip6tables -w 100"
         create_mangle_iptables
     else
