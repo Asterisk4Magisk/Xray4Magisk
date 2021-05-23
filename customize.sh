@@ -106,11 +106,11 @@ touch /data/adb/xray/ignore_out.list
 ui_print "- Generate module.prop"
 rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
-echo "id=xray" > $MODPATH/module.prop
+echo "id=xray4magisk" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.4.0, Core " >> $MODPATH/module.prop
+echo -n "version=Module v1.4.2, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210419" >> $MODPATH/module.prop
+echo "versionCode=20210523" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
