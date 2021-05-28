@@ -32,7 +32,7 @@
                 },
                 "tcpSettings": null,
                 "sockopt": {
-                    "domainStrategy": "UseIP"
+                    "domainStrategy": "UseIPv4"
                 }
             },
             "mux": {

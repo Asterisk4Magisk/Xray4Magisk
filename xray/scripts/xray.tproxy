@@ -173,20 +173,6 @@ probe_proxy_mode() {
     fi
 }
 
-disable_ipv6() {
-    echo 0 > /proc/sys/net/ipv6/conf/all/accept_ra
-    echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
-    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-    echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
-}
-
-enable_ipv6() {
-    echo 1 > /proc/sys/net/ipv6/conf/all/accept_ra
-    echo 1 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
-    echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-    echo 0 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
-}
-
 disable_proxy() {
     echo "probing proxy mode"
     probe_proxy_mode
@@ -198,12 +184,10 @@ disable_proxy() {
     echo "disable ipv4 proxy"
     clean_mangle_iptables 2> /dev/null
 
-    enable_ipv6
     if [ -f /data/adb/xray/ipv6 ] ; then
         echo "disable ipv6 proxy"
         iptables="ip6tables -w 100"
         clean_mangle_iptables 2> /dev/null
-        enable_ipv6
     fi
 }
 
@@ -222,8 +206,6 @@ enable_proxy() {
         echo "enable ipv6 proxy"
         iptables="ip6tables -w 100"
         create_mangle_iptables
-    else
-        disable_ipv6
     fi
 }
 

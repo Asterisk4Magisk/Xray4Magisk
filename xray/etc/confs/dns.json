@@ -1,10 +1,21 @@
 {
   "dns": {
     "hosts": {
-      "domain:googleapis.cn": "googleapis.com"
+      "domain:googleapis.cn": "googleapis.com",
+      "domain:google.cn": "google.com"
     },
     "servers": [
-      "https+local://223.5.5.5/dns-query"
+      "https://8.8.8.8/dns-query",
+      "https://1.1.1.1/dns-query",
+      {
+        "address": "https+local://223.5.5.5/dns-query",
+        "domains": [
+          "geosite:cn"
+        ],
+        "expectIPs": [
+          "geoip:cn"
+        ]
+      }
     ],
     "tag": "dns",
     "queryStrategy": "UseIPv4"

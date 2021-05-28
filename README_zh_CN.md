@@ -3,13 +3,6 @@
 支持 arm、arm64、x86、x86_64
 
 
-## 内含
-
-* [Xray-core](<https://github.com/XTLS/Xray-core>)
-* [magisk-module-installer](https://github.com/topjohnwu/magisk-module-installer)
-
-- 以及 Xray 服务脚本和安卓透明代理脚本
-
 ## 安装
 
 从 Release 下载压缩包，然后通过 Magisk Manager 安装
@@ -52,4 +45,4 @@ Project X is a set of network tools that help you to build your own computer net
 
 ## License
 
-[The MIT License (MIT)](https://raw.githubusercontent.com/XTLS/xray-core/master/LICENSE)
+[Mozilla Public License Version 2.0 (MPL)](https://raw.githubusercontent.com/XTLS/xray-core/master/LICENSE)
