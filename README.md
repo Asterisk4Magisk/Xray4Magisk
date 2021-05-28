@@ -1,15 +1,7 @@
-# Xray Magisk Module
+# Xray4Magisk
 A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
+
 This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64.
-
-
-
-## Included
-
-* [Xray-core](<https://github.com/XTLS/Xray-core>)
-* [magisk-module-installer](https://github.com/topjohnwu/magisk-module-installer)
-
-- XRay service script and Android transparent proxy iptables script
 
 
 
@@ -17,18 +9,23 @@ This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64
 
 You can download the release installer zip file and install it via the Magisk Manager App.
 
-### Manual download Xray-core
-Download the correct CPU Architecture Xray-core zip file and put it in `/sdcard/Download`.
+### Download Xray binary: Auto
+NOTE: This module doesn't contain Xray-core binary. Instead, the installation process download the latest binary file from Xray's github releases.
 
-such as "Xray-android-arm64-v8a.zip"
+### Download Xray binary: Manual
+Download the Xray-core zip file and put it in `/sdcard/Download`.
+
+NOTICE: It is important to check your device's CPU Architecture, and select the correct .zip file.  
+For example, for sdm855, we choose "Xray-android-arm64-v8a.zip".
+
 
 
 ## Config
 
-- Xray config file is store in `/data/adb/xray/confs/`.
+- Xray config files are store in `/data/adb/xray/confs/*.json`.
 - proxy config is `/data/adb/xray/confs/proxy.json`.
 
-- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the first element of outbounds section to your proxy server and edit file `/data/adb/xray/appid.list` to select which App to proxy, edit file `ignore_out.list` can help you to ignore some OUTPUT interfaces.
+- Tips: Please notice that the default configuration has already set inbounds section to cooperate work with transparent proxy script. It is recommended that you only edit the `proxy.json` to your proxy server and edit file `/data/adb/xray/appid.list` to select which App to proxy. Edit file `ignore_out.list` can help you to ignore some OUTPUT interfaces.
 
 
 
@@ -68,7 +65,7 @@ If you want to control xray by running command totally, just add a file `/data/a
 
 - xray service script is `$MODDIR/scripts/xray.service`.
 
-- For example, in my environment ( Magisk version: 18100 ; Magisk Manager version v7.1.1 )
+- For example, in my environment ( Magisk-alpha version: 23001 )
 
   - Start service : 
 
@@ -84,7 +81,7 @@ If you want to control xray by running command totally, just add a file `/data/a
 
 - Transparent proxy script is `/data/adb/xray/scripts/xray.tproxy`.
 
-- For example, in my environment ( Magisk version: 18100 ; Magisk Manager version v7.1.1 )
+- For example, in my environment ( Magisk-alpha version: 23001 )
 
   - Enable Transparent proxy : 
 
@@ -95,11 +92,53 @@ If you want to control xray by running command totally, just add a file `/data/a
     `/data/adb/xray/scripts/xray.tproxy disable`
 
 
+#### Bypass Transparent proxy when connecting to WLAN
+TODO
+
+#### Select which App to proxy, and which App to second proxy
+TODO
+
+#### Enable IPv6
+For best compatibility, this module disable IPv6 by default.
+
+To enable IPv6 proxy, execute `touch /data/adb/xray/ipv6`
+
+To enable DNS AAAA record querying, edit `dns.json`, change `"queryStrategy"` from "UseIPv4" to "UseIP".
+
+To enable local IPv6 out, edit `base.json`, find the first inbound with "freedom" tag, change its `"domainStrategy"` from "UseIPv4" to "UseIP".
+
+To enable proxy IPv6 out, edit `proxy.json`, change its `"domainStrategy"` as what you do in `base.json`.
+
+
+
 ## Uninstall
 
 1. Uninstall the module via Magisk Manager App.
 2. You can clean xray data dir by running command `rm -rf /data/adb/xray && rm -rf /data/adb/service.d/xray4magisk_service.sh` .
 
+
+
+## FAQ
+No such file or directory?
+> You might need Busybox for Android NDK
+
+Error calling service activity?
+> This module is designed to automatically turn on and off Flight mode, in order to clear DNS cache. However, this only work when SELinux is premissive. So just ignore this error message in `service.log`, and if you like, do turn on and off Flight mode manually.
+
+Why I need turn on WIFI hotspot otherwise I cannot connect to Internet?
+Why I cannot connect to proxy server while using **domain name**?
+> It is a DNS issue. You need add `"sockopt": { "domainStrategy": "UseIP" }` to your proxy's `"streamSettings"`. By the way, this fix needs correct dns and routing configuration. If you don't know how to do, I suggest use IP address instead of domain name. Or use a Xray binary compiled with CGO enabled. Reference: [#12](https://github.com/CerteKim/Xray4Magisk/issues/12)
+
+This module cause battery drain really quick.
+> It might be a DNS issue, check `/data/adb/xray/run/error.log`.
+
+GUI support?
+> Not done yet.
+
+
+
+## Contact
+- [Telegram](https://t.me/AsteriskFactory)
 
 
 ## Project X
@@ -110,4 +149,4 @@ Project X is a set of network tools that help you to build your own computer net
 
 ## License
 
-[The MIT License (MIT)](https://raw.githubusercontent.com/XTLS/xray-core/master/LICENSE)
+[Mozilla Public License Version 2.0 (MPL)](https://raw.githubusercontent.com/XTLS/xray-core/master/LICENSE)
