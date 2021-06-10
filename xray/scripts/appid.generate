@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 BASEDIR=/data/adb/xray
 APPFILE=$BASEDIR/app.list
 APPIDFILE=$BASEDIR/appid.list

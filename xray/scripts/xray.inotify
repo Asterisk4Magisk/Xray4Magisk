@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 
 inotify=`realpath $0`
 scripts_dir=`dirname ${inotify}`
