@@ -13,17 +13,17 @@ lastIP6="2001:da8::666"
 
 bypass() {
     if [ "$isChanged" = true ]; then
-        echo "iptables -w 100 -t mangle -D XRAY -d $lastIP/32 -j RETURN"
-        echo "iptables -w 100 -t mangle -I XRAY -d $IP/32 -j RETURN"
+        iptables -w 100 -t mangle -D XRAY -d $lastIP/32 -j RETURN
+        iptables -w 100 -t mangle -I XRAY -d $IP/32 -j RETURN
         lastIP=$IP
     fi
 }
 
 bypass6() {
     if [ "$isChanged6" = true ]; then
-        echo "ip6tables -w 100 -t mangle -D XRAY -d $lastIP6/128 -j RETURN"
-        echo "ip6tables -w 100 -t mangle -I XRAY -d $IP6/128 -j RETURN"
-        lastIP=$IP
+        ip6tables -w 100 -t mangle -D XRAY -d $lastIP6/128 -j RETURN
+        ip6tables -w 100 -t mangle -I XRAY -d $IP6/128 -j RETURN
+        lastIP6=$IP6
     fi
 }
 
