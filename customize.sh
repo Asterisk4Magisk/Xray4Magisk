@@ -118,12 +118,14 @@ echo "description=xray core with service scripts for Android" >> $MODPATH/module
 
 set_perm_recursive $MODPATH 0 0 0755 0644
 set_perm  /data/adb/service.d/xray4magisk_service.sh    0  0  0755
-set_perm  $MODPATH/uninstall.sh         0  0  0755
-set_perm  /data/adb/xray/scripts/start.sh    0  0  0755
-set_perm  /data/adb/xray/scripts/xray.inotify    0  0  0755
-set_perm  /data/adb/xray/scripts/xray.service    0  0  0755
-set_perm  /data/adb/xray/scripts/xray.tproxy     0  0  0755
-set_perm  /data/adb/xray/scripts/appid.generate     0  0  0700
-set_perm  /data/adb/xray                       0  0  0755
-set_perm  /data/adb/xray/bin                   0  0  0755
-set_perm  /data/adb/xray/bin/xray              0  0  0755
+set_perm  $MODPATH/uninstall.sh                         0  0  0755
+set_perm  /data/adb/xray/scripts/start.sh               0  0  0755
+set_perm  /data/adb/xray/scripts/xray.inotify           0  0  0755
+set_perm  /data/adb/xray/scripts/xray.service           0  0  0755
+set_perm  /data/adb/xray/scripts/xray.tproxy            0  0  0755
+set_perm  /data/adb/xray/scripts/appid.generate         0  0  0700
+set_perm  /data/adb/xray/scripts/watch.sh               0  0  0755
+set_perm  /data/adb/xray/scripts/watch.service          0  0  0755
+set_perm  /data/adb/xray                                0  0  0755
+set_perm  /data/adb/xray/bin                            0  0  0755
+set_perm  /data/adb/xray/bin/xray                       0  0  0755

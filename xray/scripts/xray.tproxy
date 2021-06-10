@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 
 table_id="100"
 inet_uid="3003"
@@ -66,6 +66,10 @@ create_mangle_iptables() {
         ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     fi
 
+    for ignore_ap in ${ignore_ap_list[@]} ; do
+        ${iptables} -t mangle -A XRAY -i ${ignore_ap} -j RETURN
+    done
+
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
     create_proxy_iptables
@@ -77,10 +81,6 @@ create_proxy_iptables() {
 
     for ignore in ${ignore_out_list[@]} ; do
         ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
-    done
-
-    for ignore_ap in ${ignore_ap_list[@]} ; do
-        ${iptables} -t mangle -A XRAY -i ${ignore_ap} -j RETURN
     done
 
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
