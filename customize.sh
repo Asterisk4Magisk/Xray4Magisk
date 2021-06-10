@@ -101,6 +101,8 @@ unzip -j -o "${ZIPFILE}" "xray/etc/confs/*" -d /data/adb/xray/confs >&2
 echo ALL > /data/adb/xray/appid.list
 [ -f /data/adb/xray/ignore_out.list ] || \
 touch /data/adb/xray/ignore_out.list
+[ -f /data/adb/xray/ignore_ap.list ] || \
+touch /data/adb/xray/ignore_ap.list
 
 # generate module.prop
 ui_print "- Generate module.prop"
