@@ -13,6 +13,8 @@ proxy2_enable=0
 proxy2_list=()
 ignore_out="/data/adb/xray/ignore_out.list"
 ignore_out_list=()
+ignore_ap_file="/data/v2ray/ignore_ap.list"
+ignore_ap_list=()
 iptables="iptables -w 100"
 intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8  169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
 # intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
@@ -51,8 +53,8 @@ create_mangle_iptables() {
         # mark all traffic
         [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
         [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip ::1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
-        ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
+        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark_id} -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
+        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-ip ::1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     else
         for subnet in ${intranet[@]} ; do
             ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
@@ -60,12 +62,9 @@ create_mangle_iptables() {
         # mark all traffic
         [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
         [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        ${iptables} -t mangle -A XRAY -p tcp -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
-        ${iptables} -t mangle -A XRAY -p udp -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
+        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
+        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-ip 127.0.0.1 --on-port ${proxy_port} --tproxy-mark ${mark_id}
     fi
-
-    # Bypass Xray itself
-    # ${iptables} -t mangle -A XRAY -m owner --gid-owner ${inet_uid} -j RETURN
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
@@ -78,6 +77,10 @@ create_proxy_iptables() {
 
     for ignore in ${ignore_out_list[@]} ; do
         ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
+    done
+
+    for ignore_ap in ${ignore_ap_list[@]} ; do
+        ${iptables} -t mangle -A XRAY -i ${ignore_ap} -j RETURN
     done
 
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
@@ -169,8 +172,34 @@ probe_proxy_mode() {
             for ignore_out_word in ${ignore_out_text[*]} ; do
                 ignore_out_list=(${ignore_out_list[*]} ${ignore_out_word})
             done
-        done < ${ignore_out}    
+        done < ${ignore_out}
     fi
+
+    # bypass ap interface
+    if [ -f ${ignore_ap_file} ] ; then
+        echo "" >> "${ignore_ap_file}"
+        sed -i '/^$/d' "${ignore_ap_file}"
+        while read ignore_ap_line ; do
+            ignore_ap_text=(`echo ${ignore_ap_line}`)
+            for ignore_ap_word in ${ignore_ap_text[*]} ; do
+                ignore_ap_list=(${ignore_ap_list[*]} ${ignore_ap_word})
+            done
+        done < ${ignore_ap_file}
+    fi
+}
+
+disable_ipv6() {
+    echo 0 > /proc/sys/net/ipv6/conf/all/accept_ra
+    echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+    echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+}
+
+enable_ipv6() {
+    echo 1 > /proc/sys/net/ipv6/conf/all/accept_ra
+    echo 1 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
+    echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+    echo 0 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
 }
 
 disable_proxy() {
@@ -183,6 +212,8 @@ disable_proxy() {
 
     echo "disable ipv4 proxy"
     clean_mangle_iptables 2> /dev/null
+
+    enable_ipv6
 
     if [ -f /data/adb/xray/ipv6 ] ; then
         echo "disable ipv6 proxy"
@@ -206,6 +237,8 @@ enable_proxy() {
         echo "enable ipv6 proxy"
         iptables="ip6tables -w 100"
         create_mangle_iptables
+    else
+        disable_ipv6
     fi
 }
 
