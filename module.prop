@@ -1,6 +1,6 @@
-id=xray4magisk
+id=xray
 name=Xray4Magisk
-version=v1.4.3
-versionCode=20210604
+version=v1.4.4
+versionCode=20210610
 author=CerteKim
 description=Xray core with service scripts for Android
