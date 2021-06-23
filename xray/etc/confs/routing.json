@@ -3,20 +3,6 @@
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
-        "inboundTag": [
-          "api"
-        ],
-        "outboundTag": "api",
-        "type": "field"
-      },
-      {
-        "type": "field",
-        "inboundTag": [
-          "web"
-        ],
-        "outboundTag": "web"
-      },
-      {
         "type": "field",
         "port": 53,
         "inboundTag": [
