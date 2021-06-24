@@ -4,6 +4,9 @@ A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
 This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64.
 
 
+# Manager APP
+[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
+
 
 ## Install
 
