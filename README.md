@@ -9,6 +9,11 @@ I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
 
 Make sure you are not going to loopback traffic again and again. It might cause your phone reset, then bootloop.
 
+
+# Manager APP
+[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
+
+
 ## Install
 
 You can download the release installer zip file and install it via the Magisk Manager App.
