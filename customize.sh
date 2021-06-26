@@ -1,7 +1,9 @@
 #####################
 # xray Customization
 #####################
+
 SKIPUNZIP=1
+ASH_STANDALONE=1
 
 # migrate old configuration
 if [ -d "/data/xray" ]; then
@@ -42,6 +44,7 @@ else
       version="Xray-linux-64.zip"
       ;;
   esac
+  ui_print "Using version: ${version}"
   if [ -f /sdcard/Download/"${version}" ]; then
     cp /sdcard/Download/"${version}" "${download_xray_zip}"
     ui_print "Info: Xray-core already downloaded, starting installer"
@@ -53,7 +56,15 @@ else
       abort "Error: Please install in Magisk Manager"
     fi
     official_xray_link="https://github.com/XTLS/Xray-core/releases"
-    latest_xray_version=`curl -k -s https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
+
+    if [ -x "$(which wget)" ] ; then
+      latest_xray_version=`wget -qO- https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
+    elif [ -x "$(which curl)" ]; then
+      latest_xray_version=`curl -k -s https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
+    else
+      ui_print "Error: Could not find curl or wget, please install one."
+    fi
+
     if [ "${latest_xray_version}" = "" ] ; then
       ui_print "Error: Connect official xray download link failed." 
       ui_print "Tips: You can download xray core manually,"
@@ -61,7 +72,15 @@ else
       abort
     fi
     ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
-    curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
+
+    if [ -x "$(which wget)" ] ; then
+      curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
+    elif [ -x "$(which curl)" ]; then
+      wget "${official_xray_link}/download/${latest_xray_version}/${version}" -O "${download_xray_zip}" >&2
+    else
+      ui_print "Error: Could not find curl or wget, please install one."
+    fi
+
     if [ "$?" != "0" ] ; then
       ui_print "Error: Download xray core failed."
       ui_print "Tips: You can download xray core manually,"
@@ -110,9 +129,9 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray4magisk" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.4.4, Core " >> $MODPATH/module.prop
+echo -n "version=Module v1.4.5, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210610" >> $MODPATH/module.prop
+echo "versionCode=20210626" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
