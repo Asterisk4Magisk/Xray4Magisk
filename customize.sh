@@ -63,6 +63,7 @@ else
       latest_xray_version=`curl -k -s https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
     else
       ui_print "Error: Could not find curl or wget, please install one."
+      abort
     fi
 
     if [ "${latest_xray_version}" = "" ] ; then
@@ -74,11 +75,12 @@ else
     ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
 
     if [ -x "$(which wget)" ] ; then
-      curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
-    elif [ -x "$(which curl)" ]; then
       wget "${official_xray_link}/download/${latest_xray_version}/${version}" -O "${download_xray_zip}" >&2
+    elif [ -x "$(which curl)" ]; then
+      curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
     else
       ui_print "Error: Could not find curl or wget, please install one."
+      abort
     fi
 
     if [ "$?" != "0" ] ; then
