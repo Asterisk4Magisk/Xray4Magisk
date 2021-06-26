@@ -1,3 +1,5 @@
+English [简体中文](README_zh_CN.md)
+
 # Xray4Magisk
 A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
 
