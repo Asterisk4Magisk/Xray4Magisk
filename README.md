@@ -4,6 +4,10 @@ A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
 This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64.
 
 
+## Disclaimer
+I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
+
+Make sure you are not going to loopback traffic again and again. It might cause your phone reset, then bootloop.
 
 ## Install
 
