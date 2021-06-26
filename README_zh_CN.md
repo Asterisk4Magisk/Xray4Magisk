@@ -1,3 +1,4 @@
+
 # Xray4Magisk
 该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。
 
@@ -14,12 +15,13 @@
 [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
 
 
+
 ## 安装
 
-下载“Releases”中的压缩文件，并通过 Magisk 管理器应用进行安装。
+从 [Release](<https://github.com/Asterisk4Magisk/Xray4Magisk/releases>) 下载压缩包，然后通过 Magisk Manager 安装。
 
 ### 下载 Xray 核心二进制文件：自动
-注意：这个模块不包含 Xray-core 的二进制文件。相反，安装过程中，程序会从 Xray 的 GitHub 仓库中下载最新的二进制文件。
+注意：这个模块不包含 Xray-core 的二进制文件。相反，安装过程中，程序会从 [Xray-core](<https://github.com/XTLS/Xray-core>) 下载最新的 [Release](<https://github.com/XTLS/Xray-core/releases>) 文件。
 
 ### 下载 Xray 核心二进制文件：手动
 在 Xray-core 的 GitHub 仓库下载对应架构的 zip 文件，并将其放置于 `/sdcard/Download` 目录下。
@@ -29,12 +31,14 @@
 
 
 
+
 ## 配置文件
 
 - Xray 的配置文件保存在 `/data/adb/xray/confs/*.json` 目录内。
 - 代理配置文件保存在 `/data/adb/xray/confs/proxy.json` 目录内。
 
 - 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本的工作。建议你只编辑 `proxy.json` 来添加你的代理服务器，并编辑文件 `/data/adb/xray/appid.list` 来选择要代理的应用程序。当然你也可以修改 `routing.json`、`dns.json` 来修改路由规则和 DNS 配置，编辑 `ignore_out.list` 文件可以忽略某些网络出口，例如可以实现连接WiFi时不走代理。
+
 
 
 
@@ -146,6 +150,7 @@ GUI 支持?
 
 
 
+
 ## 联系方式
 - [Telegram](https://t.me/AsteriskFactory)
 
@@ -156,6 +161,7 @@ Project X 是一套网络工具，帮助你建立你自己的计算机网络。�
 
 
 
-## License
 
-[Mozilla Public License Version 2.0 (MPL)](https://raw.githubusercontent.com/XTLS/xray-core/master/LICENSE)
+## 许可
+
+[Mozilla Public License Version 2.0 (MPL)](https://github.com/XTLS/Xray-core/blob/main/LICENSE)
