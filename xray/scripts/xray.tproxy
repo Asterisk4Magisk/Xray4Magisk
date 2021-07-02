@@ -33,11 +33,11 @@ add_route() {
 
 del_route() {
     ip rule del fwmark ${mark_id} table ${table_id}
-    [ $proxy2_enable -eq 1 ] && ip rule del fwmark ${mark2_id} table ${table_id}
+    ip rule del fwmark ${mark2_id} table ${table_id}
     ip route flush table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
         ip -6 rule del fwmark ${mark_id} table ${table_id}
-        [ $proxy2_enable -eq 1 ] && ip -6 rule del fwmark ${mark2_id} table ${table_id}
+        ip -6 rule del fwmark ${mark2_id} table ${table_id}
         ip -6 route flush table ${table_id}
     fi
 }
