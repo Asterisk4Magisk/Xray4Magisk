@@ -9,6 +9,7 @@ if [ -f $APPFILE ] ; then
     
     if [ ! -s $APPFILE ] ; then
         echo "ALL" > ${APPIDFILE}
+        echo "${APPFILE} is empty."
         return 0
     else
         echo -n "" > ${APPIDFILE}
@@ -18,10 +19,18 @@ if [ -f $APPFILE ] ; then
     APPTEXT=`sed '/^$/d' <<< $(echo -e "${APPTEXT}")`
     
     while read app_line ; do
+        if [ "${app_line}" = "ALL" ] ; then
+            echo "ALL" > ${APPIDFILE}
+            break
+        fi
         app_text=(`echo ${app_line}`)
         for app_word in ${app_text[*]} ; do
-            if [ "${app_word}" = "bypass" -o "${app_word}" = "ALL" -o "${app_word}" = "proxy2" ] ; then
+            if [ "${app_word}" = "bypass" -o "${app_word}" = "proxy2" ] ; then
                 echo "${app_word}" >> ${APPIDFILE}
+                break
+            elif [ "${app_word}" = "uid" ] ; then
+                unset app_text[0]
+                [ ! ${#app_text[@]} -eq 0 ] && echo "${app_text[*]}" >> ${APPIDFILE}
                 break
             else
                 LIST=()
@@ -30,13 +39,11 @@ if [ -f $APPFILE ] ; then
                 done <<< $( echo "${PACKAGES}" | grep "${app_word}" | \
                 awk '{print $2}' | awk -F ':' '{print $2}' )
                 #echo "${LIST[*]}"
-                if [ ! ${#LIST[@]} -eq 0 ]; then
-                    echo "${LIST[*]}" >> ${APPIDFILE}
-                fi
+                [ ! ${#LIST[@]} -eq 0 ] && echo "${LIST[*]}" >> ${APPIDFILE}
             fi
         done
     done <<< "${APPTEXT}"
-    echo "Success."
+    echo "Done."
 else
     echo "Fail: ${APPFILE} Not Found."
 fi
