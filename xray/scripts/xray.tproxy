@@ -25,9 +25,13 @@ add_route() {
     [ $proxy2_enable -eq 1 ] && ip rule add fwmark ${mark2_id} table ${table_id}
     ip route add local 0.0.0.0/0 dev lo table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
-        ip -6 rule add fwmark ${mark_id} table ${table_id}
-        [ $proxy2_enable -eq 1 ] && ip -6 rule add fwmark ${mark2_id} table ${table_id}
-        ip -6 route add local ::/0 dev lo table ${table_id}
+        if [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] ; then
+            /data/adb/xray/scripts/dummy.service start
+        else
+            ip -6 rule add fwmark ${mark_id} table ${table_id}
+            [ $proxy2_enable -eq 1 ] && ip -6 rule add fwmark ${mark2_id} table ${table_id}
+            ip -6 route add local ::/0 dev lo table ${table_id}
+        fi
     fi
 }
 
@@ -36,9 +40,13 @@ del_route() {
     ip rule del fwmark ${mark2_id} table ${table_id}
     ip route flush table ${table_id}
     if [ -f /data/adb/xray/ipv6 ] ; then
-        ip -6 rule del fwmark ${mark_id} table ${table_id}
-        ip -6 rule del fwmark ${mark2_id} table ${table_id}
-        ip -6 route flush table ${table_id}
+        if [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] ; then
+            /data/adb/xray/scripts/dummy.service stop
+        else
+            ip -6 rule del fwmark ${mark_id} table ${table_id}
+            ip -6 rule del fwmark ${mark2_id} table ${table_id}
+            ip -6 route flush table ${table_id}
+        fi
     fi
 }
 
@@ -93,6 +101,9 @@ create_proxy_iptables() {
         done
     fi
 
+    # Bypass dummy
+    ${iptables} -t mangle -A PROXY -o xdummy -j RETURN
+
     # Bypass Xray itself
     ${iptables} -t mangle -A PROXY -m owner --gid-owner ${inet_uid} -j RETURN
 
@@ -111,7 +122,7 @@ create_proxy_iptables() {
             ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
         done
     fi
-    
+
     # Bypass and transfer proxy2
     if [ ! $proxy2_enable -eq 0 ] ; then
 	    for proxy2id in ${proxy2_list[@]} ; do
