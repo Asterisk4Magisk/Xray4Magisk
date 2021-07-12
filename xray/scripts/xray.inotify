@@ -13,13 +13,6 @@ start_xray() {
   ${service} start &>> /data/adb/xray/run/service.log &
   if [ -f /data/adb/xray/appid.list ] ; then
     ${tproxy} enable &>> /data/adb/xray/run/service.log &
-    settings put global airplane_mode_on 1
-    sleep 1
-    am broadcast -a android.intent.action.AIRPLANE_MODE
-    sleep 1
-    settings put global airplane_mode_on 0
-    sleep 1
-    am broadcast -a android.intent.action.AIRPLANE_MODE
   fi
 }
 
