@@ -1,0 +1,82 @@
+#!/bin/sh
+
+dummy_device="xdummy"
+dummy_ip="fd01:5ca1:ab1e:8d97:497f:8b48:b9aa:85cd/128"
+
+mark3_id="164"
+table3_id="164"
+
+create_dummy() {
+	echo "[Info]: Creating dummy dev"
+	ip -6 link add ${dummy_device} type dummy>/dev/null 2>&1
+	ip -6 addr add ${dummy_ip} dev ${dummy_device} >/dev/null 2>&1
+	ip -6 link set ${dummy_device} up >/dev/null 2>&1
+}
+
+remove_dummy() {
+	echo "[Info]: Removing dummy dev"
+	ip -6 link set ${dummy_device} down >/dev/null 2>&1
+	ip -6 link del ${dummy_device} type dummy >/dev/null 2>&1
+}
+
+add_route() {
+	echo add route
+	ip -6 rule add not from all fwmark ${mark3_id} table ${table3_id}
+	ip -6 route add default dev ${dummy_device} table ${table3_id}
+}
+
+del_route() {
+	echo del route
+	ip -6 rule del not from all fwmark ${mark3_id} table ${table3_id}
+	ip -6 route del default dev ${dummy_device} table ${table3_id}
+}
+
+create_output() {
+	echo output
+	ip6tables -w 100 -t mangle -N DUMMY
+	ip6tables -w 100 -t mangle -A DUMMY -p tcp -j MARK --set-mark ${mark3_id}
+	ip6tables -w 100 -t mangle -A DUMMY -p udp -j MARK --set-mark ${mark3_id}
+	ip6tables -w 100 -t mangle -A OUTPUT -j DUMMY
+}
+
+create_prerouting() {
+	echo preroute
+	ip6tables -w 100 -t mangle -N XD
+	ip6tables -w 100 -t mangle -A XD -i xdummy -p tcp -j TPROXY --on-ip ::1 --on-port 65535 --tproxy-mark ${mark3_id}
+	ip6tables -w 100 -t mangle -A XD -i xdummy -p udp -j TPROXY --on-ip ::1 --on-port 65535 --tproxy-mark ${mark3_id}
+	ip6tables -w 100 -t mangle -A PREROUTING -j XD
+}
+
+flush_iptables() {
+	ip6tables -w 100 -t mangle -D OUTPUT -j DUMMY
+	ip6tables -w 100 -t mangle -D PREROUTING -j XD
+	ip6tables -w 100 -t mangle -F DUMMY
+	ip6tables -w 100 -t mangle -F XD
+	ip6tables -w 100 -t mangle -X DUMMY
+	ip6tables -w 100 -t mangle -X XD
+}
+
+dummy_start() {
+	create_dummy
+	add_route
+	create_prerouting
+	create_output
+}
+
+dummy_stop() {
+	flush_iptables
+	del_route
+	remove_dummy
+}
+
+case $1 in
+	start)
+		dummy_start
+		;;
+	stop)
+		dummy_stop
+		;;
+	*)
+		echo "{start|stop}"
+		;;
+esac
