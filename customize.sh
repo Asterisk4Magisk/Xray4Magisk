@@ -122,8 +122,8 @@ unzip -j -o "${ZIPFILE}" "xray/etc/confs/*" -d /data/adb/xray/confs >&2
 echo ALL > /data/adb/xray/appid.list
 [ -f /data/adb/xray/ignore_out.list ] || \
 touch /data/adb/xray/ignore_out.list
-[ -f /data/adb/xray/ignore_ap.list ] || \
-touch /data/adb/xray/ignore_ap.list
+[ -f /data/adb/xray/ap.list ] || \
+touch /data/adb/xray/ap.list
 
 # generate module.prop
 ui_print "- Generate module.prop"
@@ -131,9 +131,9 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray4magisk" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.4.5, Core " >> $MODPATH/module.prop
+echo -n "version=Module v1.5.0, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210626" >> $MODPATH/module.prop
+echo "versionCode=20210710" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
@@ -147,6 +147,7 @@ set_perm  /data/adb/xray/scripts/xray.tproxy            0  0  0755
 set_perm  /data/adb/xray/scripts/appid.generate         0  0  0700
 set_perm  /data/adb/xray/scripts/watch.sh               0  0  0755
 set_perm  /data/adb/xray/scripts/watch.service          0  0  0755
+set_perm  /data/adb/xray/scripts/dummy.service          0  0  0755
 set_perm  /data/adb/xray                                0  0  0755
 set_perm  /data/adb/xray/bin                            0  0  0755
 set_perm  /data/adb/xray/bin/xray                       0  0  0755
