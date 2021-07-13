@@ -123,7 +123,7 @@ echo ALL > /data/adb/xray/appid.list
 [ -f /data/adb/xray/ignore_out.list ] || \
 touch /data/adb/xray/ignore_out.list
 [ -f /data/adb/xray/ap.list ] || \
-touch /data/adb/xray/ap.list
+echo wlan+ > /data/adb/xray/ap.list
 
 # generate module.prop
 ui_print "- Generate module.prop"
@@ -133,7 +133,7 @@ echo "id=xray4magisk" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
 echo -n "version=Module v1.5.0, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210710" >> $MODPATH/module.prop
+echo "versionCode=20210713" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
