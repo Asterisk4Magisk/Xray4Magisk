@@ -5,6 +5,10 @@
 SKIPUNZIP=1
 ASH_STANDALONE=1
 
+if [ $BOOTMODE ! = true ] ; then
+  abort "Error: Please install in Magisk Manager"
+fi
+
 # migrate old configuration
 if [ -d "/data/xray" ]; then
   ui_print "- Old configuration detected, migrating."
@@ -52,9 +56,7 @@ else
   else
     # download latest xray core from official link
     ui_print "- Connect official xray download link."
-    if [ $BOOTMODE ! = true ] ; then
-      abort "Error: Please install in Magisk Manager"
-    fi
+
     official_xray_link="https://github.com/XTLS/Xray-core/releases"
 
     if [ -x "$(which wget)" ] ; then
@@ -140,14 +142,6 @@ echo "description=xray core with service scripts for Android" >> $MODPATH/module
 set_perm_recursive $MODPATH 0 0 0755 0644
 set_perm  /data/adb/service.d/xray4magisk_service.sh    0  0  0755
 set_perm  $MODPATH/uninstall.sh                         0  0  0755
-set_perm  /data/adb/xray/scripts/start.sh               0  0  0755
-set_perm  /data/adb/xray/scripts/xray.inotify           0  0  0755
-set_perm  /data/adb/xray/scripts/xray.service           0  0  0755
-set_perm  /data/adb/xray/scripts/xray.tproxy            0  0  0755
-set_perm  /data/adb/xray/scripts/appid.generate         0  0  0700
-set_perm  /data/adb/xray/scripts/watch.sh               0  0  0755
-set_perm  /data/adb/xray/scripts/watch.service          0  0  0755
-set_perm  /data/adb/xray/scripts/dummy.service          0  0  0755
+set_perm_recursive  /data/adb/xray/scripts              0  0  0755
 set_perm  /data/adb/xray                                0  0  0755
-set_perm  /data/adb/xray/bin                            0  0  0755
-set_perm  /data/adb/xray/bin/xray                       0  0  0755
+set_perm_recursive  /data/adb/xray/bin                  0  0  0755
