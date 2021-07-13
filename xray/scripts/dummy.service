@@ -3,8 +3,8 @@
 dummy_device="xdummy"
 dummy_ip="fd01:5ca1:ab1e:8d97:497f:8b48:b9aa:85cd/128"
 
-mark3_id="0x64"
-table3_id="0x64"
+mark3_id="164"
+table3_id="164"
 
 create_dummy() {
 	echo "[Info]: Creating dummy dev"
@@ -28,7 +28,7 @@ add_route() {
 del_route() {
 	echo del route
 	ip -6 rule del not from all fwmark ${mark3_id} table ${table3_id}
-	ip -6 route flush ${table3_id}
+	ip -6 route del default dev ${dummy_device} table ${table3_id}
 }
 
 create_output() {
