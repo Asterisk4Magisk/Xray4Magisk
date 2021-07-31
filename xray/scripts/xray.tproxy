@@ -129,8 +129,6 @@ create_proxy_iptables() {
         ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner 0 -j MARK --set-mark ${mark_id}
         # Route dnsmasq to Xray
         ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner 1052 -j MARK --set-mark ${mark_id}
-        # Route netd to Xray
-        ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner 1051 -j MARK --set-mark ${mark_id}
     fi
 
     # Bypass and transfer proxy2
