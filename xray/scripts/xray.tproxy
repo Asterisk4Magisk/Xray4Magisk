@@ -1,7 +1,7 @@
 #!/bin/sh
 
 table_id="233"
-xray_gid="1111"
+xray_gid="3003"
 proxy_port="65535"
 proxy2_port="65534"
 mark_id="1111"
