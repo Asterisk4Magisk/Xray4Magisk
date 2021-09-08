@@ -62,7 +62,7 @@ else
     if [ -x "$(which wget)" ] ; then
       latest_xray_version=`wget -qO- https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
     elif [ -x "$(which curl)" ]; then
-      latest_xray_version=`curl -k -s https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
+      latest_xray_version=`curl -ks https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
     elif [ -x "/data/adb/magisk/busybox" ] ; then
       latest_xray_version=`/data/adb/magisk/busybox wget -qO- https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
     else
@@ -81,7 +81,7 @@ else
     if [ -x "$(which wget)" ] ; then
       wget "${official_xray_link}/download/${latest_xray_version}/${version}" -O "${download_xray_zip}" >&2
     elif [ -x "$(which curl)" ]; then
-      curl "${official_xray_link}/download/${latest_xray_version}/${version}" -k -L -o "${download_xray_zip}" >&2
+      curl "${official_xray_link}/download/${latest_xray_version}/${version}" -kLo "${download_xray_zip}" >&2
     elif [ -x "/data/adb/magisk/busybox" ] ; then
       /data/adb/magisk/busybox wget "${official_xray_link}/download/${latest_xray_version}/${version}" -O "${download_xray_zip}" >&2
     else
