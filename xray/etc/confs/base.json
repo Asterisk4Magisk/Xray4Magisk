@@ -7,11 +7,10 @@
   "inbounds": [
     {
       "tag": "proxy-in",
-      "listen": "127.0.0.1",
       "port": 65535,
       "protocol": "dokodemo-door",
       "settings": {
-        "network": "udp,tcp",
+        "network": "tcp,udp",
         "followRedirect": true
       },
       "streamSettings": {
@@ -34,9 +33,7 @@
       "protocol": "freedom",
       "settings": {
         "domainStrategy": "UseIPv4"
-      },
-      "streamSettings": null,
-      "mux": null
+      }
     },
     {
       "tag": "block",

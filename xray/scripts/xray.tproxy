@@ -16,8 +16,15 @@ ignore_out_list=()
 ap_file="/data/adb/xray/ap.list"
 ap_list=()
 iptables="iptables -w 100"
+
 intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.0.0/24 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16 198.51.100.0/24 203.0.113.0/24 224.0.0.0/4 240.0.0.0/4 255.255.255.255/32)
 intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10::/28 2001:20::/28 2001:db8::/32 2002::/16 fc00::/7 fe80::/10 ff00::/8)
+
+# Special AIDs (include/private/android_filesystem_config.h):
+#  0 root; 2000 adb; 9997 everybody; 9999 nobody;
+#  1051 netd; 1052 dnsmasq; 3003 AF_INET; 3004 inet; 3005 net_admin;
+#  2900-2999 5000-5999 OEM; 10000+ APP; 99000-99999 ISOLATE; 100000 USER; 50000-59999 SHARED_GID
+AIDs=(1000 1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1017 1018 1019 1020 1021 1022 1023 1024 1025 1026 1027 1028 1029 1030 1031 1032 1033 1034 1035 1036 1037 1038 1039 1040 1041 1042 1043 1044 1045 1046 1047 1048 1049 1050 2001 2002 3001 3002 3003 3004 3005 3006 3007 3008 3009 3010 9997 9998 9999)
 
 add_route() {
     ip rule add fwmark ${mark_id} table ${table_id}
@@ -57,26 +64,29 @@ create_mangle_iptables() {
         for subnet6 in ${intranet6[@]} ; do
             ${iptables} -t mangle -A XRAY -d ${subnet6} -j RETURN
         done
-        # mark all traffic
-        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     else
         for subnet in ${intranet[@]} ; do
             ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
         done
-        # mark all traffic
-        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy2_port} --tproxy-mark ${mark2_id}
-        ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-        ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     fi
 
+    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
+    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
+    ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+
+    # Allow ap interface
+    #  Notice: Old android device may only have one wlan interface.
+    #          Some new android device have multiple wlan interface like wlan0(for internet), wlan1(for AP).
     for ap in ${ap_list[@]} ; do
         ${iptables} -t mangle -A XRAY -p tcp -i ${ap} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
         ${iptables} -t mangle -A XRAY -p udp -i ${ap} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     done
+
+    # Bypass other if
+    #  Notice: Some interface is named with r_ / oem / nm_ / qcom_
+    #          It might need more complicated solution.
+    ${iptables} -t mangle -A XRAY -i rmnet_data+ -j RETURN
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
@@ -90,6 +100,7 @@ create_proxy_iptables() {
     # Bypass xdummy
     [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] && ${iptables} -t mangle -A PROXY -o xdummy -j RETURN
 
+    # Bypass ignored interfaces
     for ignore in ${ignore_out_list[@]} ; do
         ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
     done
@@ -104,8 +115,13 @@ create_proxy_iptables() {
         done
     fi
 
+    # Bypass AIDs
+    for AID in ${AIDs[@]} ; do
+      ${iptables} -t mangle -A PROXY -m owner --uid-owner ${AID} -j RETURN
+    done
+
     # Bypass Xray itself
-    ${iptables} -t mangle -A PROXY -m owner --gid-owner ${xray_gid} -j RETURN
+    ${iptables} -t mangle -A PROXY -m owner --uid-owner 0 --gid-owner ${xray_gid} -j RETURN
 
     if [ "${proxy_mode}" = "ALL" ] ; then
         # Route Everything
@@ -142,27 +158,14 @@ create_proxy_iptables() {
     ${iptables} -t mangle -A OUTPUT -j PROXY
 }
 
-create_divert() {
-    echo "[Info]: create DIVERT chain"
-    ${iptables} -t mangle -N DIVERT
-    ${iptables} -t mangle -A PREROUTING -p tcp -m socket --transparent -j DIVERT
-    ${iptables} -t mangle -A PREROUTING -p udp -m socket --transparent -j DIVERT
-    ${iptables} -t mangle -A DIVERT -j MARK --set-mark ${mark_id}
-    ${iptables} -t mangle -A DIVERT -j ACCEPT
-}
-
 clean_mangle_iptables() {
     echo "[Info]: cleaning mangle iptables"
     ${iptables} -t mangle -D OUTPUT -j PROXY
     ${iptables} -t mangle -D PREROUTING -j XRAY
-    # ${iptables} -t mangle -D PREROUTING -p tcp -m socket --transparent -j DIVERT
-    # ${iptables} -t mangle -A PREROUTING -p udp -m socket --transparent -j DIVERT
     ${iptables} -t mangle -F PROXY
     ${iptables} -t mangle -F XRAY
-    # ${iptables} -t mangle -F DIVERT
     ${iptables} -t mangle -X PROXY
     ${iptables} -t mangle -X XRAY
-    # ${iptables} -t mangle -X DIVERT
 }
 
 probe_proxy_mode() {

@@ -8,7 +8,7 @@ run_path="${data_path}/run"
 pid_file="${run_path}/${bin_name}.pid"
 error_log="${run_path}/error.log"
 conf_file="${data_path}/confs"
-bin_opts="run -confdir ${conf_file}"
+bin_opts="-confdir ${conf_file}"
 xray_gid="3003"
 
 probe_xray_alive() {
@@ -50,6 +50,7 @@ wait_xray_listen() {
 
 start_service() {
   export XRAY_LOCATION_ASSET=${data_path}
+  export V2RAY_LOCATION_ASSET=${data_path}
   if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
