@@ -1,7 +1,7 @@
 #!/bin/sh
 
 table_id="233"
-xray_gid="3003"
+xray_gid="3005"
 proxy_port="65535"
 proxy2_port="65534"
 mark_id="1111"
@@ -70,10 +70,13 @@ create_mangle_iptables() {
         done
     fi
 
-    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
-    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
-    ${iptables} -t mangle -A XRAY -p tcp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    ${iptables} -t mangle -A XRAY -p udp -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
+    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
+    ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+
+    # Bypass no mark
+    ${iptables} -t mangle -A XRAY -i lo -j RETURN
 
     # Allow ap interface
     #  Notice: Old android device may only have one wlan interface.
@@ -86,7 +89,7 @@ create_mangle_iptables() {
     # Bypass other if
     #  Notice: Some interface is named with r_ / oem / nm_ / qcom_
     #          It might need more complicated solution.
-    ${iptables} -t mangle -A XRAY -i rmnet_data+ -j RETURN
+    ${iptables} -t mangle -I XRAY -i rmnet_data+ -j RETURN
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
@@ -99,6 +102,9 @@ create_proxy_iptables() {
 
     # Bypass xdummy
     [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] && ${iptables} -t mangle -A PROXY -o xdummy -j RETURN
+
+    # Bypass lo
+    ${iptables} -t mangle -A PROXY -o lo -j RETURN
 
     # Bypass ignored interfaces
     for ignore in ${ignore_out_list[@]} ; do
@@ -143,8 +149,10 @@ create_proxy_iptables() {
         done
         # Allow Xray4Magisk update through Magisk Manager
         ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner 0 -j MARK --set-mark ${mark_id}
+        ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner 0 -j MARK --set-mark ${mark_id}
         # Route dnsmasq to Xray
         ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner 1052 -j MARK --set-mark ${mark_id}
+        ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner 1052 -j MARK --set-mark ${mark_id}
     fi
 
     # Bypass and transfer proxy2

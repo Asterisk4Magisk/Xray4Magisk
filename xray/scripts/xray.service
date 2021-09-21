@@ -9,7 +9,7 @@ pid_file="${run_path}/${bin_name}.pid"
 error_log="${run_path}/error.log"
 conf_file="${data_path}/confs"
 bin_opts="-confdir ${conf_file}"
-xray_gid="3003"
+xray_gid="3005"
 
 probe_xray_alive() {
   [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
