@@ -6,14 +6,19 @@ A fork of [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
 This is a Xray module for Magisk, and includes binaries for arm, arm64, x86, x64.
 
 
+
 ## Disclaimer
 I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
 
 Make sure you are not going to loopback traffic again and again. It might cause your phone reset, then bootloop.
 
+If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray) etc.
+
+
 
 # Manager APP
-[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
+[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)(WIP)
+
 
 
 ## Install
@@ -46,12 +51,26 @@ For example, for sdm855, we choose "Xray-android-arm64-v8a.zip".
 
 #### Manage service start / stop
 
-- xray service is auto-run after system boot up by default.
-- You can start or stop xray service by simply turn on or turn off the module via Magisk Manager App. Start service may wait about 10 second and stop service may take effect immediately.
-
+- Xray service is auto-run after system boot up by default.
+- You can use Magisk Manager App to manage it. Be patient to wait it take effect (about 3 second).
+- Check out [Manage service start / stop
+](https://github.com/Asterisk4Magisk/Xray4Magisk#manage-service-start--stop-1) and [Manage transparent proxy enable / disable](https://github.com/Asterisk4Magisk/Xray4Magisk#manage-transparent-proxy-enable--disable)
 
 
 #### Select which App to proxy
+
+- Use [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
+- Check out [Select which UID to proxy](https://github.com/Asterisk4Magisk/Xray4Magisk#select-which-uid-to-proxy)
+
+
+### Advanced usage ( for Debug and Develop only )
+
+#### Enter manual mode
+
+If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`.  In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
+
+
+#### Select which UID to proxy
 
 - If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/adb/xray/appid.list` . 
 
@@ -62,14 +81,6 @@ For example, for sdm855, we choose "Xray-android-arm64-v8a.zip".
 - If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/adb/xray/appid.list`. 
 
 - Transparent proxy won't take effect until the xray service start normally and file `/data/adb/xray/appid.list` is not empty.
-
-
-### Advanced usage ( for Debug and Develop only )
-
-#### Enter manual mode
-
-If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`.  In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App. 
-
 
 
 #### Manage service start / stop
@@ -85,7 +96,6 @@ If you want to control xray by running command totally, just add a file `/data/a
   - Stop service :
 
     `/data/adb/img/xray/scripts/xray.service stop`
-
 
 
 #### Manage transparent proxy enable / disable
@@ -106,8 +116,10 @@ If you want to control xray by running command totally, just add a file `/data/a
 #### Bypass Transparent proxy when connecting to WLAN
 TODO
 
+
 #### Select which App to proxy, and which App to second proxy
 TODO
+
 
 #### Enable IPv6
 For best compatibility, this module disable IPv6 by default.
@@ -119,6 +131,10 @@ To enable DNS AAAA record querying, edit `dns.json`, change `"queryStrategy"` fr
 To enable local IPv6 out, edit `base.json`, find the first inbound with "freedom" tag, change its `"domainStrategy"` from "UseIPv4" to "UseIP".
 
 To enable proxy IPv6 out, edit `proxy.json`, change its `"domainStrategy"` as what you do in `base.json`.
+
+
+#### Use v2ray instead of xray
+Rename v2ray to xray then replace `/data/adb/xray/bin/xray` with it.
 
 
 
@@ -146,7 +162,8 @@ This module cause battery drain really quick.
 GUI support?
 > Not done yet.
 
-
+Why not store config files in Internal Storage?
+> For privacy. Some apps may read your data, check [Storage Isolation](https://sr.rikka.app/guide/)
 
 ## Contact
 - [Telegram](https://t.me/AsteriskFactory)
