@@ -125,11 +125,14 @@ ui_print "- Copy xray config and data files"
 [ -f /data/adb/xray/confs/proxy.json ] || \
 unzip -j -o "${ZIPFILE}" "xray/etc/confs/*" -d /data/adb/xray/confs >&2
 [ -f /data/adb/xray/appid.list ] || \
-echo ALL > /data/adb/xray/appid.list
+echo "ALL" > /data/adb/xray/appid.list
 [ -f /data/adb/xray/ignore_out.list ] || \
 touch /data/adb/xray/ignore_out.list
 [ -f /data/adb/xray/ap.list ] || \
-echo wlan+ > /data/adb/xray/ap.list
+echo "wlan+" > /data/adb/xray/ap.list
+[ -f /data/adb/xray/ipv6 ] || \
+echo "enable" > /data/adb/xray/ipv6
+
 
 # generate module.prop
 ui_print "- Generate module.prop"
@@ -137,9 +140,9 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray4magisk" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.5.2, Core " >> $MODPATH/module.prop
+echo -n "version=Module v1.5.3, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20210923" >> $MODPATH/module.prop
+echo "versionCode=20211007" >> $MODPATH/module.prop
 echo "author=CerteKim" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 

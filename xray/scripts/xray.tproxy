@@ -310,7 +310,7 @@ disable_proxy() {
 
     enable_ipv6
 
-    if [ -f /data/adb/xray/ipv6 ] ; then
+    if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ] ; then
         echo "disable ipv6 proxy"
         iptables="ip6tables -w 100"
         stop_service
@@ -329,7 +329,7 @@ enable_proxy() {
     echo "enable ipv4 proxy"
     create_mangle_iptables
 
-    if [ -f /data/adb/xray/ipv6 ] ; then
+    if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ] ; then
         echo "enable ipv6 proxy"
         iptables="ip6tables -w 100"
         create_mangle_iptables
