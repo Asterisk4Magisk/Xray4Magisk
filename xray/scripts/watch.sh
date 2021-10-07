@@ -9,7 +9,7 @@
 # check online ip
 # ip route get 1.2.3.4 | awk '{print $9}'
 
-lastIP6="2001:da8::666"
+lastIP6="::114:514:1919:810"
 
 bypass() {
     if [ "$isChanged" = true ]; then
