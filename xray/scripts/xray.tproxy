@@ -8,6 +8,7 @@ mark_id="1111"
 mark2_id="1112"
 appid_file="/data/adb/xray/appid.list"
 proxy_mode="none"
+probe="no"
 appid_list=()
 proxy2_enable=0
 proxy2_list=()
@@ -114,10 +115,12 @@ create_mangle_iptables() {
 
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
+            ${iptables} -t mangle -A XRAY -d ${subnet6} -p udp --dport 53 -j ACCEPT
             ${iptables} -t mangle -A XRAY -d ${subnet6} -j RETURN
         done
     else
         for subnet in ${intranet[@]} ; do
+            ${iptables} -t mangle -A XRAY -d ${subnet} -p udp --dport 53 -j ACCEPT
             ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
         done
     fi
@@ -165,10 +168,12 @@ create_proxy_iptables() {
 
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
+            ${iptables} -t mangle -A PROXY -d ${subnet6} -p udp --dport 53 -j ACCEPT
             ${iptables} -t mangle -A PROXY -d ${subnet6} -j RETURN
         done
     else
         for subnet in ${intranet[@]} ; do
+            ${iptables} -t mangle -A PROXY -d ${subnet} -p udp --dport 53 -j ACCEPT
             ${iptables} -t mangle -A PROXY -d ${subnet} -j RETURN
         done
     fi
@@ -281,6 +286,8 @@ probe_proxy_mode() {
             done
         done < ${ap_file}
     fi
+
+    probe="done"
 }
 
 disable_ipv6() {
@@ -320,7 +327,10 @@ disable_proxy() {
 
 enable_proxy() {
     echo "probing proxy mode"
-    probe_proxy_mode
+
+    if [ "${probe}" = no ] ; then
+        probe_proxy_mode
+    fi
 
     echo "apply route settings"
     add_route
