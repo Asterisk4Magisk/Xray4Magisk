@@ -113,6 +113,15 @@ create_mangle_iptables() {
     echo "[Info]: creating mangle chain"
     ${iptables} -t mangle -N XRAY
 
+    # Bypass no mark
+    ${iptables} -t mangle -A XRAY -i lo -j RETURN
+
+    # Bypass other if
+    #  Notice: Some interface is named with r_ / oem / nm_ / qcom_
+    #          It might need more complicated solution.
+    ${iptables} -t mangle -I XRAY -i rmnet_data+ -j RETURN
+
+    # Bypass intranet
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
             ${iptables} -t mangle -A XRAY -d ${subnet6} -p udp --dport 53 -j ACCEPT
@@ -125,14 +134,6 @@ create_mangle_iptables() {
         done
     fi
 
-    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
-    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
-    ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-    ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-
-    # Bypass no mark
-    ${iptables} -t mangle -A XRAY -i lo -j RETURN
-
     # Allow ap interface
     #  Notice: Old android device may only have one wlan interface.
     #          Some new android device have multiple wlan interface like wlan0(for internet), wlan1(for AP).
@@ -141,10 +142,12 @@ create_mangle_iptables() {
         ${iptables} -t mangle -A XRAY -p udp -i ${ap} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     done
 
-    # Bypass other if
-    #  Notice: Some interface is named with r_ / oem / nm_ / qcom_
-    #          It might need more complicated solution.
-    ${iptables} -t mangle -I XRAY -i rmnet_data+ -j RETURN
+    # Setup tproxy
+    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
+    [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
+    ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+    ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
+
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
@@ -166,6 +169,15 @@ create_proxy_iptables() {
         ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
     done
 
+    # Bypass AIDs
+    for AID in ${AIDs[@]} ; do
+      ${iptables} -t mangle -A PROXY -m owner --uid-owner ${AID} -j RETURN
+    done
+
+    # Bypass Xray itself
+    ${iptables} -t mangle -A PROXY -m owner --uid-owner 0 --gid-owner ${xray_gid} -j RETURN
+
+    # Bypass intranet
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
             ${iptables} -t mangle -A PROXY -d ${subnet6} -p udp --dport 53 -j ACCEPT
@@ -178,14 +190,7 @@ create_proxy_iptables() {
         done
     fi
 
-    # Bypass AIDs
-    for AID in ${AIDs[@]} ; do
-      ${iptables} -t mangle -A PROXY -m owner --uid-owner ${AID} -j RETURN
-    done
-
-    # Bypass Xray itself
-    ${iptables} -t mangle -A PROXY -m owner --uid-owner 0 --gid-owner ${xray_gid} -j RETURN
-
+    # Setup proxy
     if [ "${proxy_mode}" = "ALL" ] ; then
         # Route Everything
         ${iptables} -t mangle -A PROXY -p tcp -j MARK --set-mark ${mark_id}
