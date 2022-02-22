@@ -1,6 +1,7 @@
 {
   "routing": {
     "domainStrategy": "IPIfNonMatch",
+    "domainMatcher": "mph",
     "rules": [
       {
         "type": "field",
@@ -18,14 +19,14 @@
         ]
       },
       {
-        "domain": [
+        "domains": [
           "geosite:category-ads-all"
         ],
         "outboundTag": "block",
         "type": "field"
       },
       {
-        "domain": [
+        "domains": [
           "geosite:geolocation-!cn"
         ],
         "outboundTag": "proxy",
@@ -40,7 +41,7 @@
         "type": "field"
       },
       {
-        "domain": [
+        "domains": [
           "geosite:cn",
           "geosite:private"
         ],
