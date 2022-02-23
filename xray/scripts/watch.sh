@@ -13,16 +13,20 @@ lastIP6="::114:514:1919:810"
 
 bypass() {
     if [ "$isChanged" = true ]; then
-        iptables -w 100 -t mangle -D XRAY -d $lastIP/32 -j RETURN
-        iptables -w 100 -t mangle -I XRAY -d $IP/32 -j RETURN
+        iptables -w 100 -t mangle -D XRAY -d $lastIP/32 -p udp ! --dport 53 -j RETURN
+        iptables -w 100 -t mangle -D XRAY -d $lastIP/32 ! -p udp -j RETURN
+        iptables -w 100 -t mangle -I XRAY -d $IP/32 ! -p udp -j RETURN
+        iptables -w 100 -t mangle -I XRAY -d $IP/32 -p udp ! --dport 53 -j RETURN
         lastIP=$IP
     fi
 }
 
 bypass6() {
     if [ "$isChanged6" = true ]; then
-        ip6tables -w 100 -t mangle -D XRAY -d $lastIP6/128 -j RETURN
-        ip6tables -w 100 -t mangle -I XRAY -d $IP6/128 -j RETURN
+        ip6tables -w 100 -t mangle -D XRAY -d $lastIP6/128 -p udp ! --dport 53 -j RETURN
+        ip6tables -w 100 -t mangle -D XRAY -d $lastIP6/128 ! -p udp -j RETURN
+        ip6tables -w 100 -t mangle -I XRAY -d $IP6/128 ! -p udp -j RETURN
+        ip6tables -w 100 -t mangle -I XRAY -d $IP6/128 -p udp ! --dport 53 -j RETURN
         lastIP6=$IP6
     fi
 }

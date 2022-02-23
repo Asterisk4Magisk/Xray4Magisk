@@ -121,13 +121,13 @@ create_mangle_iptables() {
     # Bypass intranet
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
-            ${iptables} -t mangle -A XRAY -d ${subnet6} -p udp --dport 53 -j ACCEPT
-            ${iptables} -t mangle -A XRAY -d ${subnet6} -j RETURN
+            ${iptables} -t mangle -A XRAY -d ${subnet6} -p udp ! --dport 53 -j RETURN
+            ${iptables} -t mangle -A XRAY -d ${subnet6} ! -p udp -j RETURN
         done
     else
         for subnet in ${intranet[@]} ; do
-            ${iptables} -t mangle -A XRAY -d ${subnet} -p udp --dport 53 -j ACCEPT
-            ${iptables} -t mangle -A XRAY -d ${subnet} -j RETURN
+            ${iptables} -t mangle -A XRAY -d ${subnet} -p udp ! --dport 53 -j RETURN
+            ${iptables} -t mangle -A XRAY -d ${subnet} ! -p udp -j RETURN
         done
     fi
 
@@ -174,13 +174,13 @@ create_proxy_iptables() {
     # Bypass intranet
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
         for subnet6 in ${intranet6[@]} ; do
-            ${iptables} -t mangle -A PROXY -d ${subnet6} -p udp --dport 53 -j ACCEPT
-            ${iptables} -t mangle -A PROXY -d ${subnet6} -j RETURN
+            ${iptables} -t mangle -A PROXY -d ${subnet6} -p udp ! --dport 53 -j RETURN
+            ${iptables} -t mangle -A PROXY -d ${subnet6} ! -p udp -j RETURN
         done
     else
         for subnet in ${intranet[@]} ; do
-            ${iptables} -t mangle -A PROXY -d ${subnet} -p udp --dport 53 -j ACCEPT
-            ${iptables} -t mangle -A PROXY -d ${subnet} -j RETURN
+            ${iptables} -t mangle -A PROXY -d ${subnet} -p udp ! --dport 53 -j RETURN
+            ${iptables} -t mangle -A PROXY -d ${subnet} ! -p udp -j RETURN
         done
     fi
 
