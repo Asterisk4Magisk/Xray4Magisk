@@ -24,7 +24,7 @@ bypass() {
     rules_ipv4=$(iptables -w 100 -t mangle -nvL XRAY | grep "udp dpt" | awk '{print $9}')
  
     for rules_subnet in ${rules_ipv4[*]} ; do
-		if  (iptables -w 100 -t mangle -C XRAY -d ${subnet} ! -p udp -j RETURN > /dev/null 2>&1) ; then
+		if  (iptables -w 100 -t mangle -C XRAY -d ${rules_subnet} ! -p udp -j RETURN > /dev/null 2>&1) ; then
            iptables -w 100 -t mangle -D XRAY -d ${rules_subnet} -p udp ! --dport 53 -j RETURN
            iptables -w 100 -t mangle -D XRAY -d ${rules_subnet} ! -p udp -j RETURN
 		fi
