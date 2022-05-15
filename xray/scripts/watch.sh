@@ -9,6 +9,9 @@
 # check online ip
 # ip route get 1.2.3.4 | awk '{print $9}'
 
+watch=`realpath $0`
+scripts_dir=`dirname ${watch}`
+
 lastIP="1.2.3.4"
 lastIP6="::114:514:1919:810"
 
@@ -64,6 +67,7 @@ main(){
     wifistatus=$(dumpsys connectivity | grep "WIFI" | grep "state:" | awk -F ", " '{print $2}' | awk -F "=" '{print $2}' 2>&1)
 
     if test ! -z "${wifistatus}" ; then
+        echo "" >${Clash_run_path}/lastmobile
         if test ! "${wifistatus}" = "$(cat /data/adb/xray/run/lastwifi)" ; then
             change=$((${change} + 1))
             echo "${wifistatus}" > /data/adb/xray/run/lastwifi
@@ -75,17 +79,20 @@ main(){
         echo "" > /data/adb/xray/run/lastwifi
     fi
 
-    
-    if test "$(settings get global mobile_data 2>&1)" -eq 1 ; then
-        if test "$(settings get global mobile_data1 2>&1)" -eq 1 ; then
-            mobilestatus=1
-        else
-            mobilestatus=2
+    if [ "$(settings get global mobile_data 2>&1)" -eq 1 ] && [ -z "${wifistatus}" ] ; then
+		echo "" > /data/adb/xray/run/lastwifi
+		card1="$(settings get global mobile_data1 2>&1)"
+		card2="$(settings get global mobile_data2 2>&1)"
+		if [ "${card1}" = 1 ] ; then
+			mobilestatus=1
         fi
-    else
-        mobilestatus=0
+		if [ "${card2}" = 1 ] ; then
+			mobilestatus=2
+        fi
+	else
+		mobilestatus=0
     fi
-    
+
     sleep 1
 
     if test "${mobilestatus}" -ne 0 ; then
@@ -99,8 +106,23 @@ main(){
     	bypass
     	bypass6
 	fi
-
-	sleep 5
-	main
 }
-main
+
+default(){
+    /data/adb/magisk/busybox crond -c /data/adb/xray/run
+
+    touch /data/adb/xray/run/root
+    chmod 0600 /data/adb/xray/run/root
+
+    echo "*/3 * * * * ${scripts_dir}/watch.sh start" > /data/adb/xray/run/root
+}
+
+
+case "$1" in
+  start)
+    main
+    ;;
+  *)
+    default
+    ;;
+esac
