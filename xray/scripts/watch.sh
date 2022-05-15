@@ -67,7 +67,7 @@ main(){
     wifistatus=$(dumpsys connectivity | grep "WIFI" | grep "state:" | awk -F ", " '{print $2}' | awk -F "=" '{print $2}' 2>&1)
 
     if test ! -z "${wifistatus}" ; then
-        echo "" >${Clash_run_path}/lastmobile
+        echo "" > /data/adb/xray/run/lastmobile
         if test ! "${wifistatus}" = "$(cat /data/adb/xray/run/lastwifi)" ; then
             change=$((${change} + 1))
             echo "${wifistatus}" > /data/adb/xray/run/lastwifi
