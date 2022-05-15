@@ -109,12 +109,12 @@ main(){
 }
 
 default(){
-    /data/adb/magisk/busybox crond -c /data/adb/xray/run
+    /data/adb/magisk/busybox crond -c /data/adb/xray/run/
 
     touch /data/adb/xray/run/root
     chmod 0600 /data/adb/xray/run/root
 
-    echo "*/3 * * * * ${scripts_dir}/watch.sh start" > /data/adb/xray/run/root
+    echo "*/1 * * * * ${scripts_dir}/watch.sh start" > /data/adb/xray/run/root
 }
 
 
