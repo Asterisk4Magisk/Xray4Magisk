@@ -22,42 +22,32 @@ intranet=(0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16 172.16.0
 intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10::/28 2001:20::/28 2001:db8::/32 2002::/16 fc00::/7 fe80::/10 ff00::/8)
 
 bypass() {
-	local_ipv4_get=$(ip a | awk '$1~/inet$/{print $2}')
-    local_ipv4=(${intranet[*]} ${local_ipv4_get[*]})
-    rules_ipv4=$(iptables -w 100 -t mangle -nvL XRAY | grep "udp dpt" | awk '{print $9}')
+    local_ipv4=$(ip a | awk '$1~/inet$/{print $2}')
+    rules_ipv4=$(iptables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $9}')
  
     for rules_subnet in ${rules_ipv4[*]} ; do
-		if  (iptables -w 100 -t mangle -C XRAY -d ${rules_subnet} ! -p udp -j RETURN > /dev/null 2>&1) ; then
-           iptables -w 100 -t mangle -D XRAY -d ${rules_subnet} -p udp ! --dport 53 -j RETURN
-           iptables -w 100 -t mangle -D XRAY -d ${rules_subnet} ! -p udp -j RETURN
-		fi
+        iptables -w 100 -t mangle -D XRAY_LOCAL -d ${rules_subnet} -p udp ! --dport 53 -j RETURN
+        iptables -w 100 -t mangle -D XRAY_LOCAL -d ${rules_subnet} ! -p udp -j RETURN
     done
 
     for subnet in ${local_ipv4[*]} ; do
-        if ! (iptables -w 100 -t mangle -C XRAY -d ${subnet} ! -p udp -j RETURN > /dev/null 2>&1) ; then
-            iptables -w 100 -t mangle -I XRAY -d ${subnet} ! -p udp -j RETURN
-            iptables -w 100 -t mangle -I XRAY -d ${subnet} -p udp ! --dport 53 -j RETURN
-        fi
+        iptables -w 100 -t mangle -I XRAY_LOCAL -d ${subnet} ! -p udp -j RETURN
+        iptables -w 100 -t mangle -I XRAY_LOCAL -d ${subnet} -p udp ! --dport 53 -j RETURN
     done
 }
 
 bypass6() {
-    local_ipv6_get=$(ip -6 a | awk '$1~/inet6$/{print $2}')
-  	local_ipv6=(${intranet6[*]} ${local_ipv6_get[*]})
-   	 rules_ipv6=$(ip6tables -w 100 -t mangle -nvL XRAY | grep "udp dpt" | awk '{print $8}')
+  	local_ipv6=$(ip -6 a | awk '$1~/inet6$/{print $2}' | grep '^2')
+   	rules_ipv6=$(ip6tables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $8}')
 	
     for rules_subnet6 in ${rules_ipv6[*]} ; do
-		if  (ip6tables -w 100 -t mangle -C XRAY -d ${rules_subnet6} -p udp ! --dport 53 -j RETURN > /dev/null 2>&1) ; then
-           ip6tables -w 100 -t mangle -D XRAY -d ${rules_subnet6} -p udp ! --dport 53 -j RETURN
-           ip6tables -w 100 -t mangle -D XRAY -d ${rules_subnet6} ! -p udp -j RETURN
-		fi
+        ip6tables -w 100 -t mangle -D XRAY_LOCAL -d ${rules_subnet6} -p udp ! --dport 53 -j RETURN
+        ip6tables -w 100 -t mangle -D XRAY_LOCAL -d ${rules_subnet6} ! -p udp -j RETURN
     done
 
  	for subnet6 in ${local_ipv6[*]} ; do
-        if ! (ip6tables -w 100 -t mangle -C XRAY -d ${subnet6} -p udp ! --dport 53 -j RETURN > /dev/null 2>&1) ; then
-            ip6tables -w 100 -t mangle -I XRAY -d ${subnet6} ! -p udp -j RETURN
-            ip6tables -w 100 -t mangle -I XRAY -d ${subnet6} -p udp ! --dport 53 -j RETURN
-        fi
+        ip6tables -w 100 -t mangle -I XRAY_LOCAL -d ${subnet6} ! -p udp -j RETURN
+        ip6tables -w 100 -t mangle -I XRAY_LOCAL -d ${subnet6} -p udp ! --dport 53 -j RETURN
     done 
 }
 

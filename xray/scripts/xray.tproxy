@@ -148,6 +148,9 @@ create_mangle_iptables() {
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
+    ${iptables} -t mangle -N XRAY_LOCAL
+    ${iptables} -t mangle -A PREROUTING -j XRAY_LOCAL
+
     create_proxy_iptables
 }
 
@@ -226,10 +229,13 @@ clean_mangle_iptables() {
     echo "[Info]: cleaning mangle iptables"
     ${iptables} -t mangle -D OUTPUT -j PROXY
     ${iptables} -t mangle -D PREROUTING -j XRAY
+    ${iptables} -t mangle -D PREROUTING -j XRAY_LOCAL
     ${iptables} -t mangle -F PROXY
     ${iptables} -t mangle -F XRAY
+    ${iptables} -t mangle -F XRAY_LOCAL
     ${iptables} -t mangle -X PROXY
     ${iptables} -t mangle -X XRAY
+    ${iptables} -t mangle -X XRAY_LOCAL
 }
 
 probe_proxy_mode() {
