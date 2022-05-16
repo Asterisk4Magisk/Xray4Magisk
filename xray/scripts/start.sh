@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 MODDIR=/data/adb/modules/xray4magisk
 if [ -n "$(magisk -v | grep lite)" ]; then

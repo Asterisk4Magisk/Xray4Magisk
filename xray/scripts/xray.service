@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 magisk_busybox="/data/adb/magisk/busybox"
 
 bin_name="xray"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 table_id="233"
 xray_gid="3005"
