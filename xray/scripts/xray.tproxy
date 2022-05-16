@@ -352,6 +352,7 @@ enable_proxy() {
     else
         disable_ipv6
     fi
+    ${data_path}/scripts/watch.sh start
 }
 
 case "$1" in

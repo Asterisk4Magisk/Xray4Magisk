@@ -104,7 +104,7 @@ default(){
     touch /data/adb/xray/run/root
     chmod 0600 /data/adb/xray/run/root
 
-    echo "* * * * * ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; " > /data/adb/xray/run/root
+    echo "0 */1 * * * ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; " > /data/adb/xray/run/root
 }
 
 
