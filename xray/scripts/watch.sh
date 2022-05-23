@@ -100,14 +100,24 @@ default(){
 
     touch /data/adb/xray/run/root
     chmod 0600 /data/adb/xray/run/root
+    chown 0:0 /data/adb/xray/run/root
 
-    echo "*/1 * * * * ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; ${scripts_dir}/watch.sh start ; sleep 5 ; " > /data/adb/xray/run/root
+    echo "*/1 * * * * ${scripts_dir}/cron.sh" > /data/adb/xray/run/root
 }
 
+stop(){
+    cronexe=$(ps -ef | grep root | grep "crond -c /data/adb/xray/" | awk '{ print $2 }')
+    for cronex in ${cronexe[*]} ; do
+        kill -15 ${cronex}
+    done
+}
 
 case "$1" in
-  start)
+  watch)
     main
+    ;;
+  stop)
+    stop
     ;;
   *)
     default
