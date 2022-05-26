@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 dummy_device="xdummy"
 dummy_ip="fd01:5ca1:ab1e:8d97:497f:8b48:b9aa:85cd/128"
