@@ -149,7 +149,7 @@ create_mangle_iptables() {
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
     ${iptables} -t mangle -N XRAY_LOCAL
-    ${iptables} -t mangle -A PREROUTING -j XRAY_LOCAL
+    ${iptables} -t mangle -I PREROUTING -j XRAY_LOCAL
 
     create_proxy_iptables
 }
@@ -325,9 +325,10 @@ disable_proxy() {
     if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ] ; then
         echo "disable ipv6 proxy"
         iptables="ip6tables -w 100"
-        stop_service
+        # stop_service
         clean_mangle_iptables 2> /dev/null
     fi
+    ${data_path}/scripts/watch.sh stop
 }
 
 enable_proxy() {
@@ -348,7 +349,7 @@ enable_proxy() {
         echo "enable ipv6 proxy"
         iptables="ip6tables -w 100"
         create_mangle_iptables
-        start_service
+        # start_service
     else
         disable_ipv6
     fi
