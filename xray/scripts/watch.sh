@@ -102,7 +102,7 @@ default(){
     chmod 0600 /data/adb/xray/run/root
     chown 0:0 /data/adb/xray/run/root
 
-    echo "*/1 * * * * ${scripts_dir}/cron.sh" > /data/adb/xray/run/root
+    echo "* * * * * ${scripts_dir}/cron.sh" > /data/adb/xray/run/root
 }
 
 stop(){

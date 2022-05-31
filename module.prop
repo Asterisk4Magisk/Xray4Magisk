@@ -1,6 +1,6 @@
 id=xray4magisk
 name=Xray4Magisk
-version=v1.6.0
-versionCode=20220526
+version=v1
+versionCode=debug
 author=Asterisk4Magisk
 description=Xray core with service scripts for Android

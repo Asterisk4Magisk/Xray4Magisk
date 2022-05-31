@@ -140,9 +140,9 @@ rm -rf $MODPATH/module.prop
 touch $MODPATH/module.prop
 echo "id=xray4magisk" > $MODPATH/module.prop
 echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.6.0, Core " >> $MODPATH/module.prop
+echo -n "version=Module v1.6.1, Core " >> $MODPATH/module.prop
 echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20220526" >> $MODPATH/module.prop
+echo "versionCode=20220601" >> $MODPATH/module.prop
 echo "author=Asterisk4Magisk" >> $MODPATH/module.prop
 echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
 
