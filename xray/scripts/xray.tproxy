@@ -195,7 +195,8 @@ create_proxy_iptables() {
     elif [ "${proxy_mode}" = "skip" ] ; then
         # Bypass apps
         for appid in ${appid_list[@]} ; do
-            ${iptables} -t mangle -I PROXY -m owner --uid-owner ${appid} -j RETURN
+            ${iptables} -t mangle -I PROXY -m owner --uid-owner ${appid} -p udp ! --dport 53 -j RETURN
+            ${iptables} -t mangle -I PROXY -m owner --uid-owner ${appid} ! -p udp -j RETURN
         done
         # Allow !app
         ${iptables} -t mangle -A PROXY -p tcp -j MARK --set-mark ${mark_id}
