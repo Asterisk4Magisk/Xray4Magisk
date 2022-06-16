@@ -89,7 +89,7 @@ stop_service() {
     display_xray_pid
   fi
   rm -f ${pid_file}
-  ${data_path}/scripts/watch.sh stop
+  # ${data_path}/scripts/watch.sh stop
 }
 
 case "$1" in
