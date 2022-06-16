@@ -214,7 +214,7 @@ create_proxy_iptables() {
         ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner 1052 -j MARK --set-mark ${mark_id}
         ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner 1052 -j MARK --set-mark ${mark_id}
         # Route DNS request to Xray
-        ${iptables} -t mangle -A PROXY -p udp -p udp --dport 53 -j MARK --set-mark ${mark_id}
+        ${iptables} -t mangle -A PROXY -p udp --dport 53 -j MARK --set-mark ${mark_id}
     fi
 
     # Bypass and transfer proxy2
