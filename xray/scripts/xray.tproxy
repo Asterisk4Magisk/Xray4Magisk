@@ -117,6 +117,7 @@ create_mangle_iptables() {
     #  Notice: Some interface is named with r_ / oem / nm_ / qcom_
     #          It might need more complicated solution.
     ${iptables} -t mangle -I XRAY -i rmnet_data+ -j RETURN
+    ${iptables} -t mangle -I XRAY -i ccmni+ -j RETURN
 
     # Bypass intranet
     if [ "${iptables}" = "ip6tables -w 100" ] ; then
