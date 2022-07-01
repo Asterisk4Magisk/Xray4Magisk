@@ -153,3 +153,5 @@ set_perm  $MODPATH/uninstall.sh                         0  0  0755
 set_perm_recursive  /data/adb/xray/scripts              0  0  0755
 set_perm  /data/adb/xray                                0  0  0755
 set_perm_recursive  /data/adb/xray/bin                  0  0  0755
+#fix "set_perm_recursive  /data/adb/xray/scripts" not working on some phones. It didn't work on my Oneplus 7 pro and Remi K50.
+chmod ugo+x /data/adb/xray/scripts/*
