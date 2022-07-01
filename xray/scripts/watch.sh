@@ -19,8 +19,8 @@ echo "" > /data/adb/xray/run/lastmobile
 echo "" > /data/adb/xray/run/lastwifi
 
 bypass() {
-    local_ipv4=$(ip a | awk '$1~/inet$/{print $2}')
-    rules_ipv4=$(iptables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $9}')
+    local_ipv4=$(ip a | awk '$1~/inet$/{print $2}' 2>&1)
+    rules_ipv4=$(iptables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $9}' 2>&1)
  
     for rules_subnet in ${rules_ipv4[*]} ; do
         iptables -w 100 -t mangle -D XRAY_LOCAL -d ${rules_subnet} -p udp ! --dport 53 -j RETURN
@@ -34,8 +34,8 @@ bypass() {
 }
 
 bypass6() {
-  	local_ipv6=$(ip -6 a | awk '$1~/inet6$/{print $2}' | grep '^2')
-   	rules_ipv6=$(ip6tables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $8}')
+  	local_ipv6=$(ip -6 a | awk '$1~/inet6$/{print $2}' | grep '^2' 2>&1)
+   	rules_ipv6=$(ip6tables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $8}' 2>&1)
 	
     for rules_subnet6 in ${rules_ipv6[*]} ; do
         ip6tables -w 100 -t mangle -D XRAY_LOCAL -d ${rules_subnet6} -p udp ! --dport 53 -j RETURN
@@ -89,6 +89,12 @@ main(){
         fi
     fi
 	
+    testv4=$(iptables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $9}' 2>&1)
+    testv6=$(ip6tables -w 100 -t mangle -nvL XRAY_LOCAL | grep "udp dpt" | awk '{print $8}' 2>&1)
+    if test -z "$testv4" || test -z "$testv6" ; then
+        change=$((${change} + 1))
+    fi
+
     if test "${change}" -ne 0 ; then
     	bypass
     	bypass6
