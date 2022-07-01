@@ -129,7 +129,8 @@ echo "ALL" > /data/adb/xray/appid.list
 [ -f /data/adb/xray/ignore_out.list ] || \
 touch /data/adb/xray/ignore_out.list
 [ -f /data/adb/xray/ap.list ] || \
-echo "wlan+" > /data/adb/xray/ap.list
+#temporary fix for Redmi K50, need a generic fix for devices imcompatible with the entry "wlan+" here and instead replace with "ap+"
+[ "$(getprop ro.product.device)" = "rubens" ] && echo "ap+" > /data/adb/xray/ap.list || echo "wlan+" > /data/adb/xray/ap.list
 [ -f /data/adb/xray/ipv6 ] || \
 echo "enable" > /data/adb/xray/ipv6
 
