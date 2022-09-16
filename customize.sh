@@ -5,153 +5,131 @@
 SKIPUNZIP=1
 ASH_STANDALONE=1
 
+module_path="/data/adb/xray"
+
+core="xray"
+asset="loyalsoldier"
+
 if [ $BOOTMODE ! = true ] ; then
-  abort "Error: Please install in Magisk Manager"
-fi
-
-# migrate old configuration
-if [ -d "/data/xray" ]; then
-  ui_print "- Old configuration detected, migrating."
-  if [ -d "/data/adb/xray" ]; then
-    abort "Please remove \"/data/adb/xray\" first!"
-  fi
-  mv /data/xray/ /data/adb/xray/
-fi
-
-# prepare xray execute environment
-ui_print "- Prepare xray execute environment."
-mkdir -p /data/adb/xray
-mkdir -p /data/adb/xray/run
-mkdir -p /data/adb/xray/bin
-mkdir -p /data/adb/xray/confs
-mkdir -p /data/adb/xray/scripts
-
-download_xray_zip="/data/adb/xray/run/xray-core.zip"
-custom="/sdcard/Download/Xray-core.zip"
-
-if [ -f "${custom}" ]; then
-  cp "${custom}" "${download_xray_zip}"
-  ui_print "Info: Custom Xray-core found, starting installer"
-  latest_xray_version=custom
+  core="custom"
+  asset="custom"
 else
-  case "${ARCH}" in
-    arm)
-      version="Xray-linux-arm32-v7a.zip"
-      ;;
-    arm64)
-      version="Xray-android-arm64-v8a.zip"
-      ;;
-    x86)
-      version="Xray-linux-32.zip"
-      ;;
-    x64)
-      version="Xray-linux-64.zip"
-      ;;
+  [ -f /sdcard/sing.config ] && source /sdcard/sing.config
+  [ -f ${module_path}/sing.config ] && source ${module_path}/sing.config
+fi
+
+config_file="${module_path}/confs/${config}"
+
+whichCustom() {
+  for i in $(ls /sdcard/Download); do
+    if [ $(echo $i | grep '(^Xray-)*(\.zip$)') ]; then
+      asset="customDat"
+      return xray
+    elif [ $(echo $i | grep -nE '(^v2ray-)*(\.zip$)') ]; then
+      asset="customDat"
+      return v2ray
+    elif [ $(echo $i | grep -nE '(^sing-box-)*(\.tar\.gz$)' ) ]; then
+      asset="customDb"
+      return sing
+    elif
+      abort
+    fi
+  done
+}
+
+whichArch() {
+  case "$1" in
+    xray)
+      case "${ARCH}" in
+        arm)
+          version="Xray-linux-arm32-v7a.zip"
+        ;;
+        arm64)
+          version="Xray-android-arm64-v8a.zip"
+        ;;
+        x86)
+          version="Xray-linux-32.zip"
+        ;;
+        x64)
+          version="Xray-linux-64.zip"
+        ;;
+      esac
+    ;;
+    v2ray)
+      case "${ARCH}" in
+        arm)
+          version="v2ray-linux-arm32-v7a.zip"
+        ;;
+        arm64)
+          version="v2ray-android-arm64-v8a.zip"
+        ;;
+        x86)
+          version="v2ray-linux-32.zip"
+        ;;
+        x64)
+          version="v2ray-linux-64.zip"
+        ;;
+      esac
+    ;;
+    sing-box)
+      case "${ARCH}" in
+      arm)
+        version="linux-armv7"
+        ;;
+      arm64)
+        version="android-arm64"
+        ;;
+      x86)
+        version=""
+        ;;
+      x64)
+        version="android-amd64v3"
+        ;;
+    ;;
   esac
-  ui_print "Using version: ${version}"
-  if [ -f /sdcard/Download/"${version}" ]; then
-    cp /sdcard/Download/"${version}" "${download_xray_zip}"
-    ui_print "Info: Xray-core already downloaded, starting installer"
-    latest_xray_version=custom
-  else
-    # download latest xray core from official link
-    ui_print "- Connect official xray download link."
+}
 
-    official_xray_link="https://github.com/XTLS/Xray-core/releases"
+asset() {
+  case "${asset}" in
+    loyalsoldier)
 
-    if [ -x "$(which wget)" ] ; then
-      latest_xray_version=`wget -qO- https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
-    elif [ -x "$(which curl)" ]; then
-      latest_xray_version=`curl -ks https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
-    elif [ -x "/data/adb/magisk/busybox" ] ; then
-      latest_xray_version=`/data/adb/magisk/busybox wget -qO- https://api.github.com/repos/XTLS/Xray-core/releases | grep -m 1 "tag_name" | grep -o "v[0-9.]*"`
-    else
-      ui_print "Error: Could not find curl or wget, please install one."
-      abort
-    fi
+    ;;
+    dat)
 
-    if [ "${latest_xray_version}" = "" ] ; then
-      ui_print "Error: Connect official xray download link failed." 
-      ui_print "Tips: You can download xray core manually,"
-      ui_print "      and put it in /sdcard/Download"
-      abort
-    fi
-    ui_print "- Download latest xray core ${latest_xray_version}-${ARCH}"
+    ;;
+    db)
+      /data/adb/magisk/busybox wget https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db -O /sdcard/Download/geoip.db >&2
+      if [ "$?" != "0" ] ; then
+        ui_print "Download err"
+        abort
+      fi
+      /data/adb/magisk/busybox wget https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db -O /sdcard/Download/geosite.db >&2
+      if [ "$?" != "0" ] ; then
+        ui_print "Download err"
+        abort
+      fi
+      cp /sdcard/Download/geoip.dat ${module_path}/assets
+      cp /sdcard/Download/geosite.dat ${module_path}/assets
+    ;;
+    customDat)
+      if [ -f /sdcard/Download/geoip.dat ] && [ -f /sdcard/Download/geosite.dat ] ; then
+        cp /sdcard/Download/geoip.dat ${module_path}/assets
+        cp /sdcard/Download/geosite.dat ${module_path}/assets
+      else
+        abort
+      fi
+    ;;
+    customDb)
+      if [ -f /sdcard/Download/geoip.db ] && [ -f /sdcard/Download/geosite.db ] ; then
+        cp /sdcard/Download/geoip.db ${module_path}/assets
+        cp /sdcard/Download/geosite.db ${module_path}/assets
+      else
+        abort
+      fi
+    ;;
+  esac
+}
 
-    if [ -x "$(which wget)" ] ; then
-      wget "${official_xray_link}/download/${latest_xray_version}/${version}" -O "${download_xray_zip}" >&2
-    elif [ -x "$(which curl)" ]; then
-      curl "${official_xray_link}/download/${latest_xray_version}/${version}" -kLo "${download_xray_zip}" >&2
-    elif [ -x "/data/adb/magisk/busybox" ] ; then
-      /data/adb/magisk/busybox wget "${official_xray_link}/download/${latest_xray_version}/${version}" -O "${download_xray_zip}" >&2
-    else
-      ui_print "Error: Could not find curl or wget, please install one."
-      abort
-    fi
+if [ "${core}" = "custom" ]; then
 
-    if [ "$?" != "0" ] ; then
-      ui_print "Error: Download xray core failed."
-      ui_print "Tips: You can download xray core manually,"
-      ui_print "      and put it in /sdcard/Download"
-      abort
-    fi
-  fi
 fi
-
-# install scripts
-unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d /data/adb/xray/scripts >&2
-if [ ! -d /data/adb/service.d ] ; then
-  mkdir -p /data/adb/service.d
-fi
-unzip -j -o "${ZIPFILE}" 'xray4magisk_service.sh' -d /data/adb/service.d >&2
-unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
-set_perm  /data/adb/xray/scripts/xray.service    0  0  0755
-
-# stop service
-/data/adb/xray/scripts/xray.service stop
-
-# install xray execute file
-ui_print "- Install xray core $ARCH execute files"
-unzip -j -o "${download_xray_zip}" "geoip.dat" -d /data/adb/xray >&2
-unzip -j -o "${download_xray_zip}" "geosite.dat" -d /data/adb/xray >&2
-unzip -j -o "${download_xray_zip}" "xray" -d /data/adb/xray/bin >&2
-rm "${download_xray_zip}"
-
-# start service
-/data/adb/xray/scripts/xray.service start
-
-# copy xray data and config
-ui_print "- Copy xray config and data files"
-[ -f /data/adb/xray/confs/proxy.json ] || \
-unzip -j -o "${ZIPFILE}" "xray/etc/confs/*" -d /data/adb/xray/confs >&2
-[ -f /data/adb/xray/appid.list ] || \
-echo "ALL" > /data/adb/xray/appid.list
-[ -f /data/adb/xray/ignore_out.list ] || \
-touch /data/adb/xray/ignore_out.list
-[ -f /data/adb/xray/ap.list ] || \
-#temporary fix for Redmi K50, need a generic fix for devices imcompatible with the entry "wlan+" here and instead replace with "ap+"
-[ "$(getprop ro.product.device)" = "rubens" ] && echo "ap+" > /data/adb/xray/ap.list || echo "wlan+" > /data/adb/xray/ap.list
-[ -f /data/adb/xray/ipv6 ] || \
-echo "enable" > /data/adb/xray/ipv6
-
-
-# generate module.prop
-ui_print "- Generate module.prop"
-rm -rf $MODPATH/module.prop
-touch $MODPATH/module.prop
-echo "id=xray4magisk" > $MODPATH/module.prop
-echo "name=Xray4Magisk" >> $MODPATH/module.prop
-echo -n "version=Module v1.6.2, Core " >> $MODPATH/module.prop
-echo ${latest_xray_version} >> $MODPATH/module.prop
-echo "versionCode=20220703" >> $MODPATH/module.prop
-echo "author=Asterisk4Magisk" >> $MODPATH/module.prop
-echo "description=xray core with service scripts for Android" >> $MODPATH/module.prop
-
-set_perm_recursive $MODPATH 0 0 0755 0644
-set_perm  /data/adb/service.d/xray4magisk_service.sh    0  0  0755
-set_perm  $MODPATH/uninstall.sh                         0  0  0755
-set_perm_recursive  /data/adb/xray/scripts              0  0  0755
-set_perm  /data/adb/xray                                0  0  0755
-set_perm_recursive  /data/adb/xray/bin                  0  0  0755
-#fix "set_perm_recursive  /data/adb/xray/scripts" not working on some phones. It didn't work on my Oneplus 7 pro and Remi K50.
-chmod ugo+x /data/adb/xray/scripts/*

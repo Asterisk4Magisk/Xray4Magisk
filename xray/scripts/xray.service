@@ -2,15 +2,34 @@
 magisk_busybox="/data/adb/magisk/busybox"
 
 bin_name="xray"
-bin_path="/data/adb/xray/bin/${bin_name}"
-data_path="/data/adb/${bin_name}"
+data_path="/data/adb/xray"
 run_path="${data_path}/run"
-pid_file="${run_path}/${bin_name}.pid"
 error_log="${run_path}/error.log"
-conf_file="${data_path}/confs"
-#bin_opts="-confdir ${conf_file}"
-bin_opts="run"
 xray_gid="3005"
+
+source ${data_path}/xray.config
+
+bin_path="/data/adb/xray/bin/${bin_name}"
+pid_file="${run_path}/${bin_name}.pid"
+
+
+conf_file="${data_path}/confs/${config}"
+
+extra_opts=""
+case "${custom}" in
+  xray)
+    bin_name=xray
+    ;;
+  v2ray)
+    bin_name=v2ray
+    ;;
+  sing-box)
+    bin_name=sing-box
+    extra_opts="-D ${data_path}/assets"
+    ;;
+esac
+
+bin_opts="${extra_opts} -c ${conf_file} run"
 
 probe_xray_alive() {
   [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
@@ -52,8 +71,6 @@ wait_xray_listen() {
 start_service() {
   export XRAY_LOCATION_ASSET=${data_path}
   export V2RAY_LOCATION_ASSET=${data_path}
-  export XRAY_LOCATION_CONFDIR=${conf_file}
-  export V2RAY_LOCATION_CONFDIR=${conf_file}
   if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
