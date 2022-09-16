@@ -9,13 +9,10 @@ xray_gid="3005"
 
 source ${data_path}/xray.config
 
-bin_path="/data/adb/xray/bin/${bin_name}"
-pid_file="${run_path}/${bin_name}.pid"
-
-
 conf_file="${data_path}/confs/${config}"
 
 extra_opts=""
+
 case "${custom}" in
   xray)
     bin_name=xray
@@ -29,7 +26,9 @@ case "${custom}" in
     ;;
 esac
 
-bin_opts="${extra_opts} -c ${conf_file} run"
+bin_path="/data/adb/xray/bin/${bin_name}"
+pid_file="${run_path}/${bin_name}.pid"
+bin_opts="${extra_opts} run -c ${conf_file}"
 
 probe_xray_alive() {
   [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
@@ -69,12 +68,12 @@ wait_xray_listen() {
 }
 
 start_service() {
-  export XRAY_LOCATION_ASSET=${data_path}/assets
-  export V2RAY_LOCATION_ASSET=${data_path}/assets
+  export XRAY_LOCATION_ASSET="${data_path}/assets"
+  export V2RAY_LOCATION_ASSET="${data_path}/assets"
   if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
-  elif [ -f ${conf_file}/proxy.json ] ; then
+  elif [ -f ${conf_file} ] ; then
     echo "[Info]: Starting ${bin_name} service."
     mkdir -p ${run_path}
     ulimit -SHn 1000000
