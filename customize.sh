@@ -206,6 +206,9 @@ whichCore() {
       fi
     ;;
     sing-box)
+      if [ "asset" != "customDb"  ] ; then
+        asset="db"
+      fi
       download_link="https://github.com/SagerNet/sing-box/releases"
       github_api="https://api.github.com/repos/SagerNet/sing-box/releases"
       latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | awk '{print $2}'`
