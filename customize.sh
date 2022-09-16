@@ -233,7 +233,7 @@ core() {
     xray)
       unzip -j -o "${download_path}" "xray" -d ${module_path}/bin/ >&2
     ;;
-    v2ray)
+    v2ray|sagernet)
       unzip -j -o "${download_path}" "v2ray" -d ${module_path}/bin/ >&2
     ;;
     sing-box)
