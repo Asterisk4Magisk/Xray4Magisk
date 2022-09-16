@@ -1,6 +1,4 @@
 id=xray4magisk
 name=Xray4Magisk
-version=v1
-versionCode=debug
 author=Asterisk4Magisk
-description=Xray core with service scripts for Android
+description=TProxy scripts

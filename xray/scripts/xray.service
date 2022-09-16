@@ -69,8 +69,8 @@ wait_xray_listen() {
 }
 
 start_service() {
-  export XRAY_LOCATION_ASSET=${data_path}
-  export V2RAY_LOCATION_ASSET=${data_path}
+  export XRAY_LOCATION_ASSET=${data_path}/assets
+  export V2RAY_LOCATION_ASSET=${data_path}/assets
   if probe_xray_alive ; then
     echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
     return 0
