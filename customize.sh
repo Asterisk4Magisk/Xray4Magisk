@@ -14,14 +14,15 @@ if [ $BOOTMODE ! = true ] ; then
   core="custom"
   asset="custom"
 else
-  [ -f /sdcard/sing.config ] && source /sdcard/sing.config
-  [ -f ${module_path}/sing.config ] && source ${module_path}/sing.config
+  [ -f /sdcard/xray.config ] && source /sdcard/xray.config
+  [ -f $module_path/xray.config ] && source $module_path/xray.config
 fi
 
 config_file="${module_path}/confs/${config}"
 
 # get asset type and core type
 whichCustom() {
+  ui_print whichCustom
   for i in $(ls -tr /sdcard/Download); do
     if [ $(echo $i | grep '(^Xray-)*(\.zip$)') ]; then
       asset="customDat"
@@ -38,7 +39,7 @@ whichCustom() {
       core="sing-box"
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
-    elif
+    else
       abort
     fi
   done
@@ -46,7 +47,8 @@ whichCustom() {
 
 # get version arg
 whichArch() {
-  case "$1" in
+  ui_print whichArch
+  case "${core}" in
     xray)
       case "${ARCH}" in
         arm)
@@ -93,12 +95,15 @@ whichArch() {
       x64)
         version="android-amd64v3"
         ;;
+      esac
     ;;
   esac
 }
 
 # deploy assets
 asset() {
+  ui_print deployAssets
+  mkdir -p ${module_path}/assets
   case "${asset}" in
     loyalsoldier)
       /data/adb/magisk/busybox wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat -O /sdcard/Download/geoip.dat >&2
@@ -152,6 +157,7 @@ asset() {
 }
 
 whichCore() {
+  ui_print whichCore
   case "$core" in
     custom)
       whichCustom
@@ -159,11 +165,12 @@ whichCore() {
     xray)
       download_link="https://github.com/XTLS/Xray-core/releases"
       github_api="https://api.github.com/repos/XTLS/Xray-core/releases"
-      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | grep -o "[0-9.]*"`
+      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | awk '{print $2}'`
+      latest_version=${latest_version:2:-2}
       whichArch
       download_file=${version}
       download_path="/sdcard/Download/${download_file}"
-      /data/adb/magisk/busybox wget "${download_link}/download/${latest_version}/${download_file}" -O "${download_path}" >&2
+      /data/adb/magisk/busybox wget "${download_link}/download/v${latest_version}/${download_file}" -O "${download_path}" >&2
       if [ "$?" != "0" ] ; then
         ui_print "Download err"
         abort
@@ -172,11 +179,12 @@ whichCore() {
     v2ray)
       download_link="https://github.com/v2fly/v2ray-core/releases"
       github_api="https://api.github.com/repos/v2fly/v2ray-core/releases"
-      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | grep -o "[0-9.]*"`
+      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | awk '{print $2}'`
+      latest_version=${latest_version:2:-2}
       whichArch
       download_file=${version}
       download_path="/sdcard/Download/${download_file}"
-      /data/adb/magisk/busybox wget "${download_link}/download/${latest_version}/${download_file}" -O "${download_path}" >&2
+      /data/adb/magisk/busybox wget "${download_link}/download/v${latest_version}/${download_file}" -O "${download_path}" >&2
       if [ "$?" != "0" ] ; then
         ui_print "Download err"
         abort
@@ -185,7 +193,8 @@ whichCore() {
     sing-box)
       download_link="https://github.com/SagerNet/sing-box/releases"
       github_api="https://api.github.com/repos/SagerNet/sing-box/releases"
-      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | grep -o "[0-9.]*"`
+      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | awk '{print $2}'`
+      latest_version=${latest_version:2:-2}
       whichArch
       download_file="sing-box-${latest_version}-${version}.tar.gz"
       download_path="/sdcard/Download/${download_file}"
@@ -200,6 +209,8 @@ whichCore() {
 
 # deploy core
 core() {
+  ui_print deployCore
+  mkdir -p ${module_path}/bin
   case "${core}" in
     xray)
       unzip -j -o "${download_path}" "xray" -d ${module_path}/bin/ >&2
@@ -214,9 +225,8 @@ core() {
 }
 
 installModule() {
-  mkdir -p ${module_path}/bin
+  ui_print installModule
   mkdir -p ${module_path}/run
-  mkdir -p ${module_path}/assets
   mkdir -p ${module_path}/confs
   mkdir -p ${module_path}/scripts
   unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d ${module_path}/scripts >&2
@@ -252,3 +262,12 @@ installModule() {
   echo "${core} ${latest_version}" >> $MODPATH/module.prop
   echo "versionCode=20220916" >> $MODPATH/module.prop
 }
+
+main() {
+  whichCore
+  core
+  asset
+  installModule
+}
+
+main
