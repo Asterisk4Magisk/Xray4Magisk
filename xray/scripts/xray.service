@@ -20,7 +20,7 @@ case "${custom}" in
   xray)
     bin_name=xray
     ;;
-  v2ray)
+  v2ray|sagernet)
     bin_name=v2ray
     ;;
   sing-box)

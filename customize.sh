@@ -65,7 +65,7 @@ whichArch() {
         ;;
       esac
     ;;
-    v2ray)
+    v2ray|sagernet)
       case "${ARCH}" in
         arm)
           version="v2ray-linux-arm32-v7a.zip"
@@ -160,6 +160,7 @@ whichCore() {
   ui_print whichCore
   case "$core" in
     custom)
+      latest_version=custom
       whichCustom
     ;;
     xray)
@@ -179,6 +180,20 @@ whichCore() {
     v2ray)
       download_link="https://github.com/v2fly/v2ray-core/releases"
       github_api="https://api.github.com/repos/v2fly/v2ray-core/releases"
+      latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | awk '{print $2}'`
+      latest_version=${latest_version:2:-2}
+      whichArch
+      download_file=${version}
+      download_path="/sdcard/Download/${download_file}"
+      /data/adb/magisk/busybox wget "${download_link}/download/v${latest_version}/${download_file}" -O "${download_path}" >&2
+      if [ "$?" != "0" ] ; then
+        ui_print "Download err"
+        abort
+      fi
+    ;;
+    sagernet)
+      download_link="https://github.com/SagerNet/v2ray-core/releases"
+      github_api="https://api.github.com/repos/SagerNet/v2ray-core/releases"
       latest_version=`/data/adb/magisk/busybox wget -qO- ${github_api} | grep -m 1 "tag_name" | awk '{print $2}'`
       latest_version=${latest_version:2:-2}
       whichArch
