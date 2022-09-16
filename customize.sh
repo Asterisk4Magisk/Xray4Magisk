@@ -116,8 +116,8 @@ asset() {
         ui_print "Download err"
         abort
       fi
-      cp /sdcard/Download/geoip.db ${module_path}/assets
-        cp /sdcard/Download/geosite.db ${module_path}/assets
+      cp /sdcard/Download/geoip.dat ${module_path}/assets
+      cp /sdcard/Download/geosite.dat ${module_path}/assets
     ;;
     dat)
       unzip -j -o "${download_path}" "geoip.dat" -d ${module_path}/assets >&2
@@ -134,8 +134,8 @@ asset() {
         ui_print "Download err"
         abort
       fi
-      cp /sdcard/Download/geoip.dat ${module_path}/assets
-      cp /sdcard/Download/geosite.dat ${module_path}/assets
+      cp /sdcard/Download/geoip.db ${module_path}/assets
+      cp /sdcard/Download/geosite.db ${module_path}/assets
     ;;
     customDat)
       if [ -f /sdcard/Download/geoip.dat ] && [ -f /sdcard/Download/geosite.dat ] ; then
