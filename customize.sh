@@ -34,7 +34,7 @@ whichCustom() {
       core="v2ray"
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
-    elif [ $(echo $i | grep -e 'sing-box-.*\.tar.gz$' ) ]; then
+    elif [ $(echo $i | grep -e '^sing-box-.*\.tar.gz$' ) ]; then
       asset="customDb"
       core="sing-box"
       download_file=$i
