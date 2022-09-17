@@ -20,29 +20,35 @@ fi
 
 config_file="${module_path}/confs/${config}"
 
-# get asset type and core type
+# get core type
 whichCustom() {
   ui_print whichCustom
   for i in $(ls -tr /sdcard/Download); do
     if [ $(echo $i | grep -e '^Xray-.*\.zip$') ]; then
-      asset="customDat"
       core="xray"
+      if [ $BOOTMODE ! = true ]; then
+        asset="customDat"
+      fi
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
     elif [ $(echo $i | grep -e '^v2ray-.*\.zip$') ]; then
-      asset="customDat"
       core="v2ray"
+      if [ $BOOTMODE ! = true ]; then
+        asset="customDat"
+      fi
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
     elif [ $(echo $i | grep -e '^sing-box-.*\.tar.gz$' ) ]; then
-      asset="customDb"
       core="sing-box"
+      if [ $BOOTMODE ! = true ]; then
+        asset="customDb"
+      fi
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
     fi
   done
   if [ $core == "custom" ]; then
-    ui_print "custom core not found"
+    ui_print "Custom core not found"
     abort
   fi
 }
@@ -144,6 +150,7 @@ asset() {
         cp /sdcard/Download/geoip.dat ${module_path}/assets
         cp /sdcard/Download/geosite.dat ${module_path}/assets
       else
+        ui_print "Please put geoip.dat & geosite.dat in /sdcard/Download"
         abort
       fi
     ;;
@@ -152,6 +159,7 @@ asset() {
         cp /sdcard/Download/geoip.db ${module_path}/assets
         cp /sdcard/Download/geosite.db ${module_path}/assets
       else
+        ui_print "Please put geoip.db & geosite.db in /sdcard/Download"
         abort
       fi
     ;;
