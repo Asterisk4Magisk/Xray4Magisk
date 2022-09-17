@@ -26,14 +26,23 @@ whichCustom() {
   for i in $(ls -tr /sdcard/Download); do
     if [ $(echo $i | grep -e '^Xray-.*\.zip$') ]; then
       core="xray"
+      if [ $BOOTMODE ! = true ]; then
+        asset="customDat"
+      fi
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
     elif [ $(echo $i | grep -e '^v2ray-.*\.zip$') ]; then
       core="v2ray"
+      if [ $BOOTMODE ! = true ]; then
+        asset="customDat"
+      fi
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
     elif [ $(echo $i | grep -e '^sing-box-.*\.tar.gz$' ) ]; then
       core="sing-box"
+      if [ $BOOTMODE ! = true ]; then
+        asset="customDb"
+      fi
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
     fi
