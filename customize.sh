@@ -24,25 +24,27 @@ config_file="${module_path}/confs/${config}"
 whichCustom() {
   ui_print whichCustom
   for i in $(ls -tr /sdcard/Download); do
-    if [ $(echo $i | grep '(^Xray-)*(\.zip$)') ]; then
+    if [ $(echo $i | grep -e '^Xray-.*\.zip$') ]; then
       asset="customDat"
       core="xray"
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
-    elif [ $(echo $i | grep -nE '(^v2ray-)*(\.zip$)') ]; then
+    elif [ $(echo $i | grep -e '^v2ray-.*\.zip$') ]; then
       asset="customDat"
       core="v2ray"
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
-    elif [ $(echo $i | grep -nE '(^sing-box-)*(\.tar\.gz$)' ) ]; then
+    elif [ $(echo $i | grep -e 'sing-box-.*\.tar.gz$' ) ]; then
       asset="customDb"
       core="sing-box"
       download_file=$i
       download_path="/sdcard/Download/${download_file}"
-    else
-      abort
     fi
   done
+  if [ $core == "custom" ]; then
+    ui_print "custom core not found"
+    abort
+  fi
 }
 
 # get version arg
@@ -271,9 +273,9 @@ installModule() {
   set_perm_recursive $MODPATH 0 0 0755 0644
   set_perm  /data/adb/service.d/xray4magisk_service.sh    0  0  0755
   set_perm  $MODPATH/uninstall.sh                         0  0  0755
-  set_perm_recursive  ${module_path}/scripts              0  0  0755
+  set_perm_recursive  ${module_path}/scripts              0  0  0755 0755
   set_perm  ${module_path}                                0  0  0755
-  set_perm_recursive  ${module_path}/bin                  0  0  0755
+  set_perm_recursive  ${module_path}/bin                  0  0  0755 0755
 
   unzip -j -o "${ZIPFILE}" "module.prop" -d $MODPATH >&2
   echo -n "version=Module v2.0, Core " >> $MODPATH/module.prop
