@@ -54,9 +54,9 @@ find_netstat_path() {
 wait_xray_listen() {
   wait_count=0
   xray_pid=$(cat ${pid_file})
-  find_netstat_path && \
-  check_xray_cmd="netstat -tnlp | grep -q xray" || \
-  check_xray_cmd="ls -lh /proc/${xray_pid}/fd | grep -q socket"
+  find_netstat_path &&
+    check_xray_cmd="netstat -tnlp | grep -q xray" ||
+    check_xray_cmd="ls -lh /proc/${xray_pid}/fd | grep -q socket"
   while probe_xray_alive && ! eval "${check_xray_cmd}" && [ ${wait_count} -lt 100 ]; do
     sleep 1
     wait_count=$((${wait_count} + 1))
