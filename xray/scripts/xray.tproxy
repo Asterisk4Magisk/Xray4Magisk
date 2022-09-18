@@ -27,8 +27,6 @@ intranet6=(::/128 ::1/128 ::ffff:0:0/96 100::/64 64:ff9b::/96 2001::/32 2001:10:
 #  2900-2999 5000-5999 OEM; 10000+ APP; 99000-99999 ISOLATE; 100000 USER; 50000-59999 SHARED_GID
 AIDs=(1001 1002 1003 1004 1005 1006 1007 1008 1009 1010 1011 1012 1013 1014 1015 1016 1017 1018 1019 1020 1021 1022 1023 1024 1025 1026 1027 1028 1029 1030 1031 1032 1033 1034 1035 1036 1037 1038 1039 1040 1041 1042 1043 1044 1045 1046 1047 1048 1049 1050 2001 2002 3001 3002 3003 3004 3005 3006 3007 3008 3009 3010 9997 9998 9999)
 
-
-
 # watch
 data_path="/data/adb/xray"
 bin_name="watch.sh"
@@ -38,13 +36,13 @@ pid_file="${run_path}/${bin_name}.pid"
 error_log="${run_path}/watch.error.log"
 
 probe_alive() {
-    [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
+    [ -f ${pid_file} ] && cmd_file="/proc/$(cat ${pid_file})/cmdline" || return 1
     [ -f ${cmd_file} ] && grep -q ${bin_path} ${cmd_file} && return 0 || return 1
 }
 
 display_pid() {
-    if probe_alive ; then
-        echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+    if probe_alive; then
+        echo "[Info]: ${bin_name} service is running. ( PID: $(cat ${pid_file}) )"
         return 0
     else
         echo "[Info]: ${bin_name} service is stopped."
@@ -53,14 +51,14 @@ display_pid() {
 }
 
 start_service() {
-    if probe_alive ; then
-        echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+    if probe_alive; then
+        echo "[Info]: ${bin_name} service is running. ( PID: $(cat ${pid_file}) )"
     else
         echo "[Info]: Starting ${bin_name} service."
         nohup ${bin_path} &>${error_log} &
-        echo -n $! > ${pid_file}
-        if probe_alive ; then
-            echo "[Warning]: ${bin_name} service is running ( PID: `cat ${pid_file}` )"
+        echo -n $! >${pid_file}
+        if probe_alive; then
+            echo "[Warning]: ${bin_name} service is running ( PID: $(cat ${pid_file}) )"
         else
             echo "[Error]: Start ${bin_name} service Failed."
             rm -f ${pid_file}
@@ -69,22 +67,21 @@ start_service() {
 }
 
 stop_service() {
-    if display_pid ; then
+    if display_pid; then
         echo "[Info]: Stopping ${bin_name} service."
-        kill `cat ${pid_file}`
+        kill $(cat ${pid_file})
         sleep 1
         display_pid
     fi
     rm -f ${pid_file}
 }
 
-
 add_route() {
     ip rule add fwmark ${mark_id} table ${table_id}
     [ $proxy2_enable -eq 1 ] && ip rule add fwmark ${mark2_id} table ${table_id}
     ip route add local default dev lo table ${table_id}
-    if [ -f /data/adb/xray/ipv6 ] ; then
-        if [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] ; then
+    if [ -f /data/adb/xray/ipv6 ]; then
+        if [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ]; then
             /data/adb/xray/scripts/dummy.service start
         else
             ip -6 rule add fwmark ${mark_id} table ${table_id}
@@ -98,8 +95,8 @@ del_route() {
     ip rule del fwmark ${mark_id} table ${table_id}
     ip rule del fwmark ${mark2_id} table ${table_id}
     ip route flush table ${table_id}
-    if [ -f /data/adb/xray/ipv6 ] ; then
-        if [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] ; then
+    if [ -f /data/adb/xray/ipv6 ]; then
+        if [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ]; then
             /data/adb/xray/scripts/dummy.service stop
         else
             ip -6 rule del fwmark ${mark_id} table ${table_id}
@@ -120,13 +117,13 @@ create_mangle_iptables() {
     ${iptables} -t mangle -I XRAY -i ccmni+ -j RETURN
 
     # Bypass intranet
-    if [ "${iptables}" = "ip6tables -w 100" ] ; then
-        for subnet6 in ${intranet6[@]} ; do
+    if [ "${iptables}" = "ip6tables -w 100" ]; then
+        for subnet6 in ${intranet6[@]}; do
             ${iptables} -t mangle -A XRAY -d ${subnet6} -p udp ! --dport 53 -j RETURN
             ${iptables} -t mangle -A XRAY -d ${subnet6} ! -p udp -j RETURN
         done
     else
-        for subnet in ${intranet[@]} ; do
+        for subnet in ${intranet[@]}; do
             ${iptables} -t mangle -A XRAY -d ${subnet} -p udp ! --dport 53 -j RETURN
             ${iptables} -t mangle -A XRAY -d ${subnet} ! -p udp -j RETURN
         done
@@ -135,7 +132,7 @@ create_mangle_iptables() {
     # Allow ap interface
     #  Notice: Old android device may only have one wlan interface.
     #          Some new android device have multiple wlan interface like wlan0(for internet), wlan1(for AP).
-    for ap in ${ap_list[@]} ; do
+    for ap in ${ap_list[@]}; do
         ${iptables} -t mangle -A XRAY -p tcp -i ${ap} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
         ${iptables} -t mangle -A XRAY -p udp -i ${ap} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     done
@@ -145,7 +142,6 @@ create_mangle_iptables() {
     [ $proxy2_enable -eq 1 ] && ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark2_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark2_id}
     ${iptables} -t mangle -A XRAY -p tcp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
     ${iptables} -t mangle -A XRAY -p udp -i lo -m mark --mark ${mark_id} -j TPROXY --on-port ${proxy_port} --tproxy-mark ${mark_id}
-
 
     ${iptables} -t mangle -A PREROUTING -j XRAY
 
@@ -163,48 +159,48 @@ create_proxy_iptables() {
     [ "$(head -1 /data/adb/xray/ipv6)" = "6to4" ] && ${iptables} -t mangle -A PROXY -o xdummy -j RETURN
 
     # Bypass ignored interfaces
-    for ignore in ${ignore_out_list[@]} ; do
+    for ignore in ${ignore_out_list[@]}; do
         ${iptables} -t mangle -A PROXY -o ${ignore} -j RETURN
     done
 
     # Bypass AIDs
-    for AID in ${AIDs[@]} ; do
-      ${iptables} -t mangle -A PROXY -m owner --uid-owner ${AID} -j RETURN
+    for AID in ${AIDs[@]}; do
+        ${iptables} -t mangle -A PROXY -m owner --uid-owner ${AID} -j RETURN
     done
 
     # Bypass Xray itself
     ${iptables} -t mangle -A PROXY -m owner --uid-owner 0 --gid-owner ${xray_gid} -j RETURN
 
     # Bypass intranet
-    if [ "${iptables}" = "ip6tables -w 100" ] ; then
-        for subnet6 in ${intranet6[@]} ; do
+    if [ "${iptables}" = "ip6tables -w 100" ]; then
+        for subnet6 in ${intranet6[@]}; do
             ${iptables} -t mangle -A PROXY -d ${subnet6} -p udp ! --dport 53 -j RETURN
             ${iptables} -t mangle -A PROXY -d ${subnet6} ! -p udp -j RETURN
         done
     else
-        for subnet in ${intranet[@]} ; do
+        for subnet in ${intranet[@]}; do
             ${iptables} -t mangle -A PROXY -d ${subnet} -p udp ! --dport 53 -j RETURN
             ${iptables} -t mangle -A PROXY -d ${subnet} ! -p udp -j RETURN
         done
     fi
 
     # Setup proxy
-    if [ "${proxy_mode}" = "ALL" ] ; then
+    if [ "${proxy_mode}" = "ALL" ]; then
         # Route Everything
         ${iptables} -t mangle -A PROXY -p tcp -j MARK --set-mark ${mark_id}
         ${iptables} -t mangle -A PROXY -p udp -j MARK --set-mark ${mark_id}
-    elif [ "${proxy_mode}" = "skip" ] ; then
+    elif [ "${proxy_mode}" = "skip" ]; then
         # Bypass apps
-        for appid in ${appid_list[@]} ; do
+        for appid in ${appid_list[@]}; do
             ${iptables} -t mangle -I PROXY -m owner --uid-owner ${appid} -p udp ! --dport 53 -j RETURN
             ${iptables} -t mangle -I PROXY -m owner --uid-owner ${appid} ! -p udp -j RETURN
         done
         # Allow !app
         ${iptables} -t mangle -A PROXY -p tcp -j MARK --set-mark ${mark_id}
         ${iptables} -t mangle -A PROXY -p udp -j MARK --set-mark ${mark_id}
-    elif [ "${proxy_mode}" = "pick" ] ; then
+    elif [ "${proxy_mode}" = "pick" ]; then
         # Route apps to Xray
-        for appid in ${appid_list[@]} ; do
+        for appid in ${appid_list[@]}; do
             ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
             ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner ${appid} -j MARK --set-mark ${mark_id}
         done
@@ -219,9 +215,9 @@ create_proxy_iptables() {
     fi
 
     # Bypass and transfer proxy2
-    if [ ! $proxy2_enable -eq 0 ] ; then
-	    for proxy2id in ${proxy2_list[@]} ; do
-	        ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner ${proxy2id} -j MARK --set-mark ${mark2_id}
+    if [ ! $proxy2_enable -eq 0 ]; then
+        for proxy2id in ${proxy2_list[@]}; do
+            ${iptables} -t mangle -A PROXY -p tcp -m owner --uid-owner ${proxy2id} -j MARK --set-mark ${mark2_id}
             ${iptables} -t mangle -A PROXY -p udp -m owner --uid-owner ${proxy2id} -j MARK --set-mark ${mark2_id}
         done
     fi
@@ -243,25 +239,25 @@ clean_mangle_iptables() {
 }
 
 probe_proxy_mode() {
-    echo "" >> ${appid_file}
+    echo "" >>${appid_file}
     sed -i '/^$/d' "${appid_file}"
-    if [ -f "${appid_file}" ] ; then
+    if [ -f "${appid_file}" ]; then
         first_line=$(head -1 ${appid_file})
-        if [ "${first_line}" = "ALL" ] ; then
+        if [ "${first_line}" = "ALL" ]; then
             proxy_mode=ALL
-        elif [ "${first_line}" = "bypass" ] ; then
+        elif [ "${first_line}" = "bypass" ]; then
             proxy_mode=skip
         else
             proxy_mode=pick
         fi
     fi
 
-    while read appid_line ; do
-        appid_text=(`echo ${appid_line}`)
-        for appid_word in ${appid_text[*]} ; do
-            if [ "${appid_word}" = "bypass" -o "${appid_word}" = "ALL" ] ; then
+    while read appid_line; do
+        appid_text=($(echo ${appid_line}))
+        for appid_word in ${appid_text[*]}; do
+            if [ "${appid_word}" = "bypass" -o "${appid_word}" = "ALL" ]; then
                 break
-            elif [ "${appid_word}" = "proxy2" ] ; then
+            elif [ "${appid_word}" = "proxy2" ]; then
                 proxy2_enable=1
                 break
             else
@@ -269,48 +265,48 @@ probe_proxy_mode() {
                 [ ! $proxy2_enable -eq 0 ] && proxy2_list=(${proxy2_list[*]} ${appid_word})
             fi
         done
-    done < ${appid_file}
+    done <${appid_file}
     # echo ${appid_list[*]}
 
     # ignore output interface
-    if [ -f ${ignore_out} ] ; then
-        echo "" >> "${ignore_out}"
+    if [ -f ${ignore_out} ]; then
+        echo "" >>"${ignore_out}"
         sed -i '/^$/d' "${ignore_out}"
-        while read ignore_out_line ; do
-            ignore_out_text=(`echo ${ignore_out_line}`)
-            for ignore_out_word in ${ignore_out_text[*]} ; do
+        while read ignore_out_line; do
+            ignore_out_text=($(echo ${ignore_out_line}))
+            for ignore_out_word in ${ignore_out_text[*]}; do
                 ignore_out_list=(${ignore_out_list[*]} ${ignore_out_word})
             done
-        done < ${ignore_out}
+        done <${ignore_out}
     fi
 
     # bypass ap interface
-    if [ -f ${ap_file} ] ; then
-        echo "" >> "${ap_file}"
+    if [ -f ${ap_file} ]; then
+        echo "" >>"${ap_file}"
         sed -i '/^$/d' "${ap_file}"
-        while read ap_line ; do
-            ap_text=(`echo ${ap_line}`)
-            for ap_word in ${ap_text[*]} ; do
+        while read ap_line; do
+            ap_text=($(echo ${ap_line}))
+            for ap_word in ${ap_text[*]}; do
                 ap_list=(${ap_list[*]} ${ap_word})
             done
-        done < ${ap_file}
+        done <${ap_file}
     fi
 
     probe="done"
 }
 
 disable_ipv6() {
-    echo 0 > /proc/sys/net/ipv6/conf/all/accept_ra
-    echo 0 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
-    echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-    echo 1 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+    echo 0 >/proc/sys/net/ipv6/conf/all/accept_ra
+    echo 0 >/proc/sys/net/ipv6/conf/wlan0/accept_ra
+    echo 1 >/proc/sys/net/ipv6/conf/all/disable_ipv6
+    echo 1 >/proc/sys/net/ipv6/conf/wlan0/disable_ipv6
 }
 
 enable_ipv6() {
-    echo 1 > /proc/sys/net/ipv6/conf/all/accept_ra
-    echo 1 > /proc/sys/net/ipv6/conf/wlan0/accept_ra
-    echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6
-    echo 0 > /proc/sys/net/ipv6/conf/wlan0/disable_ipv6
+    echo 1 >/proc/sys/net/ipv6/conf/all/accept_ra
+    echo 1 >/proc/sys/net/ipv6/conf/wlan0/accept_ra
+    echo 0 >/proc/sys/net/ipv6/conf/all/disable_ipv6
+    echo 0 >/proc/sys/net/ipv6/conf/wlan0/disable_ipv6
 }
 
 disable_proxy() {
@@ -322,15 +318,15 @@ disable_proxy() {
     iptables="iptables -w 100"
 
     echo "disable ipv4 proxy"
-    clean_mangle_iptables 2> /dev/null
+    clean_mangle_iptables 2>/dev/null
 
     enable_ipv6
 
-    if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ] ; then
+    if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ]; then
         echo "disable ipv6 proxy"
         iptables="ip6tables -w 100"
         # stop_service
-        clean_mangle_iptables 2> /dev/null
+        clean_mangle_iptables 2>/dev/null
     fi
     ${data_path}/scripts/watch.sh stop
 }
@@ -338,7 +334,7 @@ disable_proxy() {
 enable_proxy() {
     echo "probing proxy mode"
 
-    if [ "${probe}" = no ] ; then
+    if [ "${probe}" = no ]; then
         probe_proxy_mode
     fi
 
@@ -349,7 +345,7 @@ enable_proxy() {
     echo "enable ipv4 proxy"
     create_mangle_iptables
 
-    if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ] ; then
+    if [ "$(head -1 /data/adb/xray/ipv6)" = "enable" ]; then
         echo "enable ipv6 proxy"
         iptables="ip6tables -w 100"
         create_mangle_iptables
@@ -361,18 +357,18 @@ enable_proxy() {
 }
 
 case "$1" in
-  enable)
+enable)
     disable_proxy
     enable_proxy
     ;;
-  disable)
+disable)
     disable_proxy
     ;;
-  renew)
+renew)
     disable_proxy
     enable_proxy
     ;;
-  *)
+*)
     echo "$0:  usage:  $0 {enable|disable|renew}"
     ;;
 esac

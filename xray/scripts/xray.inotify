@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
-inotify=`realpath $0`
-scripts_dir=`dirname ${inotify}`
+inotify=$(realpath $0)
+scripts_dir=$(dirname ${inotify})
 service="${scripts_dir}/xray.service"
 tproxy="${scripts_dir}/xray.tproxy"
 
@@ -10,9 +10,9 @@ monitor_dir=$2
 monitor_file=$3
 
 start_xray() {
-  ${service} start &>> /data/adb/xray/run/service.log &
-  if [ -f /data/adb/xray/appid.list ] ; then
-    ${tproxy} enable &>> /data/adb/xray/run/service.log &
+  ${service} start &>>/data/adb/xray/run/service.log &
+  if [ -f /data/adb/xray/appid.list ]; then
+    ${tproxy} enable &>>/data/adb/xray/run/service.log &
   fi
 }
 
@@ -22,15 +22,15 @@ stop_xray() {
 }
 
 main() {
-if [ ! -f /data/adb/xray/manual ] ; then
-  if [ "${monitor_file}" = "disable" ] ; then
-    if [ "${events}" = "d" ] ; then
-      start_xray
-    elif [ "${events}" = "n" ] ; then
-      stop_xray
+  if [ ! -f /data/adb/xray/manual ]; then
+    if [ "${monitor_file}" = "disable" ]; then
+      if [ "${events}" = "d" ]; then
+        start_xray
+      elif [ "${events}" = "n" ]; then
+        stop_xray
+      fi
     fi
   fi
-fi
 }
 
 main
