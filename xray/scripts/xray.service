@@ -14,16 +14,16 @@ conf_file="${data_path}/confs/${config}"
 extra_opts=""
 
 case "${custom}" in
-  xray)
-    bin_name=xray
-    ;;
-  v2ray|sagernet)
-    bin_name=v2ray
-    ;;
-  sing-box)
-    bin_name=sing-box
-    extra_opts="-D ${data_path}/assets"
-    ;;
+xray)
+  bin_name=xray
+  ;;
+v2ray | sagernet)
+  bin_name=v2ray
+  ;;
+sing-box)
+  bin_name=sing-box
+  extra_opts="-D ${data_path}/assets"
+  ;;
 esac
 
 bin_path="/data/adb/xray/bin/${bin_name}"
@@ -31,13 +31,13 @@ pid_file="${run_path}/${bin_name}.pid"
 bin_opts="${extra_opts} run -c ${conf_file}"
 
 probe_xray_alive() {
-  [ -f ${pid_file} ] && cmd_file="/proc/`cat ${pid_file}`/cmdline" || return 1
+  [ -f ${pid_file} ] && cmd_file="/proc/$(cat ${pid_file})/cmdline" || return 1
   [ -f ${cmd_file} ] && grep -q ${bin_path} ${cmd_file} && return 0 || return 1
 }
 
 display_xray_pid() {
-  if probe_xray_alive ; then
-    echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+  if probe_xray_alive; then
+    echo "[Info]: ${bin_name} service is running. ( PID: $(cat ${pid_file}) )"
     return 0
   else
     echo "[Info]: ${bin_name} service is stopped."
@@ -53,14 +53,15 @@ find_netstat_path() {
 
 wait_xray_listen() {
   wait_count=0
-  xray_pid=`cat ${pid_file}`
+  xray_pid=$(cat ${pid_file})
   find_netstat_path && \
   check_xray_cmd="netstat -tnlp | grep -q xray" || \
   check_xray_cmd="ls -lh /proc/${xray_pid}/fd | grep -q socket"
-  while probe_xray_alive && ! eval "${check_xray_cmd}" && [ ${wait_count} -lt 100 ] ; do
-    sleep 1 ; wait_count=$((${wait_count} + 1))
+  while probe_xray_alive && ! eval "${check_xray_cmd}" && [ ${wait_count} -lt 100 ]; do
+    sleep 1
+    wait_count=$((${wait_count} + 1))
   done
-  if probe_xray_alive && eval "${check_xray_cmd}" ; then
+  if probe_xray_alive && eval "${check_xray_cmd}"; then
     return 0
   else
     return 1
@@ -70,21 +71,21 @@ wait_xray_listen() {
 start_service() {
   export XRAY_LOCATION_ASSET="${data_path}/assets"
   export V2RAY_LOCATION_ASSET="${data_path}/assets"
-  if probe_xray_alive ; then
-    echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+  if probe_xray_alive; then
+    echo "[Info]: ${bin_name} service is running. ( PID: $(cat ${pid_file}) )"
     return 0
-  elif [ -f ${conf_file} ] ; then
+  elif [ -f ${conf_file} ]; then
     echo "[Info]: Starting ${bin_name} service."
     mkdir -p ${run_path}
     ulimit -SHn 1000000
     nohup ${magisk_busybox} setuidgid 0:${xray_gid} ${bin_path} ${bin_opts} &>${error_log} &
-    echo -n $! > ${pid_file}
-    if wait_xray_listen ; then
-      echo "[Info]: ${bin_name} service is running. ( PID: `cat ${pid_file}` )"
+    echo -n $! >${pid_file}
+    if wait_xray_listen; then
+      echo "[Info]: ${bin_name} service is running. ( PID: $(cat ${pid_file}) )"
       return 0
     else
-      if probe_xray_alive ; then
-        echo "[Warning]: ${bin_name} service is running but may not listening. ( PID: `cat ${pid_file}` )"
+      if probe_xray_alive; then
+        echo "[Warning]: ${bin_name} service is running but may not listening. ( PID: $(cat ${pid_file}) )"
         return 0
       else
         echo "[Error]: Start ${bin_name} service Failed."
@@ -98,9 +99,9 @@ start_service() {
 }
 
 stop_service() {
-  if display_xray_pid ; then
+  if display_xray_pid; then
     echo "[Info]: Stopping ${bin_name} service."
-    kill `cat ${pid_file}`
+    kill $(cat ${pid_file})
     sleep 1
     display_xray_pid
   fi
@@ -109,20 +110,20 @@ stop_service() {
 }
 
 case "$1" in
-  start)
-    start_service
-    ;;
-  stop)
-    stop_service
-    ;;
-  restart)
-    stop_service
-    start_service
-    ;;
-  status)
-    display_xray_pid
-    ;;
-  *)
-    echo "$0:  usage:  $0 {start|stop|restart|status}"
-    ;;
+start)
+  start_service
+  ;;
+stop)
+  stop_service
+  ;;
+restart)
+  stop_service
+  start_service
+  ;;
+status)
+  display_xray_pid
+  ;;
+*)
+  echo "$0:  usage:  $0 {start|stop|restart|status}"
+  ;;
 esac

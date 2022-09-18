@@ -8,7 +8,7 @@ table3_id="164"
 
 create_dummy() {
 	echo "[Info]: Creating dummy dev"
-	ip -6 link add ${dummy_device} type dummy>/dev/null 2>&1
+	ip -6 link add ${dummy_device} type dummy >/dev/null 2>&1
 	ip -6 addr add ${dummy_ip} dev ${dummy_device} >/dev/null 2>&1
 	ip -6 link set ${dummy_device} up >/dev/null 2>&1
 }
@@ -70,13 +70,13 @@ dummy_stop() {
 }
 
 case $1 in
-	start)
-		dummy_start
-		;;
-	stop)
-		dummy_stop
-		;;
-	*)
-		echo "{start|stop}"
-		;;
+start)
+	dummy_start
+	;;
+stop)
+	dummy_stop
+	;;
+*)
+	echo "{start|stop}"
+	;;
 esac
