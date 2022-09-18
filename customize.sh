@@ -390,7 +390,7 @@ core() {
 }
 
 installModule() {
-  ui_print "---Release script---"
+  ui_print "---Release scripts---"
   mkdir -p ${module_path}/run
   mkdir -p ${module_path}/confs
   mkdir -p ${module_path}/scripts
