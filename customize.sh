@@ -70,7 +70,7 @@ whichCustom() {
   for i in $(ls -tr /sdcard/Download); do
     if [ $(echo $i | grep -e '^Xray-.*\.zip$') ]; then
       core="xray"
-      ui_print "---Core selected as xray---"
+      ui_print "---Custom core selected as xray---"
       if [ ! $BOOTMODE ]; then
         asset="customDat"
       fi
@@ -78,7 +78,7 @@ whichCustom() {
       download_path="/sdcard/Download/${download_file}"
     elif [ $(echo $i | grep -e '^v2ray-.*\.zip$') ]; then
       core="v2ray"
-      ui_print "---Core selected as v2ray---"
+      ui_print "---Custom core selected as v2ray---"
       if [ ! $BOOTMODE ]; then
         asset="customDat"
       fi
@@ -86,7 +86,7 @@ whichCustom() {
       download_path="/sdcard/Download/${download_file}"
     elif [ $(echo $i | grep -e '^sing-box-.*\.tar.gz$') ]; then
       core="sing-box"
-      ui_print "---Core selected as sing-box---"
+      ui_print "---Custom core selected as sing-box---"
       if [ ! $BOOTMODE ]; then
         asset="customDb"
       fi
@@ -135,8 +135,8 @@ selasset() {
 selcore() {
   if [ ! $BOOTMODE ]; then
     core="custom"
+    core0="custom"
     ui_print "---Work in offline mode, will use custom installation---"
-    whichCustom
   else
     [ -f /sdcard/xray.config ] && source /sdcard/xray.config
     [ -f $module_path/xray.config ] && source $module_path/xray.config
@@ -152,30 +152,34 @@ selcore() {
           ui_print "VOL+ = xray, VOL- = v2ray"
           if $VKSEL; then
             core="xray"
+            core0="xray"
             ui_print "---Core selected as xray---"
             selasset
           else
             ui_print "---Please select v2fly or sagernet---"
             ui_print "VOL+ = v2fly, VOL- = sagernet"
             if $VKSEL; then
-              core="v2fly"
+              core="v2ray"
+              core0="v2ray"
               ui_print "---Core selected as v2ray(v2fly)---"
               selasset
             else
               core="sagernet"
+              core0="sagernet"
               ui_print "---Core selected as v2ray(sagerNet)---"
               selasset
             fi
           fi
         else
           core="sing-box"
+          core0="sing-box"
           ui_print "---Core selected as sing-box---"
           selasset
         fi
       else
         core="custom"
+        core0="custom"
         ui_print "---Start custom installation---"
-        whichCustom
         selasset
       fi
     else
@@ -304,6 +308,7 @@ whichCore() {
   case "$core" in
   custom)
     latest_version=custom
+    whichCustom
     ;;
   xray)
     download_link="https://github.com/XTLS/Xray-core/releases"
@@ -421,10 +426,11 @@ installModule() {
   echo -n "version=Module v2.0, Core " >>$MODPATH/module.prop
   echo "${core} ${latest_version}" >>$MODPATH/module.prop
   echo "versionCode=20220918" >>$MODPATH/module.prop
-  echo "config="config.json"" >${module_path}/xray.config
+  echo "# Settings" >${module_path}/xray.config
+  echo "config="config.json"" >>${module_path}/xray.config
   echo "custom=$core" >>${module_path}/xray.config
   echo "# Update" >>${module_path}/xray.config
-  echo "core=$core" >>${module_path}/xray.config
+  echo "core=$core0" >>${module_path}/xray.config
   echo "asset=$asset" >>${module_path}/xray.config
 }
 
