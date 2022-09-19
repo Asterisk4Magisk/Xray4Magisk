@@ -423,9 +423,9 @@ installModule() {
   set_perm_recursive ${module_path}/bin 0 0 0755 0755
 
   unzip -j -o "${ZIPFILE}" "module.prop" -d $MODPATH >&2
-  echo -n "version=Module v2.0, Core " >>$MODPATH/module.prop
+  echo -n "version=Module v2.1, Core " >>$MODPATH/module.prop
   echo "${core} ${latest_version}" >>$MODPATH/module.prop
-  echo "versionCode=20220918" >>$MODPATH/module.prop
+  echo "versionCode=20220919" >>$MODPATH/module.prop
   echo "# Settings" >${module_path}/xray.config
   echo "config="config.json"" >>${module_path}/xray.config
   echo "custom=$core" >>${module_path}/xray.config
