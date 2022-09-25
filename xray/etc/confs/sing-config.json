@@ -1,0 +1,95 @@
+{
+	"log": {
+		"disabled": false,
+		"level": "info",
+		"timestamp": true
+	},
+	"dns": {
+		"servers": [
+			{
+				"tag": "google",
+				"address": "tls://8.8.8.8"
+			},
+			{
+				"tag": "local",
+				"address": "8.8.8.8",
+				"detour": "direct"
+			}
+		],
+		"rules": [
+			{
+				"domain_suffix": "domain.name",
+				"geosite": "cn",
+				"server": "local"
+			}
+		],
+		"final": "",
+		"strategy": "prefer_ipv4",
+		"disable_cache": false,
+		"disable_expire": false
+	},
+	"inbounds": [
+		{
+			"type": "tun",
+			"tag": "tun-in",
+			"interface_name": "tun0",
+			"inet4_address": "172.19.0.1/30",
+			"mtu": 9000,
+			"auto_route": true,
+			"strict_route": true,
+			"endpoint_independent_nat": true,
+			"stack": "gvisor",
+			"sniff": true
+		}
+	],
+	"outbounds": [
+		{
+			"type": "trojan",
+			"tag": "trojan-out",
+			"server": "dc.domain.name",
+			"server_port": 443,
+			"password": "passwd",
+			"network": "tcp",
+			"tls": {
+				"enabled": true,
+				"server_name": "dc.domain.name"
+			},
+			"transport": {
+				"type": "grpc",
+				"service_name": "rpc"
+			},
+			"domain_strategy": "ipv4_only"
+		},
+		{
+			"type": "direct",
+			"tag": "direct"
+		},
+		{
+			"type": "block",
+			"tag": "block"
+		},
+		{
+			"type": "dns",
+			"tag": "dns-out"
+		}
+	],
+	"route": {
+		"rules": [
+			{
+				"protocol": "dns",
+				"outbound": "dns-out"
+			},
+			{
+				"geosite": "category-ads-all",
+				"outbound": "block"
+			},
+			{
+				"geosite": "cn",
+				"geoip": "cn",
+				"outbound": "direct"
+			}
+		],
+		"auto_detect_interface": true
+	},
+	"experimental": {}
+}
