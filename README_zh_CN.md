@@ -12,6 +12,8 @@
 
 **请确保您的配置文件不会造成流量回环，否则可能会导致您的手机无限重启。**
 
+如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）等应用程序。
+
 ## 管理器 APP
 
 [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
@@ -22,7 +24,7 @@
 
 ### 自动安装
 
-这个模块不包含 [Xray-core](https://github.com/XTLS/Xray-core) 或 [v2ray-core](https://github.com/v2fly/v2ray-core) 等二进制文件。
+这个模块不包含 [Xray-core](https://github.com/XTLS/Xray-core) 或 [sing-box](https://github.com/SagerNet/sing-box) 等二进制文件。
 
 - 使用 Magisk 安装：
 
@@ -34,23 +36,25 @@
   asset=
   ```
 
-  `core` 为核心文件，有效值：`custom/xray/v2ray/sagernet/sing-box`
+  `core` 为核心文件，有效值：`custom`/`xray`/`v2ray`/`sagernet`/`sing-box`
 
   custom 为自定义，v2ray 为 [v2fly/v2ray-core](https://github.com/v2fly/v2ray-core)，sagernet 为 [SagerNet/v2ray-core](https://github.com/SagerNet/v2ray-core)
 
-  `asset` 为规则文件，有效值：`loyalsoldier/dat/customDat/db/customDb`
+  `asset` 为规则文件，有效值：`loyalsoldier`/`dat`/`customDat`/`db/customDb`
 
   loyalsoldier 为 [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat)，dat 和 db 分别为对应的默认，customDat 和 customDb 分别为对应的自定义
 
   **xray.config 的优先级高于音量选择安装**
 
-  升级安装可以修改 `/data/adb/xray/` 目录的 `xray.config`
+  升级安装默认为前次安装配置，也可以修改 `/data/adb/xray/` 目录下 `xray.config` 的 `#Update` 项决定下次安装，有效值同上。
 
-### 手动安装（custom）
+  如果不想修改，也可以删除 `xray.config`，下次安装将使用音量选择。配置文件将会被保留。
 
-下载对应架构的核心文件并打包成压缩包，与规则文件一起放置于 `/sdcard/Download` 目录下。
+### 手动安装（custom core）
 
-核心文件命名规则如下：（\* 表示随意字符）
+下载对应架构的核心文件并打包成压缩包，与规则文件（可选）一起放置于 `/sdcard/Download` 目录下。
+
+核心文件命名规则如下：（\* 表示任意字符）
 
 - xray ---> Xray-\*.zip
 - v2ray/sagernet ---> v2ray-\*.zip
@@ -62,8 +66,8 @@
 
 ## 配置文件
 
-- 配置文件保存在 `/data/adb/xray/confs/config.json`
-- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 Xray 的 [Project X](https://xtls.github.io/)
+- 配置文件保存在 `/data/adb/xray/confs/*.json`
+- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/) 和 [sing-box](https://sing-box.sagernet.org/)
 - 文件 `/data/adb/xray/appid.list` 用于选择需要代理的应用程序（APP）。编辑 `ignore_out.list` 文件可以忽略某些网络出口，例如可以实现连接 WiFi 时不走代理。
 
 ## 使用方法
@@ -75,9 +79,11 @@
 **以下核心服务统称 Xray**
 
 - Xray 服务默认会在系统启动后自动运行。
-- 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待 10 秒钟，停止服务可能会立即生效。
+- 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待几秒钟，停止服务可能会立即生效。
 
 #### 选择要代理的应用程序（APP）
+
+- 可以使用 [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
 
 - 如果您希望对特定的应用程序（APP）进行透明代理（阅读透明代理部分了解更多细节），只需在文件 `/data/adb/xray/appid.list` 中写下这些应用程序（APP）的 uid。
 
@@ -88,6 +94,19 @@
 - 如果您希望 Xray 代理所有应用程序（APP），除了某些特定的应用，那么请在 `/data/adb/xray/appid.list` 文件的第一行写下 `bypass` 之后再如前文所述的方法写下您**不希望**代理的应用的 uid。
 
 - Xray 服务正常启动且文件 `/data/adb/xray/appid.list` 不为空的情况下，透明代理才会生效。
+
+### 多核心切换
+
+修改 `/data/adb/xray/` 目录下 `xray.config` 的 `#Settings` 项决定使用的核心与配置文件：
+
+```
+config=
+custom=
+```
+
+`config` 有效值为完整配置文件名，默认为 `config.json`。
+
+`custom` 为需要使用的核心文件，有效值为 `xray`/`v2ray`/`sing-box`
 
 ### 高级用法（仅限调试 & 开发）
 

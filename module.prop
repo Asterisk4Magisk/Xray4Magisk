@@ -2,3 +2,4 @@ id=xray4magisk
 name=Xray4Magisk
 author=Asterisk4Magisk
 description=TProxy scripts
+updateJson=https://raw.githubusercontent.com/Asterisk4Magisk/Xray4Magisk/master/update.json

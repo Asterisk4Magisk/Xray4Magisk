@@ -1,5 +1,6 @@
 # Declare files that will always have LF line endings on checkout.
 META-INF/** text eol=lf
+xray/** text eol=lf
 *.prop text eol=lf
 *.sh text eol=lf
 *.md text eol=lf
