@@ -1,0 +1,43 @@
+{
+    "outbounds": [
+        {
+            "protocol": "dns",
+            "tag": "dns-out"
+        },
+        {
+            "protocol": "freedom",
+            "settings": {
+                "domainStrategy": "UseIP"
+            },
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "block"
+        },
+        {
+            "mux": {
+                "enabled": false
+            },
+            "protocol": "shadowsocks",
+            "settings": {
+                "servers": [
+                    {
+                        "Address": "1.2.3.4",
+                        "Method": "aes-128-gcm",
+                        "Password": "1234",
+                        "Port": 1234,
+                        "level": 0
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "sockopt": {
+                    "domainStrategy": "UseIP"
+                }
+            },
+            "tag": "proxy"
+        }
+    ]
+}

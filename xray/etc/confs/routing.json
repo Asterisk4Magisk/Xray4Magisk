@@ -1,0 +1,43 @@
+{
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "inboundTag": [
+                    "proxy-in"
+                ],
+                "port": 53,
+                "outboundTag": "dns-out"
+            },
+            {
+                "domain": [
+                    "geosite:apple-cn",
+                    "geosite:cn"
+                ],
+                "outboundTag": "direct",
+                "type": "field"
+            },
+            {
+                "domain": [
+                    "geosite:geolocation-!cn"
+                ],
+                "outboundTag": "proxy",
+                "type": "field"
+            },
+            {
+                "ip": [
+                    "geoip:cn",
+                    "geoip:private"
+                ],
+                "outboundTag": "direct",
+                "type": "field"
+            },
+            {
+                "network": "tcp,udp",
+                "outboundTag": "proxy",
+                "type": "field"
+            }
+        ]
+    }
+}

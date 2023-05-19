@@ -1,5 +1,7 @@
 id=xray4magisk
 name=Xray4Magisk
+version=Module v1.5.1-golang, Helper v0.0.1-debug
+versionCode=20230519
 author=Asterisk4Magisk
 description=TProxy scripts
 updateJson=https://raw.githubusercontent.com/Asterisk4Magisk/Xray4Magisk/master/update.json

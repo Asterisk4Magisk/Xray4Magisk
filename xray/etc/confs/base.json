@@ -1,0 +1,30 @@
+{
+    "log": {
+        "access": "none",
+        "loglevel": "warning",
+        "dnsLog": false
+    },
+    "inbounds": [
+        {
+            "tag": "proxy-in",
+            "port": 65535,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "network": "udp,tcp",
+                "followRedirect": true
+            },
+            "streamSettings": {
+                "sockopt": {
+                    "tproxy": "tproxy"
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "fakedns"
+                ],
+                "metadataOnly": false
+            }
+        }
+    ]
+}
