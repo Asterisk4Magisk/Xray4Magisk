@@ -2,9 +2,9 @@ English | [简体中文](README_zh_CN.md)
 
 # Xray4Magisk
 
-A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)
+~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/v2ray/sing-box, and includes binaries for arm, arm64, x86, x64.
+This is a Magisk module for Xray/v2ray, and includes binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -14,61 +14,22 @@ I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
 
 If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray) etc.
 
-## Manager APP
-
-[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)(WIP)
-
 ## Install
 
-Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) and install it via [Magisk](https://github.com/topjohnwu/Magisk) or [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager).
+Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) and install it via [Magisk](https://github.com/topjohnwu/Magisk)
 
 ### Auto installation
 
 This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core) or [sing-box](https://github.com/SagerNet/sing-box).
 
-- Using Magisk to install.
-
-  - You can select the core and rule files to be installed with the volume keys
-  - You can customize the initial installation by placing the `xray.config` file in the `/sdcard` directory: (can be deleted after installation)
-
-  ```
-  core=
-  asset=
-  ```
-
-  `core` is the core file, valid value: `custom`/`xray`/`v2ray`/`sagernet`/`sing-box`
-
-  Value custom for custom, v2ray for [v2fly/v2ray-core](https://github.com/v2fly/v2ray-core), sagernet for [SagerNet/v2ray-core](https://github.com/SagerNet/v2ray-core)
-
-  `asset` is rules files with the following valid values: `loyalsoldier/dat/customDat/db/customDb`
-
-  loyalsoldier is [Loyalsoldier/v2ray-rules-dat](https://github.com/Loyalsoldier/v2ray-rules-dat), dat and db are the corresponding defaults, customDat and customDb are the corresponding customizations
-
-  **xray.config has a higher priority than the volume selection installation**
-
-  The upgrade installation defaults to the previous installation, or you can modify the `#Update` entry in `xray.config` in the `/data/adb/xray/` directory to determine the next installation, with the same valid values as above.
-
-  You can also delete `xray.config` if you don't want to change it, and the next installation will use the volume selection.The config file will be retained.
-
-### Manual installation (custom core)
-
-Download the core file for the corresponding architecture and package it in a zip archive, placing it in the `/sdcard/Download` directory along with the rules files (optional).
-
-The naming convention for core files is as follows: (\* indicates arbitrary characters)
-
-- xray ---> Xray-\*.zip
-- v2ray/sagernet ---> v2ray-\*.zip
-- sing-box ---> sing-box-\*.tar.gz
-
-**Note: Check the CPU architecture of your device and select the correct zip file.**
-
-For example, for sdm855 to download xray-core, download `Xray-android-arm64-v8a.zip`.
+- Using Magisk to install.  
+  You can configure the `xrayhelper.yml` inside, to choose core
 
 ## Config
 
 - The config file is stored in `/data/adb/xray/confs/*.json`
 - Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that you only edit the `outbounds` section to add your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/) and [sing-box](https://sing-box.sagernet.org/)
-- The file `/data/adb/xray/appid.list` is used to select the APPs that require proxying. editing the `ignore_out.list` file allows you to ignore certain network exits, for example to enable not going through the proxy when connecting to WiFi.
+- The file `/data/adb/xray/xrayhelper.yml` is [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper)'s configuration, you should configure it first, it is recommended to learn how to use the XrayHelper cli, it can help you manage core, asset, and proxy nodes
 
 ## Usage
 
@@ -81,33 +42,6 @@ For example, for sdm855 to download xray-core, download `Xray-android-arm64-v8a.
 - Xray service is auto-run after system boot up by default.
 - You can use Magisk Manager App to manage it. Starting the service may take a few seconds, stopping it may take effect immediately.
 
-#### Select which App to proxy
-
-- You can use [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
-
-- If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/adb/xray/appid.list` .
-
-  Each App's uid should separate by space or just one App's uid per line. ( for Android App's uid , you can search App's package name in file `/data/system/packages.list` , or you can look into some App like Shadowsocks. )
-
-- If you expect all Apps proxy by xray with transparent proxy, just write `ALL` in file `/data/adb/xray/appid.list` .
-
-- If you expect all Apps proxy by xray with transparent proxy EXCEPT specific Apps, write down `bypass` at the first line then these Apps' uid separated as above in file `/data/adb/xray/appid.list`.
-
-- Transparent proxy won't take effect until the xray service start normally and file `/data/adb/xray/appid.list` is not empty.
-
-### Multi-Core Switching
-
-Modify the `#Settings` entry in `xray.config` in the `/data/adb/xray/` directory to determine the core and configuration files to use.
-
-```
-config=
-custom=
-```
-
-Valid values for `config` are the full configuration file name, defaults to `config.json`.
-
-`custom` is the core document to be used, with a valid value of `xray`/`v2ray`/`sing-box`
-
 ### Advanced usage ( for Debug and Develop only )
 
 #### Enter manual mode
@@ -115,32 +49,23 @@ Valid values for `config` are the full configuration file name, defaults to `con
 If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`. In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App.
 
 #### Manage service start / stop
+- Start service :
 
-- xray service script is `$MODDIR/scripts/xray.service`.
+    `xrayhelper service start`
 
-- For example, in my environment ( Magisk-alpha version: 23001 )
+- Stop service :
 
-  - Start service :
-
-    `/data/adb/xray/scripts/xray.service start`
-
-  - Stop service :
-
-    `/data/adb/img/xray/scripts/xray.service stop`
+    `xrayhelper service stop`
 
 #### Manage transparent proxy enable / disable
 
-- Transparent proxy script is `/data/adb/xray/scripts/xray.tproxy`.
-
-- For example, in my environment ( Magisk-alpha version: 23001 )
-
   - Enable Transparent proxy :
 
-    `/data/adb/xray/scripts/xray.tproxy enable`
+    `xrayhelper proxy enable`
 
   - Disable Transparent proxy :
 
-    `/data/adb/xray/scripts/xray.tproxy disable`
+    `xrayhelper proxy disable`
 
 #### Bypass Transparent proxy when connecting to WLAN
 
@@ -149,16 +74,6 @@ TODO
 #### Select which App to proxy, and which App to second proxy
 
 TODO
-
-#### Enable IPv6
-
-To enable IPv6 proxy, execute `touch /data/adb/xray/ipv6`
-
-To enable DNS AAAA record querying, edit `dns.json`, change `"queryStrategy"` from "UseIPv4" to "UseIP".
-
-To enable local IPv6 out, edit `base.json`, find the first inbound with "freedom" tag, change its `"domainStrategy"` from "UseIPv4" to "UseIP".
-
-To enable proxy IPv6 out, edit `proxy.json`, change its `"domainStrategy"` as what you do in `base.json`.
 
 ## Uninstall
 
@@ -186,7 +101,7 @@ This module cause battery drain really quick.
 
 GUI support?
 
-> Not done yet.
+> No plan.
 
 Why not store config files in Internal Storage?
 
@@ -199,6 +114,10 @@ Why not store config files in Internal Storage?
 ## Project X
 
 Project X is a set of network tools that help you to build your own computer network. It secures your network connections and thus protects your privacy. See [Project X](https://github.com/XTLS/xray-core) for more information.
+
+## XrayHelper
+
+[XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper) for Android, some scripts in Xray4Magisk rewritten with golang, provide arm64 and amd64 binary.
 
 ## License
 
