@@ -20,7 +20,7 @@ Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4M
 
 ### Auto installation
 
-This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core) or [sing-box](https://github.com/SagerNet/sing-box).
+This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core).
 
 - Using Magisk to install.  
   You can configure the `xrayhelper.yml` inside, to choose core
@@ -82,18 +82,9 @@ TODO
 
 ## FAQ
 
-No such file or directory?
+What is the difference between this branch and the master branch?
 
-> You might need Busybox for Android NDK
-
-Error calling service activity?
-
-> This module is designed to automatically turn on and off Flight mode, in order to clear DNS cache. However, this only work when SELinux is premissive. So just ignore this error message in `service.log`, and if you like, do turn on and off Flight mode manually.
-
-Why I need turn on WIFI hotspot otherwise I cannot connect to Internet?
-Why I cannot connect to proxy server while using **domain name**?
-
-> It is a DNS issue. You need add `"sockopt": { "domainStrategy": "UseIP" }` to your proxy's `"streamSettings"`. By the way, this fix needs correct dns and routing configuration. If you don't know how to do, I suggest use IP address instead of domain name. Or use a Xray binary compiled with CGO enabled. Reference: [#12](https://github.com/CerteKim/Xray4Magisk/issues/12)
+> Rewritten with Golang, implements some difficult functions that are difficult to implement with shell scripts, does not depend on BusyBox, and can be installed  on [KernelSU](https://github.com/tiann/KernelSU).
 
 This module cause battery drain really quick.
 
