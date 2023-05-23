@@ -14,9 +14,6 @@ I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
 
 If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray) etc.
 
-## Manager APP
-
-[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)(WIP)
 
 ## Install
 
@@ -82,8 +79,6 @@ For example, for sdm855 to download xray-core, download `Xray-android-arm64-v8a.
 - You can use Magisk Manager App to manage it. Starting the service may take a few seconds, stopping it may take effect immediately.
 
 #### Select which App to proxy
-
-- You can use [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
 
 - If you expect transparent proxy ( read Transparent proxy section for more detail ) for specific Apps, just write down these Apps' uid in file `/data/adb/xray/appid.list` .
 
@@ -186,7 +181,7 @@ This module cause battery drain really quick.
 
 GUI support?
 
-> Not done yet.
+> No plan.
 
 Why not store config files in Internal Storage?
 
