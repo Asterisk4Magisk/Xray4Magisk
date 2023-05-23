@@ -14,10 +14,6 @@
 
 如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）等应用程序。
 
-## 管理器 APP
-
-[Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
-
 ## 安装
 
 从 [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) 下载模块压缩包，然后通过 [Magisk](https://github.com/topjohnwu/Magisk) 或 [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager) 安装。
@@ -82,8 +78,6 @@
 - 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待几秒钟，停止服务可能会立即生效。
 
 #### 选择要代理的应用程序（APP）
-
-- 可以使用 [Xray4Magisk_Manager](https://github.com/whalechoi/Xray4Magisk_Manager)
 
 - 如果您希望对特定的应用程序（APP）进行透明代理（阅读透明代理部分了解更多细节），只需在文件 `/data/adb/xray/appid.list` 中写下这些应用程序（APP）的 uid。
 
@@ -184,7 +178,7 @@ Error calling service activity?
 
 GUI 支持？
 
-> 还未完成
+> 没有计划
 
 ## 联系
 
