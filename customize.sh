@@ -13,10 +13,8 @@ fi
 installModule() {
     ui_print "- Install helper"
     mkdir -p ${module_path}/bin
-    mkdir -p ${MODPATH}/system/bin
     unzip -j -o "${ZIPFILE}" "xray/bin/${ARCH}/xrayhelper" -d ${module_path}/bin >&2
     set_perm ${module_path}/bin/xrayhelper 0 0 0755
-    ln -s ${module_path}/bin/xrayhelper ${MODPATH}/system/bin/xrayhelper
     [ -f ${module_path}/xrayhelper.yml ] ||
         unzip -j -o "${ZIPFILE}" 'xray/etc/xrayhelper.yml' -d ${module_path} >&2
 
@@ -33,12 +31,19 @@ installModule() {
     ui_print "- Release configs"
     if [ ! -d ${module_path}/confs ]; then
         mkdir -p ${module_path}/confs
+        unzip -j -o "${ZIPFILE}" 'xray/etc/confs/proxy.json' -d ${module_path}/confs >&2
     fi
-    unzip -j -o "${ZIPFILE}" 'xray/etc/confs/*' -d ${module_path}/confs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/confs/base.json' -d ${module_path}/confs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/confs/dns.json' -d ${module_path}/confs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/confs/policy.json' -d ${module_path}/confs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/confs/routing.json' -d ${module_path}/confs >&2
     if [ ! -d ${module_path}/singconfs ]; then
         mkdir -p ${module_path}/singconfs
+        unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/proxy.json' -d ${module_path}/singconfs >&2
     fi
-    unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/*' -d ${module_path}/singconfs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/base.json' -d ${module_path}/singconfs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/dns.json' -d ${module_path}/singconfs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/route.json' -d ${module_path}/singconfs >&2
 
     ui_print "- Install geodata asset"
     ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata

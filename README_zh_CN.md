@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/v2fly v2ray/sagernet v2ray 的 Magisk 模块，支持 arm64, x64 架构。
+本项目为 Xray/Sing-box 的 Magisk 模块，支持 arm64, x64 架构。
 
 ## 免责声明
 
@@ -38,9 +38,17 @@
 - Xray 服务默认会在系统启动后自动运行。
 - 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待几秒钟，停止服务可能会立即生效。
 
+#### 使用 Termux 操作 xrayhelper
+  - 安装 root-repo 和 tsu：
+
+    `pkg i root-repo && pkg i tsu`
+  - 配置别名 (bash)：
+
+    `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
+
 #### 有关模块的更多配置
 
-该分支使用了 XrayHelper, 更多详细配置请参考 [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper/blob/master/README_zh_CN.md) 
+3.0 以上版本使用了 XrayHelper, 更多详细配置请参考 [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper/blob/master/README_zh_CN.md) 
 
 ### 高级用法（仅限调试 & 开发）
 
@@ -50,7 +58,7 @@
 
 #### 管理服务的启停
 
-- 在 [Termux](https://github.com/termux/termux-app) 中通过 root 用户使用 xrayhelper 进行操作.
+- 在 [Termux](https://github.com/termux/termux-app) 中使用 xrayhelper 进行操作.
 
 - 例如，在测试环境中（KernelSU version: 10896）
 
@@ -64,7 +72,7 @@
 
 #### 管理透明代理是否启用
 
-- 在 [Termux](https://github.com/termux/termux-app) 中通过 root 用户使用 xrayhelper 进行操作.
+- 在 [Termux](https://github.com/termux/termux-app) 中使用 xrayhelper 进行操作.
 
 
 - 例如，在测试环境中（KernelSU version: 10896）
@@ -92,7 +100,7 @@ TODO
 
 ## FAQ
 
-该分支和master分支有何区别？
+3.0 版本和 先前版本有何区别？
 
 > 使用Golang重写的版本，实现了一些难以用shell实现的功能，不依赖BusyBox，可以在 [KernelSU](https://github.com/tiann/KernelSU) 上安装使用
 

@@ -4,7 +4,7 @@ English | [简体中文](README_zh_CN.md)
 
 ~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/v2ray, and includes binaries for arm64, x64.
+This is a Magisk module for Xray/Sing-box, and includes xrayhelper binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -42,6 +42,15 @@ This module does not contain binaries such as [Xray-core](https://github.com/XTL
 
 - Xray service is auto-run after system boot up by default.
 - You can use Magisk Manager App to manage it. Starting the service may take a few seconds, stopping it may take effect immediately.
+
+#### Use xrayhelper via Termux
+
+- Install root-repo and tsu :
+
+    `pkg i root-repo && pkg i tsu`
+- Config alias (bash)：
+
+    `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
 
 ### Advanced usage ( for Debug and Develop only )
 
@@ -83,7 +92,7 @@ TODO
 
 ## FAQ
 
-What is the difference between this branch and the master branch?
+What is the difference between 3.0 and previous version?
 
 > Rewritten with Golang, implements some difficult functions that are difficult to implement with shell scripts, does not depend on BusyBox, and can be installed  on [KernelSU](https://github.com/tiann/KernelSU).
 
