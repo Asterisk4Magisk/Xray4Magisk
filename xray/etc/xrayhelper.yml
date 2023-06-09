@@ -8,6 +8,7 @@ xrayHelper:
 proxy:
     method: tproxy
     tproxyPort: 65535
+    socksPort: 65534
     enableIPv6: false
     mode: blacklist
     apList:

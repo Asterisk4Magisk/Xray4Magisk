@@ -27,7 +27,8 @@ This module does not contain binaries such as [Xray-core](https://github.com/XTL
 
 ## Config
 
-- The config file is stored in `/data/adb/xray/confs/*.json`
+- The xray config file is stored in `/data/adb/xray/confs/*.json`
+- The sing-box config file is stored in `/data/adb/xray/singconfs/*.json`
 - Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that you only edit the `outbounds` section to add your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/) and [sing-box](https://sing-box.sagernet.org/)
 - The file `/data/adb/xray/xrayhelper.yml` is [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper)'s configuration, you should configure it first, it is recommended to learn how to use the XrayHelper cli, it can help you manage core, asset, and proxy nodes
 

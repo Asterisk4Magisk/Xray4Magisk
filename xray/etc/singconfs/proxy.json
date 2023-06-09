@@ -1,0 +1,19 @@
+{
+    "outbounds": [
+        {
+            "tag": "dns-out",
+            "type": "dns"
+        },
+        {
+            "tag": "direct",
+            "type": "direct"
+        },
+        {
+            "tag": "block",
+            "type": "block"
+        },
+        {
+            "tag": "proxy"
+        }
+    ]
+}

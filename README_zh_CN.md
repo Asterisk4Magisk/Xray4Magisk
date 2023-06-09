@@ -23,7 +23,8 @@
 ## 配置文件
 
 - XrayHelper 配置文件保存在 `/data/adb/xray/xrayhelper.yml`
-- 核心的配置文件保存在 `/data/adb/xray/confs/*.json`
+- Xray核心的配置文件保存在 `/data/adb/xray/confs/*.json`
+- Sing-box核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
 - 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)
 
 ## 使用方法

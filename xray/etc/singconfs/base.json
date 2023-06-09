@@ -1,0 +1,25 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "warn",
+        "timestamp": true
+    },
+    "inbounds": [
+        {
+            "type": "tproxy",
+            "tag": "proxy-in",
+            "listen": "::",
+            "listen_port": 65535,
+            "sniff": true,
+            "sniff_override_destination": false
+        },
+        {
+            "type": "socks",
+            "tag": "socks-in",
+            "listen": "::",
+            "listen_port": 65534,
+            "sniff": true,
+            "sniff_override_destination": false
+        }
+    ]
+}

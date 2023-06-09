@@ -1,11 +1,12 @@
 {
     "routing": {
-        "domainStrategy": "IPIfNonMatch",
+        "domainStrategy": "AsIs",
         "rules": [
             {
                 "type": "field",
                 "inboundTag": [
-                    "proxy-in"
+                    "proxy-in",
+                    "socks-in"
                 ],
                 "port": 53,
                 "outboundTag": "dns-out"

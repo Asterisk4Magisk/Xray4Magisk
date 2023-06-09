@@ -33,8 +33,12 @@ installModule() {
     ui_print "- Release configs"
     if [ ! -d ${module_path}/confs ]; then
         mkdir -p ${module_path}/confs
-        unzip -j -o "${ZIPFILE}" 'xray/etc/confs/*' -d ${module_path}/confs >&2
     fi
+    unzip -j -o "${ZIPFILE}" 'xray/etc/confs/*' -d ${module_path}/confs >&2
+    if [ ! -d ${module_path}/singconfs ]; then
+        mkdir -p ${module_path}/singconfs
+    fi
+    unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/*' -d ${module_path}/singconfs >&2
 
     ui_print "- Install geodata asset"
     ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
