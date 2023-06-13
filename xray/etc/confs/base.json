@@ -1,0 +1,52 @@
+{
+    "log": {
+        "access": "none",
+        "loglevel": "warning",
+        "dnsLog": false
+    },
+    "inbounds": [
+        {
+            "tag": "proxy-in",
+            "port": 65535,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "network": "udp,tcp",
+                "followRedirect": true
+            },
+            "streamSettings": {
+                "sockopt": {
+                    "tproxy": "tproxy"
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "metadataOnly": false,
+                "routeOnly": true
+            }
+        },
+        {
+            "tag": "socks-in",
+            "listen": "127.0.0.1",
+            "port": 65534,
+            "protocol": "socks",
+            "settings": {
+                "udp": true
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "metadataOnly": false,
+                "routeOnly": true
+            }
+        }
+    ]
+}

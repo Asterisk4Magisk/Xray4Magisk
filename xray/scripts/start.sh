@@ -1,22 +1,20 @@
 #!/system/bin/sh
 
 MODDIR=/data/adb/modules/xray4magisk
-if [ -n "$(magisk -v | grep lite)" ]; then
-  MODDIR=/data/adb/lite_modules/xray4magisk
-fi
 SCRIPTS_DIR=/data/adb/xray/scripts
+XRAYHELPER=/data/adb/xray/bin/xrayhelper
+XRAYHELPER_CONF=/data/adb/xray/xrayhelper.yml
 
 start_proxy() {
-  ${SCRIPTS_DIR}/xray.service start &>>/data/adb/xray/run/service.log &&
-    if [ -f /data/adb/xray/appid.list ]; then
-      ${SCRIPTS_DIR}/xray.tproxy enable &>>/data/adb/xray/run/service.log &
-    fi
+    ${XRAYHELPER} -c ${XRAYHELPER_CONF} service start &>>/data/adb/xray/run/helper.log &&
+    ${XRAYHELPER} -c ${XRAYHELPER_CONF} proxy enable &>>/data/adb/xray/run/helper.log &
 }
 
 if [ ! -f /data/adb/xray/manual ]; then
-  echo -n "" >/data/adb/xray/run/service.log
-  if [ ! -f ${MODDIR}/disable ]; then
-    start_proxy
-  fi
-  inotifyd ${SCRIPTS_DIR}/xray.inotify ${MODDIR} &>>/data/adb/xray/run/service.log &
+    echo -n "" >/data/adb/xray/run/helper.log
+    rm -rf /data/adb/xray/run/core.pid
+    if [ ! -f ${MODDIR}/disable ]; then
+        start_proxy
+    fi
+    inotifyd ${SCRIPTS_DIR}/xray.inotify ${MODDIR} &>>/data/adb/xray/run/helper.log &
 fi

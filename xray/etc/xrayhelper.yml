@@ -1,0 +1,16 @@
+xrayHelper:
+    coreType: xray
+    corePath: /data/adb/xray/bin/xray
+    coreConfig: /data/adb/xray/confs/
+    dataDir: /data/adb/xray/data/
+    runDir: /data/adb/xray/run/
+    proxyTag: proxy
+proxy:
+    method: tproxy
+    tproxyPort: 65535
+    socksPort: 65534
+    enableIPv6: false
+    mode: blacklist
+    apList:
+        - wlan+
+        - rndis+
