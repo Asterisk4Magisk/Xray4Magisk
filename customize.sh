@@ -29,6 +29,7 @@ installModule() {
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
 
     ui_print "- Release configs"
+    unzip -j -o "${ZIPFILE}" 'xray/etc/v2ray.v5.json' -d ${module_path} >&2
     if [ ! -d ${module_path}/confs ]; then
         mkdir -p ${module_path}/confs
         unzip -j -o "${ZIPFILE}" 'xray/etc/confs/proxy.json' -d ${module_path}/confs >&2

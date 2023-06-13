@@ -4,7 +4,7 @@ English | [简体中文](README_zh_CN.md)
 
 ~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/Sing-box, and includes xrayhelper binaries for arm64, x64.
+This is a Magisk module for Xray/V2ray/Sing-box, and includes xrayhelper binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -78,10 +78,6 @@ If you want to control xray by running command totally, just add a file `/data/a
     `xrayhelper proxy disable`
 
 #### Bypass Transparent proxy when connecting to WLAN
-
-TODO
-
-#### Select which App to proxy, and which App to second proxy
 
 TODO
 

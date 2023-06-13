@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/Sing-box 的 Magisk 模块，支持 arm64, x64 架构。
+本项目为 Xray/V2ray/Sing-box 的 Magisk 模块，支持 arm64, x64 架构。
 
 ## 免责声明
 
@@ -89,10 +89,6 @@
 
 TODO
 
-#### 选择要代理的应用程序（APP），以及选择要使用第二个代理的应用程序（APP）
-
-TODO
-
 ## 卸载
 
 1. 从 Magisk 管理器应用卸载本模块。
@@ -100,7 +96,7 @@ TODO
 
 ## FAQ
 
-3.0 版本和 先前版本有何区别？
+3.0 版本和先前版本有何区别？
 
 > 使用Golang重写的版本，实现了一些难以用shell实现的功能，不依赖BusyBox，可以在 [KernelSU](https://github.com/tiann/KernelSU) 上安装使用
 
