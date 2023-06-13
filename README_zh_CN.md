@@ -24,8 +24,9 @@
 
 - XrayHelper 配置文件保存在 `/data/adb/xray/xrayhelper.yml`
 - Xray核心的配置文件保存在 `/data/adb/xray/confs/*.json`
+- V2ray核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
 - Sing-box核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
-- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)
+- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 以及 [sing-box](https://sing-box.sagernet.org/)
 
 ## 使用方法
 
