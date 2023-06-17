@@ -1,0 +1,19 @@
+log-level: warning
+tproxy-port: 65535
+socks-port: 65534
+bind-address: '*'
+ipv6: false
+allow-lan: true
+external-controller: 127.0.0.1:65532
+external-ui: /data/adb/xray/data/yacd-gh-pages
+dns:
+    enable: true
+    ipv6: false
+    listen: 127.0.0.1:65533
+    nameserver:
+        - https://223.5.5.5/dns-query
+    fallback:
+        - https://1.1.1.1/dns-query
+    fallback-filter:
+        geoip: true
+        geoip-code: CN

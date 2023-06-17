@@ -45,6 +45,10 @@ installModule() {
     unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/base.json' -d ${module_path}/singconfs >&2
     unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/dns.json' -d ${module_path}/singconfs >&2
     unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/route.json' -d ${module_path}/singconfs >&2
+    if [ ! -d ${module_path}/clashconfs ]; then
+        mkdir -p ${module_path}/clashconfs
+    fi
+    unzip -j -o "${ZIPFILE}" 'xray/etc/clashconfs/template.yaml' -d ${module_path}/clashconfs >&2
 
     ui_print "- Install geodata asset"
     ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata

@@ -4,7 +4,7 @@ English | [简体中文](README_zh_CN.md)
 
 ~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/V2ray/Sing-box, and includes xrayhelper binaries for arm64, x64.
+This is a Magisk module for Xray/V2ray/Sing-box/Clash, and includes xrayhelper binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -12,7 +12,7 @@ I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
 
 **Make sure your config file does not cause traffic to loop back, otherwise it may cause your phone to constantly reboot.**
 
-If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray) etc.
+If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray), Clash For Android etc.
 
 ## Install
 
@@ -30,7 +30,8 @@ This module does not contain binaries such as [Xray-core](https://github.com/XTL
 - The xray config file is stored in `/data/adb/xray/confs/*.json`
 - The v2ray config file is stored in `/data/adb/xray/v2ray.v5.json`
 - The sing-box config file is stored in `/data/adb/xray/singconfs/*.json`
-- Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that you only edit the `outbounds` section to add your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/) and [sing-box](https://sing-box.sagernet.org/)
+- The clash template config file is stored in `/data/adb/xray/clashconfs/template.yaml`
+- Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that you only edit the `outbounds` section to add your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/), [sing-box](https://sing-box.sagernet.org/) and [clash](https://dreamacro.github.io/clash/)
 - The file `/data/adb/xray/xrayhelper.yml` is [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper)'s configuration, you should configure it first, it is recommended to learn how to use the XrayHelper cli, it can help you manage core, asset, and proxy nodes
 
 ## Usage

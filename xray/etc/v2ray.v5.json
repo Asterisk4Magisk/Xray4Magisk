@@ -17,7 +17,7 @@
                 }
             }
         ],
-        "queryStrategy": "USE_IP"
+        "queryStrategy": "USE_IP4"
     },
     "inbounds": [
         {

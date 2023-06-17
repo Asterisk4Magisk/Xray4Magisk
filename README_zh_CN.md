@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/V2ray/Sing-box 的 Magisk 模块，支持 arm64, x64 架构。
+本项目为 Xray/V2ray/Sing-box/Clash 的 Magisk 模块，支持 arm64, x64 架构。
 
 ## 免责声明
 
@@ -12,7 +12,7 @@
 
 **请确保您的配置文件不会造成流量回环，否则可能会导致您的手机无限重启。**
 
-如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）等应用程序。
+如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）、Clash For Android等应用程序。
 
 ## 安装
 
@@ -26,7 +26,8 @@
 - Xray核心的配置文件保存在 `/data/adb/xray/confs/*.json`
 - V2ray核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
 - Sing-box核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
-- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 以及 [sing-box](https://sing-box.sagernet.org/)
+- Clash核心的模板配置文件保存在 `/data/adb/xray/clashconfs/template.yaml`
+- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [sing-box](https://sing-box.sagernet.org/)以及 [clash](https://dreamacro.github.io/clash/)
 
 ## 使用方法
 
