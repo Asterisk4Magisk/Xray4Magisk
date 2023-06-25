@@ -1,5 +1,7 @@
 ### Changelog
 
-- use xrayhelper v1.2.0
-- bring clash template configuration
+- use xrayhelper v1.2.1
+- delete tun2socks.pid file when startup
+- not enable proxy when start core failed
+- update core configuration files
 - update README

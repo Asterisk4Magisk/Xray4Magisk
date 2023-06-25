@@ -17,6 +17,13 @@
             },
             {
                 "geosite": [
+                    "google",
+                    "geolocation-!cn"
+                ],
+                "outbound": "proxy"
+            },
+            {
+                "geosite": [
                     "apple-cn",
                     "cn"
                 ],
@@ -25,12 +32,6 @@
                     "cn"
                 ],
                 "outbound": "direct"
-            },
-            {
-                "geosite": [
-                    "geolocation-!cn"
-                ],
-                "outbound": "proxy"
             }
         ],
         "final": "proxy",

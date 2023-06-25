@@ -18,12 +18,9 @@ If you really don't know how to configure this module, you mignt need apps like 
 
 Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) and install it via [Magisk](https://github.com/topjohnwu/Magisk)
 
-### Auto installation
+This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core), When installing, the relevant files are downloaded automatically. If your network has poor access to Github, please consider using a network proxy.
 
-This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core).
-
-- Using Magisk to install.  
-  You can configure the `xrayhelper.yml` inside, to choose core
+You can configure the `xrayhelper.yml` inside, to choose core.
 
 ## Config
 
@@ -45,7 +42,7 @@ This module does not contain binaries such as [Xray-core](https://github.com/XTL
 - Xray service is auto-run after system boot up by default.
 - You can use Magisk Manager App to manage it. Starting the service may take a few seconds, stopping it may take effect immediately.
 
-#### Use xrayhelper via Termux
+#### Config xrayhelper in Termux
 
 - Install root-repo and tsu :
 
@@ -54,13 +51,8 @@ This module does not contain binaries such as [Xray-core](https://github.com/XTL
 
     `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
 
-### Advanced usage ( for Debug and Develop only )
-
-#### Enter manual mode
-
-If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`. In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App.
-
-#### Manage service start / stop
+#### Example usage of xrayhelper
+##### Manage service start / stop
 - Start service :
 
     `xrayhelper service start`
@@ -69,7 +61,7 @@ If you want to control xray by running command totally, just add a file `/data/a
 
     `xrayhelper service stop`
 
-#### Manage transparent proxy enable / disable
+##### Manage transparent proxy enable / disable
 
   - Enable Transparent proxy :
 
@@ -78,6 +70,12 @@ If you want to control xray by running command totally, just add a file `/data/a
   - Disable Transparent proxy :
 
     `xrayhelper proxy disable`
+
+### Advanced usage ( for Debug and Develop only )
+
+#### Enter manual mode
+
+If you want to control xray by running command totally, just add a file `/data/adb/xray/manual`. In this situation, xray service won't start on boot automatically and you cann't manage service start/stop via Magisk Manager App.
 
 #### Bypass Transparent proxy when connecting to WLAN
 

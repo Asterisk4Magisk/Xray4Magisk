@@ -13,17 +13,18 @@
             },
             {
                 "domain": [
-                    "geosite:apple-cn",
-                    "geosite:cn"
+                    "geosite:google",
+                    "geosite:geolocation-!cn"
                 ],
-                "outboundTag": "direct",
+                "outboundTag": "proxy",
                 "type": "field"
             },
             {
                 "domain": [
-                    "geosite:geolocation-!cn"
+                    "geosite:apple-cn",
+                    "geosite:cn"
                 ],
-                "outboundTag": "proxy",
+                "outboundTag": "direct",
                 "type": "field"
             },
             {

@@ -16,7 +16,7 @@
 
 ## 安装
 
-从 [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) 下载Golang版本模块压缩包，然后通过 [Magisk](https://github.com/topjohnwu/Magisk) 进行安装  
+从 [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) 下载模块压缩包，然后通过 [Magisk](https://github.com/topjohnwu/Magisk) 进行安装  
 
 **注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议安装过程中开启网络代理**
 
@@ -40,13 +40,32 @@
 - Xray 服务默认会在系统启动后自动运行。
 - 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待几秒钟，停止服务可能会立即生效。
 
-#### 使用 Termux 操作 xrayhelper
+#### 在 Termux 配置 xrayhelper
   - 安装 root-repo 和 tsu：
 
     `pkg i root-repo && pkg i tsu`
   - 配置别名 (bash)：
 
     `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
+
+#### xrayhelper 使用示例
+##### 管理服务的启停
+- 启动服务 :
+
+  `xrayhelper service start`
+
+- 停止服务 :
+
+  `xrayhelper service stop`
+
+##### 管理透明代理是否启用
+- 启用透明代理：
+
+  `xrayhelper proxy enable`
+
+- 停用透明代理：
+
+  `xrayhelper proxy disable`
 
 #### 有关模块的更多配置
 
@@ -57,35 +76,6 @@
 #### 进入手动模式
 
 如果您希望完全通过运行命令来控制 Xray，只需新建一个文件 `/data/adb/xray/manual`。在这种情况下，Xray 服务不会在启动时自动启动，您也不能通过 Magisk 管理器应用管理服务的启动/停止。
-
-#### 管理服务的启停
-
-- 在 [Termux](https://github.com/termux/termux-app) 中使用 xrayhelper 进行操作.
-
-- 例如，在测试环境中（KernelSU version: 10896）
-
-  - 启动服务 :
-
-    `xrayhelper service start`
-
-  - 停止服务 :
-
-    `xrayhelper service stop`
-
-#### 管理透明代理是否启用
-
-- 在 [Termux](https://github.com/termux/termux-app) 中使用 xrayhelper 进行操作.
-
-
-- 例如，在测试环境中（KernelSU version: 10896）
-
-  - 启用透明代理：
-
-    `xrayhelper proxy enable`
-
-  - 停用透明代理：
-
-    `xrayhelper proxy disable`
 
 #### 连接到 WLAN 时绕过透明代理
 
