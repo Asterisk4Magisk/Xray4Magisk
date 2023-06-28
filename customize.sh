@@ -140,16 +140,6 @@ installModule() {
     [ -f ${module_path}/xrayhelper.yml ] ||
         unzip -j -o "${ZIPFILE}" 'xray/etc/xrayhelper.yml' -d ${module_path} >&2
 
-    ui_print "- Release scripts"
-    mkdir -p ${module_path}/run
-    mkdir -p ${module_path}/scripts
-    unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d ${module_path}/scripts >&2
-    if [ ! -d /data/adb/service.d ]; then
-        mkdir -p /data/adb/service.d
-    fi
-    unzip -j -o "${ZIPFILE}" 'xray4magisk_service.sh' -d /data/adb/service.d >&2
-    unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
-
     ui_print "- Release configs"
     unzip -j -o "${ZIPFILE}" 'xray/etc/v2ray.v5.json' -d ${module_path} >&2
     if [ ! -d ${module_path}/confs ]; then
@@ -173,6 +163,16 @@ installModule() {
     unzip -j -o "${ZIPFILE}" 'xray/etc/clashconfs/template.yaml' -d ${module_path}/clashconfs >&2
 
     installCore
+    ui_print "- Release scripts"
+    mkdir -p ${module_path}/run
+    mkdir -p ${module_path}/scripts
+    unzip -j -o "${ZIPFILE}" 'xray/scripts/*' -d ${module_path}/scripts >&2
+    if [ ! -d /data/adb/service.d ]; then
+        mkdir -p /data/adb/service.d
+    fi
+    unzip -j -o "${ZIPFILE}" 'xray4magisk_service.sh' -d /data/adb/service.d >&2
+    unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
+    
     ui_print "- Set permission"
     set_perm /data/adb/service.d/xray4magisk_service.sh 0 0 0755
     set_perm $MODPATH/uninstall.sh 0 0 0755
