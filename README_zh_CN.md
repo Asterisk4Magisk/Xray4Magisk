@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/V2ray/Sing-box/Clash 的 Magisk 模块，支持 arm64, x64 架构。
+本项目为 Xray/V2ray/Sing-box/Clash/Clash.Meta 的 Magisk 模块，支持 arm64, x64 架构。
 
 ## 免责声明
 
@@ -12,7 +12,7 @@
 
 **请确保您的配置文件不会造成流量回环，否则可能会导致您的手机无限重启。**
 
-如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）、Clash For Android等应用程序。
+如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）、Clash For Android、ClashMeta For Android等应用程序。
 
 ## 安装
 
@@ -27,20 +27,19 @@
 - V2ray核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
 - Sing-box核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
 - Clash核心的模板配置文件保存在 `/data/adb/xray/clashconfs/template.yaml`
-- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您只编辑 `outbounds` 部分来添加您的代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [sing-box](https://sing-box.sagernet.org/)以及 [clash](https://dreamacro.github.io/clash/)
+- Clash.Meta核心的模板配置文件保存在 `/data/adb/xray/clashmetaconfs/template.yaml`
+- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)、 [Clash](https://dreamacro.github.io/clash/)以及 [Clash.Meta](https://clash-meta.wiki/)
 
 ## 使用方法
 
-### 常规方法（默认 & 推荐方法）
-
-#### 管理服务的启停
+### 管理服务的启停
 
 **以下核心服务统称 Xray**
 
 - Xray 服务默认会在系统启动后自动运行。
 - 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待几秒钟，停止服务可能会立即生效。
 
-#### 在 Termux 配置 xrayhelper
+### 在 Termux 配置 xrayhelper
   - 安装 root-repo 和 tsu：
 
     `pkg i root-repo && pkg i tsu`
@@ -48,8 +47,8 @@
 
     `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
 
-#### xrayhelper 使用示例
-##### 管理服务的启停
+### xrayhelper 使用示例
+#### 管理服务的启停
 - 启动服务 :
 
   `xrayhelper service start`
@@ -58,7 +57,7 @@
 
   `xrayhelper service stop`
 
-##### 管理透明代理是否启用
+#### 管理透明代理是否启用
 - 启用透明代理：
 
   `xrayhelper proxy enable`
@@ -67,19 +66,19 @@
 
   `xrayhelper proxy disable`
 
-#### 有关模块的更多配置
+### 有关模块的更多配置
 
 3.0 以上版本使用了 XrayHelper, 更多详细配置请参考 [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper/blob/master/README_zh_CN.md) 
 
-### 高级用法（仅限调试 & 开发）
+## 调试 & 开发
 
-#### 进入手动模式
+### 进入手动模式
 
 如果您希望完全通过运行命令来控制 Xray，只需新建一个文件 `/data/adb/xray/manual`。在这种情况下，Xray 服务不会在启动时自动启动，您也不能通过 Magisk 管理器应用管理服务的启动/停止。
 
-#### 连接到 WLAN 时绕过透明代理
+### 打印详细日志
 
-TODO
+在使用 xrayhelper 命令时，添加`-v`或`--verbose`参数即可
 
 ## 卸载
 
@@ -90,7 +89,7 @@ TODO
 
 3.0 版本和先前版本有何区别？
 
-> 使用Golang重写的版本，实现了一些难以用shell实现的功能，不依赖BusyBox，可以在 [KernelSU](https://github.com/tiann/KernelSU) 上安装使用
+> 使用 Golang 重写的版本，实现了一些难以用shell实现的功能，不依赖 BusyBox，可以在 [KernelSU](https://github.com/tiann/KernelSU) 上安装使用
 
 这个模块导致电池电量消耗非常快？
 
@@ -110,7 +109,7 @@ Project X 是一套网络工具，帮助你建立你自己的计算机网络。�
 
 ## XrayHelper
 
-[XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper) 是一个安卓专属的Xray助手，使用golang重新实现Xray4Magisk的部分功能，提供arm64和amd64二进制文件.
+[XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper) 是一个安卓专属的通用代理助手，使用 Golang 重新实现 Xray4Magisk 的部分功能，提供 arm64 和 amd64 二进制文件.
 
 ## 许可
 

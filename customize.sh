@@ -36,7 +36,6 @@ chooseport() {
         local count=0
         timeout $delay /system/bin/getevent -lqc 1 2>&1 >$TMPDIR/events &
         while true; do
-            sleep 0.5
             count=$((count + 1))
             if ($(grep -q 'KEY_VOLUMEUP *DOWN' $TMPDIR/events)); then
                 return 0
@@ -44,6 +43,7 @@ chooseport() {
                 return 1
             fi
             [ $count -gt 29 ] && break
+            sleep 0.5
         done
         if $error; then
             # abort "Volume key not detected!"
@@ -76,6 +76,13 @@ selectCore() {
         sed -i 's/coreType: .*/coreType: clash/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
+        sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
+        ;;
+    clash.meta)
+        sed -i 's/coreType: .*/coreType: clash\.meta/g' ${module_path}/xrayhelper.yml
+        sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.meta/g' ${module_path}/xrayhelper.yml
+        sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashmetaconfs\//g' ${module_path}/xrayhelper.yml
+        sed -i 's/template: .*/template: \/data\/adb\/xray\/clashmetaconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
         ;;
     *)
         sed -i 's/coreType: .*/coreType: xray/g' ${module_path}/xrayhelper.yml
@@ -92,7 +99,7 @@ installCore() {
     if $VKSEL; then
         ui_print
         ui_print "- Please select your core"
-        ui_print "* VOL+ = xray/v2ray/sing-box, VOL- = clash *"
+        ui_print "* VOL+ = xray/v2ray/sing-box, VOL- = clash/clash.meta *"
         if $VKSEL; then
             ui_print
             ui_print "- Please select xray/v2ray or sing-box"
@@ -122,9 +129,18 @@ installCore() {
                 ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
             fi
         else
-            selectCore clash
-            ui_print "- Install clash core"
-            ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+            ui_print
+            ui_print "- Please select clash or clash.meta"
+            ui_print "* VOL+ = clash, VOL- = clash.meta *"
+            if $VKSEL; then
+                selectCore clash
+                ui_print "- Install clash core"
+                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+            else
+                selectCore clash.meta
+                ui_print "- Install clash.meta core"
+                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+            fi
         fi
     else
         ui_print "- Skip core installation"
@@ -161,6 +177,10 @@ installModule() {
         mkdir -p ${module_path}/clashconfs
     fi
     unzip -j -o "${ZIPFILE}" 'xray/etc/clashconfs/template.yaml' -d ${module_path}/clashconfs >&2
+    if [ ! -d ${module_path}/clashmetaconfs ]; then
+        mkdir -p ${module_path}/clashmetaconfs
+    fi
+    unzip -j -o "${ZIPFILE}" 'xray/etc/clashmetaconfs/template.yaml' -d ${module_path}/clashmetaconfs >&2
 
     installCore
     ui_print "- Release scripts"
@@ -172,7 +192,7 @@ installModule() {
     fi
     unzip -j -o "${ZIPFILE}" 'xray4magisk_service.sh' -d /data/adb/service.d >&2
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
-    
+
     ui_print "- Set permission"
     set_perm /data/adb/service.d/xray4magisk_service.sh 0 0 0755
     set_perm $MODPATH/uninstall.sh 0 0 0755

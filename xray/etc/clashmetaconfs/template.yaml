@@ -1,0 +1,23 @@
+log-level: warning
+tproxy-port: 65535
+socks-port: 65534
+bind-address: '*'
+ipv6: false
+allow-lan: true
+external-controller: 127.0.0.1:65532
+external-ui: /data/adb/xray/data/Yacd-meta-gh-pages
+dns:
+    enable: true
+    enhanced-mode: redir-host
+    listen: 127.0.0.1:65533
+    nameserver:
+        - 223.5.5.5
+sniffer:
+    enable: true
+    sniff:
+        HTTP:
+            ports:
+                - 80
+        TLS:
+            ports:
+                - 443
