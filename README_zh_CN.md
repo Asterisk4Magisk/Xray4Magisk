@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/V2ray/Sing-box/Clash/Clash.Meta 的 Magisk 模块，支持 arm64, x64 架构。
+本项目为 Xray/V2ray/Sing-box/Clash/Clash.Premium/Clash.Meta 的 Magisk 模块，支持 arm64, x64 架构。
 
 ## 免责声明
 
@@ -23,14 +23,17 @@
 ## 配置文件
 
 - XrayHelper 配置文件保存在 `/data/adb/xray/xrayhelper.yml`
-- Xray核心的配置文件保存在 `/data/adb/xray/confs/*.json`
-- V2ray核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
-- Sing-box核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
-- Clash核心的模板配置文件保存在 `/data/adb/xray/clashconfs/template.yaml`
-- Clash.Meta核心的模板配置文件保存在 `/data/adb/xray/clashmetaconfs/template.yaml`
-- 提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)、 [Clash](https://dreamacro.github.io/clash/)以及 [Clash.Meta](https://clash-meta.wiki/)
+- Xray 核心的配置文件保存在 `/data/adb/xray/confs/*.json`
+- V2ray 核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
+- Sing-box 核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
+- Clash/Clash.Premium 核心的模板配置文件保存在 `/data/adb/xray/clashconfs/template.yaml`
+- Clash.Meta 核心的模板配置文件保存在 `/data/adb/xray/clashmetaconfs/template.yaml`
+
+提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)、 [Clash](https://dreamacro.github.io/clash/)以及 [Clash.Meta](https://clash-meta.wiki/)
 
 ## 使用方法
+
+[快速入门](quickstart_zh_CN.md)
 
 ### 管理服务的启停
 

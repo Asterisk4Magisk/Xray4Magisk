@@ -78,6 +78,12 @@ selectCore() {
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
         ;;
+    clash.premium)
+        sed -i 's/coreType: .*/coreType: clash\.premium/g' ${module_path}/xrayhelper.yml
+        sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.premium/g' ${module_path}/xrayhelper.yml
+        sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
+        sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
+        ;;
     clash.meta)
         sed -i 's/coreType: .*/coreType: clash\.meta/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.meta/g' ${module_path}/xrayhelper.yml
@@ -99,7 +105,7 @@ installCore() {
     if $VKSEL; then
         ui_print
         ui_print "- Please select your core"
-        ui_print "* VOL+ = xray/v2ray/sing-box, VOL- = clash/clash.meta *"
+        ui_print "* VOL+ = xray/v2ray/sing-box, VOL- = clash/clash.premium/clash.meta *"
         if $VKSEL; then
             ui_print
             ui_print "- Please select xray/v2ray or sing-box"
@@ -130,14 +136,29 @@ installCore() {
             fi
         else
             ui_print
-            ui_print "- Please select clash or clash.meta"
-            ui_print "* VOL+ = clash, VOL- = clash.meta *"
+            ui_print "- Please select clash/clash.premium or clash.meta"
+            ui_print "* VOL+ = clash/clash.premium, VOL- = clash.meta *"
             if $VKSEL; then
-                selectCore clash
-                ui_print "- Install clash core"
-                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                ui_print
+                ui_print "- Please select clash or clash.premium"
+                ui_print "* VOL+ = clash, VOL- = clash.premium *"
+                if $VKSEL; then
+                    selectCore clash
+                    ui_print "- Install yacd"
+                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
+                    ui_print "- Install clash core"
+                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                else
+                    selectCore clash.premium
+                    ui_print "- Install yacd"
+                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
+                    ui_print "- Install clash.premium core"
+                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                fi
             else
                 selectCore clash.meta
+                ui_print "- Install yacd-meta"
+                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
                 ui_print "- Install clash.meta core"
                 ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
             fi

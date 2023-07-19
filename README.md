@@ -4,7 +4,7 @@ English | [简体中文](README_zh_CN.md)
 
 ~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/V2ray/Sing-box/Clash/Clash.Meta, and includes xrayhelper binaries for arm64, x64.
+This is a Magisk module for Xray/V2ray/Sing-box/Clash/Clash.Premium/Clash.Meta, and includes xrayhelper binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -32,6 +32,8 @@ This module does not contain binaries such as [Xray-core](https://github.com/XTL
 Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that use xrayhelper to manage your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/), [Sing-box](https://sing-box.sagernet.org/),[Clash](https://dreamacro.github.io/clash/) and [Clash.Meta](https://clash-meta.wiki/)
 
 ## Usage
+
+[Quick Start](quickstart.md)
 
 ### Manage service start / stop
 
@@ -69,6 +71,10 @@ Tip: The default config already sets the inbounds section to work with transpare
 
     `xrayhelper proxy disable`
 
+### More things about module configuration
+
+XrayHelper is used in version 3.0 and above, for more detailed configuration please refer to [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper/blob/master/README.md)
+
 ## Debug and Develop
 
 ### Enter manual mode
@@ -88,7 +94,7 @@ Just add the option `-v` or `--verbose` when you using xrayhelper
 
 What is the difference between 3.0 and previous version?
 
-> Rewritten with Golang, implements some functions that are difficult to implement with shell scripts, does not depend on BusyBox, and can be installed  on [KernelSU](https://github.com/tiann/KernelSU).
+> Rewritten with Golang, implements some functions that are difficult to implement with shell scripts, does not depend on BusyBox, and can be installed on [KernelSU](https://github.com/tiann/KernelSU).
 
 This module cause battery drain really quick.
 

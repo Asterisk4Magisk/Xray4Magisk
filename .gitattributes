@@ -10,3 +10,4 @@ xray/scripts/** text eol=lf
 # Denote all files that are truly binary and should not be modified.
 system/** binary
 xray/bin/** binary
+img/** binary

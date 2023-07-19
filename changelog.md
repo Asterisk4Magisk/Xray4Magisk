@@ -1,5 +1,6 @@
+**WARNING: YOUR CORE CONFIG FILE WILL BE OVERWRITTEN**
 ### Changelog
 
-- use xrayhelper v1.2.3
-- bring clash.meta template configuration
+- can choose clash.premium
+- use xrayhelper v1.2.4
 - update README
