@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/V2ray/Sing-box/Clash/Clash.Premium/Clash.Meta 的 Magisk 模块，支持 arm64, x64 架构。
+本项目为 Xray/V2ray/Sing-box/Clash/Clash.Premium/Clash.Meta 的 Magisk 模块，支持 arm64， x64 架构。
 
 ## 免责声明
 
@@ -18,7 +18,9 @@
 
 从 [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) 下载模块压缩包，然后通过 [Magisk](https://github.com/topjohnwu/Magisk) 进行安装  
 
-**注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装Core并在模块安装成功后手动安装Core、配置XrayHelper**
+注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装Core并在模块安装成功后手动安装Core、配置XrayHelper
+
+如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`clash` 表示使用 Clash，`clash.premium` 表示使用 Clash.Premium，`clash.meta` 表示使用 Clash.Meta，`skip` 表示跳过核心安装，其他任意内容将仍然使用音量键进行选择
 
 ## 配置文件
 
@@ -71,7 +73,7 @@
 
 ### 有关模块的更多配置
 
-3.0 以上版本使用了 XrayHelper, 更多详细配置请参考 [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper/blob/master/README_zh_CN.md) 
+3.0 以上版本使用了 XrayHelper， 更多详细配置请参考 [XrayHelper](https://github.com/Asterisk4Magisk/XrayHelper/blob/master/README_zh_CN.md) 
 
 ## 调试 & 开发
 

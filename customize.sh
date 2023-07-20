@@ -60,45 +60,76 @@ chooseport() {
 
 VKSEL=chooseport
 
-selectCore() {
+installCore() {
     case "$1" in
     v2ray)
         sed -i 's/coreType: .*/coreType: v2ray/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/v2ray/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/v2ray.v5.json/g' ${module_path}/xrayhelper.yml
+        ui_print "- Install geodata asset"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
+        ui_print "- Install v2ray core"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     sing-box)
         sed -i 's/coreType: .*/coreType: sing-box/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/sing-box/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/singconfs\//g' ${module_path}/xrayhelper.yml
+        ui_print "- Install geodata asset"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
+        ui_print "- Install sing-box core"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     clash)
         sed -i 's/coreType: .*/coreType: clash/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
+        ui_print "- Install yacd"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
+        ui_print "- Install clash core"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     clash.premium)
         sed -i 's/coreType: .*/coreType: clash\.premium/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.premium/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
+        ui_print "- Install yacd"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
+        ui_print "- Install clash.premium core"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     clash.meta)
         sed -i 's/coreType: .*/coreType: clash\.meta/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.meta/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashmetaconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/clashmetaconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
+        ui_print "- Install yacd-meta"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+        ui_print "- Install clash.meta core"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
-    *)
+    xray)
         sed -i 's/coreType: .*/coreType: xray/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/xray/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/confs\//g' ${module_path}/xrayhelper.yml
+        ui_print "- Install geodata asset"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
+        ui_print "- Install xray core"
+        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+        ;;
+    skip)
+        ui_print "- Skip core installation"
+        ui_print "- You need install core and configure xrayhelper.yml after module installation"
+        ;;
+    *)
+        installCore_VK
         ;;
     esac
 }
 
-installCore() {
+installCore_VK() {
     ui_print
     ui_print "- Do you need install core online?"
     ui_print "* VOL+ = YES, VOL- = NO *"
@@ -115,24 +146,12 @@ installCore() {
                 ui_print "- Please select xray or v2ray"
                 ui_print "* VOL+ = xray, VOL- = v2ray *"
                 if $VKSEL; then
-                    selectCore xray
-                    ui_print "- Install geodata asset"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
-                    ui_print "- Install xray core"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                    installCore xray
                 else
-                    selectCore v2ray
-                    ui_print "- Install geodata asset"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
-                    ui_print "- Install v2ray core"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                    installCore v2ray
                 fi
             else
-                selectCore sing-box
-                ui_print "- Install geodata asset"
-                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
-                ui_print "- Install sing-box core"
-                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                installCore sing-box
             fi
         else
             ui_print
@@ -143,29 +162,16 @@ installCore() {
                 ui_print "- Please select clash or clash.premium"
                 ui_print "* VOL+ = clash, VOL- = clash.premium *"
                 if $VKSEL; then
-                    selectCore clash
-                    ui_print "- Install yacd"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
-                    ui_print "- Install clash core"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                    installCore clash
                 else
-                    selectCore clash.premium
-                    ui_print "- Install yacd"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
-                    ui_print "- Install clash.premium core"
-                    ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                    installCore clash.premium
                 fi
             else
-                selectCore clash.meta
-                ui_print "- Install yacd-meta"
-                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
-                ui_print "- Install clash.meta core"
-                ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+                installCore clash.meta
             fi
         fi
     else
-        ui_print "- Skip core installation"
-        ui_print "- You need install core and configure xrayhelper.yml after module installation"
+        installCore skip
     fi
 }
 
@@ -203,7 +209,11 @@ installModule() {
     fi
     unzip -j -o "${ZIPFILE}" 'xray/etc/clashmetaconfs/template.yaml' -d ${module_path}/clashmetaconfs >&2
 
-    installCore
+    if [ -f /sdcard/xray4magisk.setup ]; then
+        installCore $(head -1 /sdcard/xray4magisk.setup)
+    else
+        installCore_VK
+    fi
     ui_print "- Release scripts"
     mkdir -p ${module_path}/run
     mkdir -p ${module_path}/scripts
