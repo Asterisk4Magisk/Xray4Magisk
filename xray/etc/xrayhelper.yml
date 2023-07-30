@@ -9,6 +9,7 @@ proxy:
     method: tproxy
     tproxyPort: 65535
     socksPort: 65534
+    tunDevice: xtun
     enableIPv6: false
     mode: blacklist
     apList:
