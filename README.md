@@ -4,7 +4,7 @@ English | [简体中文](README_zh_CN.md)
 
 ~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/V2ray/Sing-box/Clash/Clash.Premium/Clash.Meta, and includes xrayhelper binaries for arm64, x64.
+This is a Magisk module for Xray/V2ray/Sing-box/Mihomo(Clash.Meta), and includes xrayhelper binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -12,7 +12,7 @@ I'm not responsible for bricked devices, dead SD cards, or burning your SoC.
 
 **Make sure your config file does not cause traffic to loop back, otherwise it may cause your phone to constantly reboot.**
 
-If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray), Clash For Android, ClashMeta For Android etc.
+If you really don't know how to configure this module, you mignt need apps like v2rayNG, SagerNet(or AnXray), ClashMeta For Android etc.
 
 ## Install
 
@@ -20,7 +20,7 @@ Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4M
 
 This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core), When installing, the relevant files are downloaded automatically. If your network has poor access to Github, please consider using a network proxy or choose not install core online.
 
-If your device don't have volume keys, you can create file `/sdcard/xray4magisk.setup`, first line of the file will determine the core type, `xray` for Xray, `v2ray` for V2ray, `sing-box` for Sing-box, `clash` for Clash, `clash.premium` for Clash.Premium, `clash.meta` for Clash.Meta and `skip` for skip core installation, any other content will still use the volume keys to select core.
+If your device don't have volume keys, you can create file `/sdcard/xray4magisk.setup`, first line of the file will determine the core type, `xray` for Xray, `v2ray` for V2ray, `sing-box` for Sing-box, `mihomo` for Mihomo(Clash.Meta) and `skip` for skip core installation, any other content will still use the volume keys to select core.
 
 ## Config
 
@@ -28,10 +28,9 @@ If your device don't have volume keys, you can create file `/sdcard/xray4magisk.
 - The xray config file is stored in `/data/adb/xray/confs/*.json`
 - The v2ray config file is stored in `/data/adb/xray/v2ray.v5.json`
 - The sing-box config file is stored in `/data/adb/xray/singconfs/*.json`
-- The clash template config file is stored in `/data/adb/xray/clashconfs/template.yaml`
-- The clash.meta template config file is stored in `/data/adb/xray/clashmetaconfs/template.yaml`
+- The mihomo(clash.meta) template config file is stored in `/data/adb/xray/mihomoconfs/template.yaml`
 
-Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that use xrayhelper to manage your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/), [Sing-box](https://sing-box.sagernet.org/),[Clash](https://dreamacro.github.io/clash/) and [Clash.Meta](https://clash-meta.wiki/)
+Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that use xrayhelper to manage your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/), [Sing-box](https://sing-box.sagernet.org/), [Mihomo](https://wiki.metacubex.one/)
 
 ## Usage
 
@@ -46,12 +45,12 @@ Tip: The default config already sets the inbounds section to work with transpare
 
 ### Config xrayhelper in Termux
 
-- Install root-repo and tsu :
+- Install Termux :
 
-    `pkg i root-repo && pkg i tsu`
+    [Termux on Github](https://github.com/termux/termux-app/releases)
 - Config alias (bash)：
 
-    `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
+    `echo "alias xrayhelper=\"su -c /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
 
 ### Example usage of xrayhelper
 #### Manage service start / stop

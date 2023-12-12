@@ -80,34 +80,14 @@ installCore() {
         ui_print "- Install sing-box core"
         ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
-    clash)
-        sed -i 's/coreType: .*/coreType: clash/g' ${module_path}/xrayhelper.yml
-        sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash/g' ${module_path}/xrayhelper.yml
-        sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
-        sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
-        ui_print "- Install yacd"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
-        ui_print "- Install clash core"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
-        ;;
-    clash.premium)
-        sed -i 's/coreType: .*/coreType: clash\.premium/g' ${module_path}/xrayhelper.yml
-        sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.premium/g' ${module_path}/xrayhelper.yml
-        sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashconfs\//g' ${module_path}/xrayhelper.yml
-        sed -i 's/template: .*/template: \/data\/adb\/xray\/clashconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
-        ui_print "- Install yacd"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd
-        ui_print "- Install clash.premium core"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
-        ;;
-    clash.meta)
-        sed -i 's/coreType: .*/coreType: clash\.meta/g' ${module_path}/xrayhelper.yml
-        sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/clash\.meta/g' ${module_path}/xrayhelper.yml
-        sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/clashmetaconfs\//g' ${module_path}/xrayhelper.yml
-        sed -i 's/template: .*/template: \/data\/adb\/xray\/clashmetaconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
+    mihomo)
+        sed -i 's/coreType: .*/coreType: mihomo/g' ${module_path}/xrayhelper.yml
+        sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/mihomo/g' ${module_path}/xrayhelper.yml
+        sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/mihomoconfs\//g' ${module_path}/xrayhelper.yml
+        sed -i 's/template: .*/template: \/data\/adb\/xray\/mihomoconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
         ui_print "- Install yacd-meta"
         ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
-        ui_print "- Install clash.meta core"
+        ui_print "- Install mihomo(clash.meta) core"
         ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     xray)
@@ -136,38 +116,24 @@ installCore_VK() {
     if $VKSEL; then
         ui_print
         ui_print "- Please select your core"
-        ui_print "* VOL+ = xray/v2ray/sing-box, VOL- = clash/clash.premium/clash.meta *"
+        ui_print "* VOL+ = xray/v2ray, VOL- = sing-box/mihomo(clash.meta) *"
         if $VKSEL; then
             ui_print
-            ui_print "- Please select xray/v2ray or sing-box"
-            ui_print "* VOL+ = xray/v2ray, VOL- = sing-box *"
+            ui_print "- Please select xray or v2ray"
+            ui_print "* VOL+ = xray, VOL- = v2ray *"
             if $VKSEL; then
-                ui_print
-                ui_print "- Please select xray or v2ray"
-                ui_print "* VOL+ = xray, VOL- = v2ray *"
-                if $VKSEL; then
-                    installCore xray
-                else
-                    installCore v2ray
-                fi
+                installCore xray
             else
-                installCore sing-box
+                installCore v2ray
             fi
         else
             ui_print
-            ui_print "- Please select clash/clash.premium or clash.meta"
-            ui_print "* VOL+ = clash/clash.premium, VOL- = clash.meta *"
+            ui_print "- Please select sing-box or mihomo(clash.meta)"
+            ui_print "* VOL+ = sing-box, VOL- = mihomo(clash.meta) *"
             if $VKSEL; then
-                ui_print
-                ui_print "- Please select clash or clash.premium"
-                ui_print "* VOL+ = clash, VOL- = clash.premium *"
-                if $VKSEL; then
-                    installCore clash
-                else
-                    installCore clash.premium
-                fi
+                installCore sing-box
             else
-                installCore clash.meta
+                installCore mihomo
             fi
         fi
     else
@@ -200,14 +166,10 @@ installModule() {
     unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/base.json' -d ${module_path}/singconfs >&2
     unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/dns.json' -d ${module_path}/singconfs >&2
     unzip -j -o "${ZIPFILE}" 'xray/etc/singconfs/route.json' -d ${module_path}/singconfs >&2
-    if [ ! -d ${module_path}/clashconfs ]; then
-        mkdir -p ${module_path}/clashconfs
+    if [ ! -d ${module_path}/mihomoconfs ]; then
+        mkdir -p ${module_path}/mihomoconfs
     fi
-    unzip -j -o "${ZIPFILE}" 'xray/etc/clashconfs/template.yaml' -d ${module_path}/clashconfs >&2
-    if [ ! -d ${module_path}/clashmetaconfs ]; then
-        mkdir -p ${module_path}/clashmetaconfs
-    fi
-    unzip -j -o "${ZIPFILE}" 'xray/etc/clashmetaconfs/template.yaml' -d ${module_path}/clashmetaconfs >&2
+    unzip -j -o "${ZIPFILE}" 'xray/etc/mihomoconfs/template.yaml' -d ${module_path}/mihomoconfs >&2
 
     if [ -f /sdcard/xray4magisk.setup ]; then
         installCore $(head -1 /sdcard/xray4magisk.setup)

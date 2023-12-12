@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/V2ray/Sing-box/Clash/Clash.Premium/Clash.Meta 的 Magisk 模块，支持 arm64， x64 架构。
+本项目为 Xray/V2ray/Sing-box/Mihomo(Clash.Meta) 的 Magisk 模块，支持 arm64， x64 架构。
 
 ## 免责声明
 
@@ -12,7 +12,7 @@
 
 **请确保您的配置文件不会造成流量回环，否则可能会导致您的手机无限重启。**
 
-如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）、Clash For Android、ClashMeta For Android等应用程序。
+如果你真的不知道如何配置这个模块，你可能需要像 v2rayNG、SagerNet（或 AnXray）、ClashMeta For Android等应用程序。
 
 ## 安装
 
@@ -20,7 +20,7 @@
 
 注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装Core并在模块安装成功后手动安装Core、配置XrayHelper
 
-如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`clash` 表示使用 Clash，`clash.premium` 表示使用 Clash.Premium，`clash.meta` 表示使用 Clash.Meta，`skip` 表示跳过核心安装，其他任意内容将仍然使用音量键进行选择
+如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo(Clash.Meta)，`skip` 表示跳过核心安装，其他任意内容将仍然使用音量键进行选择
 
 ## 配置文件
 
@@ -28,10 +28,9 @@
 - Xray 核心的配置文件保存在 `/data/adb/xray/confs/*.json`
 - V2ray 核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
 - Sing-box 核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
-- Clash/Clash.Premium 核心的模板配置文件保存在 `/data/adb/xray/clashconfs/template.yaml`
-- Clash.Meta 核心的模板配置文件保存在 `/data/adb/xray/clashmetaconfs/template.yaml`
+- Mihomo(Clash.Meta) 核心的模板配置文件保存在 `/data/adb/xray/mihomoconfs/template.yaml`
 
-提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)、 [Clash](https://dreamacro.github.io/clash/)以及 [Clash.Meta](https://clash-meta.wiki/)
+提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)以及 [Mihomo](https://wiki.metacubex.one/)
 
 ## 使用方法
 
@@ -45,12 +44,12 @@
 - 您可以通过 Magisk 管理应用打开或关闭模块来启动或停止 Xray 服务。启动服务可能需要等待几秒钟，停止服务可能会立即生效。
 
 ### 在 Termux 配置 xrayhelper
-  - 安装 root-repo 和 tsu：
+  - 安装 Termux：
 
-    `pkg i root-repo && pkg i tsu`
+    [Termux on Github](https://github.com/termux/termux-app/releases)
   - 配置别名 (bash)：
 
-    `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
+    `echo "alias xrayhelper=\"su -c /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc`
 
 ### xrayhelper 使用示例
 #### 管理服务的启停

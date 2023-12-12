@@ -10,13 +10,7 @@
 
 如果你没有安装 Termux，由于其在 Google Play 已停更，建议直接去 [Github Release](https://github.com/termux/termux-app/releases/latest) 下载并安装
 
-1. 打开 Termux ，输入 `termux-change-repo`，更换软件源镜像，这里推荐使用中科大镜像
-
-    ![mirror](img/1.png)
-
-2. 使用命令 `pkg i root-repo && pkg i tsu` 安装 root-repo 和 tsu
-
-3. 使用命令 `echo "alias xrayhelper=\"sudo /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc` 在 bash 配置 XrayHelper 的别名
+使用命令 `echo "alias xrayhelper=\"su -c /data/adb/xray/bin/xrayhelper\"" >> ~/.bashrc && source ~/.bashrc` 在 bash 配置 XrayHelper 的别名
 
 至此，可愉快的在 Termux 使用 XrayHelper 了
 

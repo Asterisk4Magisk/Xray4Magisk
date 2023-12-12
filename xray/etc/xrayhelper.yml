@@ -11,10 +11,11 @@ proxy:
     socksPort: 65534
     tunDevice: xtun
     enableIPv6: false
+    autoDNSStrategy: true
     mode: blacklist
     apList:
         - wlan+
         - rndis+
 clash:
     dnsPort: 65533
-    template: /data/adb/xray/clashconfs/template.yaml
+    template: /data/adb/xray/mihomoconfs/template.yaml
