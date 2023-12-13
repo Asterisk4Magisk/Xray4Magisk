@@ -146,6 +146,10 @@ installModule() {
     mkdir -p ${module_path}/bin
     unzip -j -o "${ZIPFILE}" "xray/bin/${ARCH}/xrayhelper" -d ${module_path}/bin >&2
     set_perm ${module_path}/bin/xrayhelper 0 0 0755
+    [ -d "/system/xbin" ] && local bin_dir="/system/xbin" || local bin_dir="/system/bin"
+    mkdir -p ${MODPATH}${bin_dir}
+    unzip -j -o "${ZIPFILE}" "xray/bin/${ARCH}/xrayhelper" -d ${MODPATH}${bin_dir} >&2
+    set_perm ${MODPATH}${bin_dir}/xrayhelper 0 0 0755
     [ -f ${module_path}/xrayhelper.yml ] ||
         unzip -j -o "${ZIPFILE}" 'xray/etc/xrayhelper.yml' -d ${module_path} >&2
 
