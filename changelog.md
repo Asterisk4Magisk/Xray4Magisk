@@ -1,11 +1,10 @@
 **WARNING: YOUR CORE CONFIG FILE WILL BE OVERWRITTEN**
-### Changelog
-## Module
+## Changelog
+### Module
 - use xrayhelper v1.3.1
 - update core config
-- update README
 
-## XrayHelper v1.3.1
+### XrayHelper v1.3.1
 - setup NDK r26c for cgo and compile with sdk34
 - add --bypass-self option
 - switch command remove v2ray core support
