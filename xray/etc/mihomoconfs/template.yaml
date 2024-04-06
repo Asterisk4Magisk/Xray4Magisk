@@ -2,22 +2,37 @@ log-level: warning
 tproxy-port: 65535
 socks-port: 65534
 bind-address: '*'
-ipv6: false
 allow-lan: true
+ipv6: false
+find-process-mode: "off"
+keep-alive-interval: 30
+geo-auto-update: false
+geo-update-interval: 24
 external-controller: 127.0.0.1:65532
 external-ui: /data/adb/xray/data/Yacd-meta-gh-pages
 dns:
     enable: true
     enhanced-mode: redir-host
     listen: 127.0.0.1:65533
+    prefer-h3: false
     nameserver:
         - 223.5.5.5
+        - 223.6.6.6
+    default-nameserver:
+        - 223.5.5.5
+        - 223.6.6.6
+    proxy-server-nameserver:
+        - 223.5.5.5
+        - 223.6.6.6
 sniffer:
     enable: true
     sniff:
         HTTP:
             ports:
                 - 80
+        QUIC:
+            ports:
+                - 443
         TLS:
             ports:
                 - 443
