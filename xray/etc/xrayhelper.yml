@@ -17,7 +17,13 @@ proxy:
     autoDNSStrategy: true
     mode: blacklist
     pkgList:
-        - com.tencent.mm
+        - 'com.tencent.*'
+        - 'com.baidu.*'
+        - 'com.netease.*'
+        - 'com.taobao.*'
+        - 'com.bilibili.*'
+        - 'cn.*'
+        - '*china*'
     apList:
         - wlan+
         - rndis+

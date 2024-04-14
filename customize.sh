@@ -75,8 +75,6 @@ installCore() {
         sed -i 's/coreType: .*/coreType: sing-box/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/sing-box/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/singconfs\//g' ${module_path}/xrayhelper.yml
-        ui_print "- Install geodata asset"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
         ui_print "- Install sing-box core"
         ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
