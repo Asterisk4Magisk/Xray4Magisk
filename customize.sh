@@ -61,7 +61,6 @@ chooseport() {
 VKSEL=chooseport
 
 installCore() {
-    ui_print
     case "$1" in
     v2ray)
         sed -i 's/coreType: .*/coreType: v2ray/g' ${module_path}/xrayhelper.yml
@@ -98,12 +97,9 @@ installCore() {
         ui_print "- Install xray core"
         ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
-    skip)
+    *)
         ui_print "- Skip core installation"
         ui_print "- You need install core and configure xrayhelper.yml after module installation"
-        ;;
-    *)
-        installCore_VK
         ;;
     esac
 }
@@ -141,7 +137,6 @@ installCore_VK() {
 }
 
 releaseConfig() {
-    ui_print
     ui_print "- Release xrayhelper config"
     unzip -j -o "${ZIPFILE}" 'xray/etc/xrayhelper.yml' -d ${module_path} >&2
 
@@ -175,6 +170,13 @@ releaseConfig() {
 }
 
 installModule() {
+    # Params for no value key device
+    if [ -f /sdcard/xray4magisk.setup ]; then
+        local use_param=true
+        local param_core=$(sed -n 1p /sdcard/xray4magisk.setup)
+        local param_keep=$(sed -n 2p /sdcard/xray4magisk.setup)
+    fi
+
     # Install xrayhelper
     ui_print "- Install xrayhelper"
     mkdir -p ${module_path}/bin
@@ -183,21 +185,27 @@ installModule() {
 
     # Release module config files
     if [ -f ${module_path}/xrayhelper.yml ]; then
-        ui_print
-        ui_print "- Old config files detected, overwrite them?"
-        ui_print "* VOL+ = YES, VOL- = NO *"
-        if $VKSEL; then
-            releaseConfig
+        if [ "$use_param" != true ]; then
+            ui_print
+            ui_print "- Old config files detected, overwrite them?"
+            ui_print "* VOL+ = YES, VOL- = NO *"
+            if $VKSEL; then
+                releaseConfig
+            fi
+        else
+            if [ "$param_keep" != "keep" ]; then
+                releaseConfig
+            fi
         fi
     else
         releaseConfig
     fi
 
     # Install core
-    if [ -f /sdcard/xray4magisk.setup ]; then
-        installCore $(head -1 /sdcard/xray4magisk.setup)
-    else
+    if [ "$use_param" != true ]; then
         installCore_VK
+    else
+        installCore $param_core
     fi
 
     # Release module scripts

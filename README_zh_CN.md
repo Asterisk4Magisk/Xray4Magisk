@@ -20,7 +20,7 @@
 
 注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装Core并在模块安装成功后手动安装Core、配置XrayHelper
 
-如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo(Clash.Meta)，`skip` 表示跳过核心安装，其他任意内容将仍然使用音量键进行选择
+如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo(Clash.Meta)，其他任意内容将仍然使用音量键进行选择；该文件的第二行将决定是否覆盖旧配置文件，`keep`表示保留旧配置文件，其他内容将会覆盖配置文件。
 
 ## 配置文件
 

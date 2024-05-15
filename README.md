@@ -20,7 +20,7 @@ Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4M
 
 This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core), When installing, the relevant files are downloaded automatically. If your network has poor access to Github, please consider using a network proxy or choose not install core online.
 
-If your device don't have volume keys, you can create file `/sdcard/xray4magisk.setup`, first line of the file will determine the core type, `xray` for Xray, `v2ray` for V2ray, `sing-box` for Sing-box, `mihomo` for Mihomo(Clash.Meta) and `skip` for skip core installation, any other content will still use the volume keys to select core.
+If your device don't have volume keys, you can create file `/sdcard/xray4magisk.setup`, first line of the file will determine the core type, `xray` for Xray, `v2ray` for V2ray, `sing-box` for Sing-box and `mihomo` for Mihomo(Clash.Meta), any other content will skip core installation; second line of the file will control whether to overwrite old config files, `keep` will preserve them, otherwise will be overwritten.
 
 ## Config
 
