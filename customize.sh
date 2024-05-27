@@ -67,16 +67,16 @@ installCore() {
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/v2ray/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/v2ray.v5.json/g' ${module_path}/xrayhelper.yml
         ui_print "- Install geodata asset"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
         ui_print "- Install v2ray core"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     sing-box)
         sed -i 's/coreType: .*/coreType: sing-box/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/sing-box/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/singconfs\//g' ${module_path}/xrayhelper.yml
         ui_print "- Install sing-box core"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     mihomo)
         sed -i 's/coreType: .*/coreType: mihomo/g' ${module_path}/xrayhelper.yml
@@ -84,18 +84,18 @@ installCore() {
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/mihomoconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/mihomoconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
         ui_print "- Install yacd-meta"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
         ui_print "- Install mihomo core"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     xray)
         sed -i 's/coreType: .*/coreType: xray/g' ${module_path}/xrayhelper.yml
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/xray/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/confs\//g' ${module_path}/xrayhelper.yml
         ui_print "- Install geodata asset"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update geodata
         ui_print "- Install xray core"
-        ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
+        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
     *)
         ui_print "- Skip core installation"
