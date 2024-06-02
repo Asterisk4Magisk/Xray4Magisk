@@ -219,6 +219,11 @@ installModule() {
     unzip -j -o "${ZIPFILE}" 'xray4magisk_service.sh' -d /data/adb/service.d >&2
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d $MODPATH >&2
 
+    # Release KernelSU WebUI
+    ui_print "- Release KernelSU WebUI"
+    mkdir -p $MODPATH/webroot
+    unzip -o "${ZIPFILE}" 'webroot/*' -d $MODPATH >&2
+
     # Set module files' permission
     ui_print "- Set permission"
     set_perm /data/adb/service.d/xray4magisk_service.sh 0 0 0755

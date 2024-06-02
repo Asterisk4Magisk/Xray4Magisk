@@ -101,7 +101,7 @@
 
 GUI 支持？
 
-> 没有计划
+> 请使用 [KernelSU](https://github.com/tiann/KernelSU)。
 
 ## 联系
 

@@ -103,7 +103,7 @@ This module cause battery drain really quick.
 
 GUI support?
 
-> No plan.
+> Please use [KernelSU](https://github.com/tiann/KernelSU).
 
 Why not store config files in Internal Storage?
 
