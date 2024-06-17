@@ -13,6 +13,7 @@ start_proxy() {
 if [ ! -f /data/adb/xray/manual ]; then
     ${XRAYHELPER} &>/data/adb/xray/run/helper.log
     rm -rf /data/adb/xray/run/core.pid
+    rm -rf /data/adb/xray/run/adghome.pid
     rm -rf /data/adb/xray/run/tun2socks.pid
     if [ ! -f ${MODDIR}/disable ]; then
         start_proxy

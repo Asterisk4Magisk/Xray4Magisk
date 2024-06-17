@@ -4,7 +4,7 @@
 
 ~~该项目 fork 自 [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)。~~
 
-本项目为 Xray/V2ray/Sing-box/Mihomo(Clash.Meta) 的 Magisk 模块，支持 arm64， x64 架构。
+本项目为 Xray/V2ray/Sing-box/Mihomo/Hysteria2 的 Magisk 模块，支持 arm64， x64 架构。
 
 ## 免责声明
 
@@ -18,19 +18,21 @@
 
 从 [Release](https://github.com/Asterisk4Magisk/Xray4Magisk/releases) 下载模块压缩包，然后通过 [Magisk](https://github.com/topjohnwu/Magisk) 进行安装  
 
-注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装Core并在模块安装成功后手动安装Core、配置XrayHelper
+注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装 Core 并在模块安装成功后手动安装 Core、配置 XrayHelper
 
-如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo(Clash.Meta)，其他任意内容将跳过核心安装；该文件的第二行将决定是否覆盖旧配置文件，`keep`表示保留旧配置文件，其他内容将会覆盖配置文件。
+如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo，`hysteria2` 表示使用 Hysteria2，其他任意内容将跳过核心安装；该文件的第二行将决定是否覆盖旧配置文件，`keep`表示保留旧配置文件，其他内容将会覆盖配置文件。
 
 ## 配置文件
 
 - XrayHelper 配置文件保存在 `/data/adb/xray/xrayhelper.yml`
 - Xray 核心的配置文件保存在 `/data/adb/xray/confs/*.json`
-- V2ray 核心的配置文件保存在 `/data/adb/xray/v2ray.v5.json`
+- V2ray 核心的配置文件保存在 `/data/adb/xray/v2rayconfs/config.json`
 - Sing-box 核心的配置文件保存在 `/data/adb/xray/singconfs/*.json`
-- Mihomo(Clash.Meta) 核心的模板配置文件保存在 `/data/adb/xray/mihomoconfs/template.yaml`
+- Mihomo 核心的模板配置文件保存在 `/data/adb/xray/mihomoconfs/template.yaml`
+- Hysteria2 核心的配置文件保存在 `/data/adb/xray/hy2confs/config.yaml`
+- AdGuardHome 的配置文件保存在 `/data/adb/xray/adghomeconfs/config.yaml`，默认 WebUI 用户名密码均为 `xray4magisk`
 
-提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)以及 [Mihomo](https://wiki.metacubex.one/)
+提示：默认配置已经设置了 inbounds 部分来配合透明代理脚本工作。建议您使用 xrayhelper 管理代理服务器，进阶配置请参考相应官方文档，如 [Xray](https://xtls.github.io/)、 [V2ray](https://www.v2fly.org/) 、 [Sing-box](https://sing-box.sagernet.org/)、 [Mihomo](https://wiki.metacubex.one/) 以及 [Hysteria2](https://hysteria.network/)
 
 ## 使用方法
 

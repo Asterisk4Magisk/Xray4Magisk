@@ -1,0 +1,134 @@
+{
+    "log": {
+        "access": {
+            "type": "None"
+        },
+        "error": {
+            "level": "Warning",
+            "type": "Console"
+        }
+    },
+    "dns": {
+        "domainMatcher": "mph",
+        "nameServer": [
+            {
+                "address": {
+                    "address": "https+local://223.5.5.5/dns-query"
+                }
+            }
+        ],
+        "queryStrategy": "USE_IP4"
+    },
+    "inbounds": [
+        {
+            "port": 65535,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "followRedirect": true,
+                "networks": "udp,tcp"
+            },
+            "sniffing": {
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "enabled": true,
+                "metadataOnly": false
+            },
+            "streamSettings": {
+                "socketSettings": {
+                    "tproxy": "tproxy"
+                }
+            },
+            "tag": "proxy-in"
+        },
+        {
+            "listen": "127.0.0.1",
+            "port": 65534,
+            "protocol": "socks",
+            "settings": {
+                "packetEncoding": "Packet",
+                "udpEnabled": true
+            },
+            "sniffing": {
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "enabled": true,
+                "metadataOnly": false
+            },
+            "tag": "socks-in"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "dns",
+            "tag": "dns-out"
+        },
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "block"
+        },
+        {
+            "tag": "proxy"
+        }
+    ],
+    "router": {
+        "domainStrategy": "IpIfNonMatch",
+        "rule": [
+            {
+                "inboundTag": [
+                    "proxy-in",
+                    "socks-in"
+                ],
+                "networks": "udp",
+                "portList": "53",
+                "tag": "dns-out"
+            },
+            {
+                "geoDomain": [
+                    {
+                        "code": "apple-cn"
+                    },
+                    {
+                        "code": "cn"
+                    }
+                ],
+                "networks": "tcp,udp",
+                "tag": "direct"
+            },
+            {
+                "geoDomain": [
+                    {
+                        "code": "geolocation-!cn"
+                    }
+                ],
+                "networks": "tcp,udp",
+                "tag": "proxy"
+            },
+            {
+                "geoip": [
+                    {
+                        "code": "cn"
+                    },
+                    {
+                        "code": "private"
+                    }
+                ],
+                "networks": "tcp,udp",
+                "tag": "direct"
+            },
+            {
+                "networks": "tcp,udp",
+                "tag": "proxy"
+            }
+        ]
+    }
+}

@@ -1,5 +1,6 @@
 # Declare files that will always have LF line endings on checkout.
 META-INF/** text eol=lf
+webroot/** text eol=lf
 xray/etc/** text eol=lf
 xray/scripts/** text eol=lf
 

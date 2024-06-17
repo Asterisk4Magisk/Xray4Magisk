@@ -4,7 +4,7 @@ English | [简体中文](README_zh_CN.md)
 
 ~~A fork from [V2ray for Android](https://github.com/Magisk-Modules-Repo/v2ray)~~
 
-This is a Magisk module for Xray/V2ray/Sing-box/Mihomo(Clash.Meta), and includes xrayhelper binaries for arm64, x64.
+This is a Magisk module for Xray/V2ray/Sing-box/Mihomo/Hysteria2, and includes xrayhelper binaries for arm64, x64.
 
 ## Disclaimer
 
@@ -20,17 +20,19 @@ Download the module zip from [Release](https://github.com/Asterisk4Magisk/Xray4M
 
 This module does not contain binaries such as [Xray-core](https://github.com/XTLS/Xray-core), When installing, the relevant files are downloaded automatically. If your network has poor access to Github, please consider using a network proxy or choose not install core online.
 
-If your device don't have volume keys, you can create file `/sdcard/xray4magisk.setup`, first line of the file will determine the core type, `xray` for Xray, `v2ray` for V2ray, `sing-box` for Sing-box and `mihomo` for Mihomo(Clash.Meta), any other content will skip core installation; second line of the file will control whether to overwrite old config files, `keep` will preserve them, otherwise will be overwritten.
+If your device don't have volume keys, you can create file `/sdcard/xray4magisk.setup`, first line of the file will determine the core type, `xray` for Xray, `v2ray` for V2ray, `sing-box` for Sing-box, `mihomo` for Mihomo and `hysteria2` for Hysteria2, any other content will skip core installation; second line of the file will control whether to overwrite old config files, `keep` will preserve them, otherwise will be overwritten.
 
 ## Config
 
 - The xrayhelper config file is stored in `/data/adb/xray/xrayhelper.yml`
 - The xray config file is stored in `/data/adb/xray/confs/*.json`
-- The v2ray config file is stored in `/data/adb/xray/v2ray.v5.json`
+- The v2ray config file is stored in `/data/adb/xray/v2rayconfs/config.json`
 - The sing-box config file is stored in `/data/adb/xray/singconfs/*.json`
-- The mihomo(clash.meta) template config file is stored in `/data/adb/xray/mihomoconfs/template.yaml`
+- The mihomo template config file is stored in `/data/adb/xray/mihomoconfs/template.yaml`
+- The hysteria2 config file is stored in `/data/adb/xray/hy2confs/config.yaml`
+- The adguardhome config file is stored in `/data/adb/xray/adghomeconfs/config.yaml`, and the default username and password are both `xray4magisk`
 
-Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that use xrayhelper to manage your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/), [Sing-box](https://sing-box.sagernet.org/), [Mihomo](https://wiki.metacubex.one/)
+Tip: The default config already sets the inbounds section to work with transparent proxy scripts. It is recommended that use xrayhelper to manage your proxy server, for advanced configurations please refer to the appropriate official documentation, such as [Xray](https://xtls.github.io/), [V2ray](https://www.v2fly.org/), [Sing-box](https://sing-box.sagernet.org/), [Mihomo](https://wiki.metacubex.one/) and [Hysteria2](https://hysteria.network/)
 
 ## Usage
 

@@ -8,6 +8,15 @@ xrayHelper:
     subList:
         - https://example.com/v2rayNg
         - clash+https://example.com/mihomo
+    userAgent: ClashMeta
+clash:
+    dnsPort: 65533
+    template: /data/adb/xray/mihomoconfs/template.yaml
+adgHome:
+    enable: false
+    address: 127.0.0.1:65530
+    workDir: /data/adb/xray/adghomeconfs/
+    dnsPort: 65531
 proxy:
     method: tproxy
     tproxyPort: 65535
@@ -27,6 +36,3 @@ proxy:
     apList:
         - wlan+
         - rndis+
-clash:
-    dnsPort: 65533
-    template: /data/adb/xray/mihomoconfs/template.yaml

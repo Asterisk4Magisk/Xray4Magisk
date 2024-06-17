@@ -1,13 +1,16 @@
 ## Changelog
 ### Module
-- use xrayhelper v1.3.4
-- use xray4magisk-ksu-webui v0.0.1
+- use xrayhelper v1.4.0
+- use xray4magisk-ksu-webui v0.0.2
+- add hysteria2 config
+- add AdGuardHome config
 
-### XrayHelper v1.3.4
-- vmess json Unmarshal str convert fix
-- set subprocess group ID for common.External
-- console based restful api for kernelsu webui
-- some other shareurl changes
+### XrayHelper v1.4.0
+- tproxy method no longer check ipv6 connection
+- save raw data from v2rayNg subscribe when decode base64 failed
+- custom User-Agent for http requests send by xrayhelper
+- add hysteria2 support
+- add adguardhome support
 
-### xray4magisk-ksu-webui v0.0.1
-- initial version
+### xray4magisk-ksu-webui v0.0.2
+- sync XrayHelper v1.4.0
