@@ -1,7 +1,7 @@
 id=xray4magisk
 name=Xray4Magisk
-version=Module v3.4.3, Helper v1.4.3
-versionCode=20240702
+version=Module v3.4.4, Helper v1.4.4
+versionCode=20240718
 author=Asterisk4Magisk
 description=System Proxy
 updateJson=https://raw.githubusercontent.com/Asterisk4Magisk/Xray4Magisk/master/update.json

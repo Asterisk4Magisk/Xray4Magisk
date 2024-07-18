@@ -5,6 +5,7 @@ xrayHelper:
     dataDir: /data/adb/xray/data/
     runDir: /data/adb/xray/run/
     proxyTag: proxy
+    allowInsecure: false
     subList:
         - https://example.com/v2rayNg
         - clash+https://example.com/mihomo
