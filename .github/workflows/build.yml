@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v4
+
+      - name: Copy Files
+        run: |
+          mkdir -p build_assets
+          cp -r ${GITHUB_WORKSPACE}/META-INF/ ./build_assets/
+          cp -r ${GITHUB_WORKSPACE}/webroot/ ./build_assets/
+          cp -r ${GITHUB_WORKSPACE}/xray/ ./build_assets/
+          cp ${GITHUB_WORKSPACE}/xray4magisk_service.sh ./build_assets/
+          cp ${GITHUB_WORKSPACE}/customize.sh ./build_assets/
+          cp ${GITHUB_WORKSPACE}/module.prop ./build_assets/
+          cp ${GITHUB_WORKSPACE}/uninstall.sh ./build_assets/
+          cp ${GITHUB_WORKSPACE}/update.json ./build_assets/
+          cp ${GITHUB_WORKSPACE}/README.md ./build_assets/
+          cp ${GITHUB_WORKSPACE}/README_zh_CN.md ./build_assets/
+
+      - name: Create ZIP archive
+        shell: bash
+        run: |
+          pushd build_assets || exit 1
+          touch -mt $(date +%Y01010000) *
+          zip -9vr ../Xray4Magisk.zip .
+          popd || exit 1
+          FILE=./Xray4Magisk.zip
+          DGST=$FILE.dgst
+          for METHOD in {"md5","sha1","sha256","sha512"}
+          do
+            openssl dgst -$METHOD $FILE | sed 's/([^)]*)//g' >>$DGST
+          done
+
+      - name: Change the name
+        run: |
+          mv build_assets Xray4Magisk
+
+      - name: Upload files to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Xray4Magisk
+          path: |
+            ./Xray4Magisk/*
