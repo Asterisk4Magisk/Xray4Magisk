@@ -2,6 +2,7 @@
 ### Module
 - use xrayhelper v1.4.5
 - use xray4magisk-ksu-webui v0.0.4
+- add net.inotify to refresh proxy rule when network changed
 
 ### XrayHelper v1.4.5
 - [fix xray httpupgrade/splithttp settings object host field](https://github.com/Asterisk4Magisk/XrayHelper/commit/e44fc8a754fd556347ca91e3828ec437811ff299)
