@@ -1,0 +1,10 @@
+#!/system/bin/sh
+#FROM https://github.com/CHIZI-0618/box4magisk/blob/main/box/scripts/net.inotify
+
+xrayhelper=/data/adb/xray/bin/xrayhelper
+xrayhelper_conf=/data/adb/xray/xrayhelper.yml
+events=$1
+
+if [ "$events" = "w" ]; then
+    ${xrayhelper} -c ${xrayhelper_conf} proxy refresh
+fi
