@@ -92,8 +92,16 @@ installCore() {
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/mihomo/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/mihomoconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/mihomoconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
-        ui_print "- Install yacd-meta"
-        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+        ui_print
+        ui_print "- Please select mihomo web UI"
+        ui_print "* VOL+ = yacd-meta, VOL- = metacubexd *"
+        if $VKSEL; then
+            ui_print "- Install yacd-meta"
+            su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+        else
+            ui_print "- Install metacubexd"
+            su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update metacubexd
+        fi
         ui_print "- Install mihomo core"
         su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;

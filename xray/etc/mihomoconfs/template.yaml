@@ -9,7 +9,7 @@ keep-alive-interval: 30
 geo-auto-update: false
 geo-update-interval: 24
 external-controller: 127.0.0.1:65532
-external-ui: /data/adb/xray/data/Yacd-meta-gh-pages
+external-ui: /data/adb/xray/data/mihomoUI
 dns:
     enable: true
     enhanced-mode: redir-host
