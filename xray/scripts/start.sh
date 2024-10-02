@@ -21,5 +21,5 @@ if [ ! -f /data/adb/xray/manual ]; then
         sleep 5
     fi
     inotifyd ${SCRIPTS_DIR}/xray.inotify ${MOD_DIR} &>>/data/adb/xray/run/helper.log &
-    inotifyd ${SCRIPTS_DIR}/net.inotify ${NET_DIR} &>>/data/adb/xray/run/helper.log &
+    # inotifyd ${SCRIPTS_DIR}/net.inotify ${NET_DIR} &>>/data/adb/xray/run/helper.log &
 fi
