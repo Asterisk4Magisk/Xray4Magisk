@@ -217,7 +217,7 @@ releaseConfig() {
     unzip -j -o "${ZIPFILE}" 'xray/etc/adghomeconfs/config.yaml' -d ${module_path}/adghomeconfs >&2
 }
 
-# 全局变量定义
+# Global parameters
 use_param=false
 param_core=""
 param_keep=""
