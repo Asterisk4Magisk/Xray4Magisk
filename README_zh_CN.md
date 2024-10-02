@@ -20,7 +20,7 @@
 
 注意：这个模块不包含任何核心的二进制文件，安装时，联网下载相关文件，若您的网络访问Github速度不佳，建议在模块安装过程中开启网络代理或者选择不在线安装 Core 并在模块安装成功后手动安装 Core、配置 XrayHelper
 
-如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo，`hysteria2` 表示使用 Hysteria2，其他任意内容将跳过核心安装；该文件的第二行将决定是否覆盖旧配置文件，`keep`表示保留旧配置文件，其他内容将会覆盖配置文件。
+如果你的设备没有音量键，可以创建文件 `/sdcard/xray4magisk.setup`，该文件的第一行将决定在线安装的核心类型，`xray` 表示使用 Xray，`v2ray` 表示使用 V2ray，`sing-box` 表示使用 Sing-box，`mihomo` 表示使用 Mihomo，`hysteria2` 表示使用 Hysteria2，其他任意内容将跳过核心安装；该文件的第二行将决定是否覆盖旧配置文件，`keep`表示保留旧配置文件，其他内容将会覆盖配置文件。该文件的第三行选择webUI类型，留空则默认，目前`mihomo` UI可选填写 `1` 表示使用yacd-meta， `2` 表示使用metacubexd。
 
 ## 配置文件
 

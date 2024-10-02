@@ -92,8 +92,27 @@ installCore() {
         sed -i 's/corePath: .*/corePath: \/data\/adb\/xray\/bin\/mihomo/g' ${module_path}/xrayhelper.yml
         sed -i 's/coreConfig: .*/coreConfig: \/data\/adb\/xray\/mihomoconfs\//g' ${module_path}/xrayhelper.yml
         sed -i 's/template: .*/template: \/data\/adb\/xray\/mihomoconfs\/template\.yaml/g' ${module_path}/xrayhelper.yml
-        ui_print "- Install yacd-meta"
-        su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+        if [ "$use_param" != true ]; then
+            ui_print
+            ui_print "- Please select mihomo web UI"
+            ui_print "* VOL+ = yacd-meta, VOL- = metacubexd *"
+            if $VKSEL; then
+                ui_print "- Install yacd-meta"
+                su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+            else
+                ui_print "- Install metacubexd"
+                su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update metacubexd
+            fi
+        else
+            if [ "$param_uitype" != "2" ]; then
+                ui_print "- Install yacd-meta UI"
+                su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update yacd-meta
+            else
+                ui_print "- Install metacubexd UI"
+                su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update metacubexd
+            fi
+
+        fi
         ui_print "- Install mihomo core"
         su -c ${module_path}/bin/xrayhelper -c ${module_path}/xrayhelper.yml update core
         ;;
@@ -198,12 +217,19 @@ releaseConfig() {
     unzip -j -o "${ZIPFILE}" 'xray/etc/adghomeconfs/config.yaml' -d ${module_path}/adghomeconfs >&2
 }
 
+# Global parameters
+use_param=false
+param_core=""
+param_keep=""
+param_uitype=""
+
 installModule() {
     # Params for no value key device
     if [ -f /sdcard/xray4magisk.setup ]; then
-        local use_param=true
-        local param_core=$(sed -n 1p /sdcard/xray4magisk.setup)
-        local param_keep=$(sed -n 2p /sdcard/xray4magisk.setup)
+        use_param=true
+        param_core=$(sed -n 1p /sdcard/xray4magisk.setup)
+        param_keep=$(sed -n 2p /sdcard/xray4magisk.setup)
+        param_uitype=$(sed -n 3p /sdcard/xray4magisk.setup)
     fi
 
     # Install xrayhelper
