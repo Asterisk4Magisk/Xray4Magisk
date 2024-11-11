@@ -103,7 +103,7 @@
 
 GUI 支持？
 
-> 请使用 [KernelSU](https://github.com/tiann/KernelSU)。
+> 请使用 [KernelSU](https://github.com/tiann/KernelSU) 或者 [KsuWebUIStandalone](https://github.com/5ec1cff/KsuWebUIStandalone)。
 
 ## 联系
 

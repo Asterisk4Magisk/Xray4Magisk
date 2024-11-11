@@ -105,7 +105,7 @@ This module cause battery drain really quick.
 
 GUI support?
 
-> Please use [KernelSU](https://github.com/tiann/KernelSU).
+> Please use [KernelSU](https://github.com/tiann/KernelSU) or [KsuWebUIStandalone](https://github.com/5ec1cff/KsuWebUIStandalone).
 
 Why not store config files in Internal Storage?
 

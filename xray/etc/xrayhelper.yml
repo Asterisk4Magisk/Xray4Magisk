@@ -9,7 +9,7 @@ xrayHelper:
     subList:
         - https://example.com/v2rayNg
         - clash+https://example.com/mihomo
-    userAgent: ClashMeta
+    userAgent: xray4magisk
 clash:
     dnsPort: 65533
     template: /data/adb/xray/mihomoconfs/template.yaml

@@ -1,14 +1,24 @@
 ## Changelog
 ### Module
-- use xrayhelper v1.4.5
-- use xray4magisk-ksu-webui v0.0.4
-- add net.inotify to refresh proxy rule when network changed
+- disable net.inotify by default [by powerAn2020](https://github.com/powerAn2020)
+- add mihomo panel selection [by MNDIA](https://github.com/MNDIA)
+- change default xrayhelper User-Agent to xray4magisk
 
-### XrayHelper v1.4.5
-- [fix xray httpupgrade/splithttp settings object host field](https://github.com/Asterisk4Magisk/XrayHelper/commit/e44fc8a754fd556347ca91e3828ec437811ff299)
-- [add cpuLimit and memLimit options](https://github.com/Asterisk4Magisk/XrayHelper/commit/574f34021f22a5ecdc50efd3432a3256574367cd)
-- [better way to bypass external ip](https://github.com/Asterisk4Magisk/XrayHelper/commit/df255732698b90f1b68ef87a25c92d1bcc124327)
-- [check service status before enable proxy](https://github.com/Asterisk4Magisk/XrayHelper/commit/28324757b8898487e1513de3e6a220d749ba08f9)
+### XrayHelper v1.4.6
+- fix some shareurl issues
+- add misc realping api
+- add get/set/add/delete dns api
+- add get/set/add/delete/exchange dnsrule api
+- add get/set/add/delete/exchange rule api
+- add get/set/add/delete ruleset api
+- add wireguard shareurl support
+- add metacubexd support for update command [by MNDIA](https://github.com/MNDIA)
 
-### xray4magisk-ksu-webui v0.0.4
-- [sync with xrayhelper 1.4.5](https://github.com/Asterisk4Magisk/xray4magisk-ksu-webui/commit/907462af18f1fb6dc3c9ecf57beeeb4737c2e22d)
+### xray4magisk-ksu-webui v0.1.0
+- sync with xrayhelper 1.4.6
+- standalone proxy server management panel [by powerAn2020](https://github.com/powerAn2020)
+- route rule management feature
+- DNS server management feature
+- sing-box rule_set management feature
+- sing-box DNS rule management feature
+- some other optimizations
