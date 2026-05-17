@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> ## This project is no longer maintained
+>
+> If you need a Magisk module with similar functionality, we recommend using **[box4magisk](https://github.com/CHIZI-0618/box4magisk)**.
+>
+> Alternatively, you can try our new app: **[AsteriskNG](https://github.com/Asterisk4Magisk/AsteriskNG)**.
+
 English | [简体中文](README_zh_CN.md)
 
 # Xray4Magisk
